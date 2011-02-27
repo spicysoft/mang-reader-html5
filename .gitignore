@@ -1,0 +1,5 @@
+.*
+target/*.*
+target/*/*.*
+!.gitignore
+!target/dist-release
