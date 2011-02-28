@@ -118,7 +118,6 @@ class HtmlCompiler
         $src_externs = split(',',$match[2]);
         $html = '';
         if ($this->build_type === self::DEBUG) {
-            var_dump($src_externs);
             foreach($src_externs as $src) {
                 list($master,$extern) = split(':',$src);
                 $filename = self::filename($master);
