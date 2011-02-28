@@ -55,7 +55,6 @@ button:active {
 
 .mask {
 	z-index: 5;
-	cursor: wait;
 	position: absolute;
 	left: 0;
 	top: 0;

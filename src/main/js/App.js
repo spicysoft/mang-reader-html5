@@ -1,4 +1,3 @@
-
 /**
  * Singleton of $App class.
  */
@@ -6,22 +5,22 @@ var App;
 var Reader;
 var _;
 var strings = {};
-$(function() { App_startup(); });
+
 /**
  * スタートアップ処理。
  * App シングルトンインスタンスを生成して処理を委譲する。
- *
- * @example
- *  $(function() {
- *    App_startup($("readerCanvas"));
- *  });
  */
-function App_startup()
-{
-  App = new $App();
+$(function() {
+  App = new $App(); 
+  var GET = App.parseQueryString(location.search);
+  var storyId = GET['storyId'];
+  if (storyId == undefined) {
+    alert("storyId isn't defined.");
+  }
   Reader = new $Reader();
-  _ = App.getLocalizedString;
-}
+  Reader.showPreview(storyId);
+
+});
 
 /**
  * App Class definition.
@@ -37,44 +36,28 @@ function $App()
     if (typeof window.console != 'object'){
       window.console = {log:function(){},debug:function(){},info:function(){},warn:function(){},error:function(){},assert:function(){},dir:function(){},dirxml:function(){},trace:function(){},group:function(){},groupEnd:function(){},time:function(){},timeEnd:function(){},profile:function(){},profileEnd:function(){},count:function(){}};
     }
-
-    this.userId  = 0;
-    this.languageId = 0;
     this.apiRoot = '/api';
-    this.GET = parseQueryString(location.search);
-    this.storyId = this.GET['storyId'];
-    if (this.storyId == undefined) {
-      alert("storyId isn't defined.");
-    }
-    centering();
-    this.showPreview(this.storyId);
+    this.languageId = 0;
+    _ = this.getLocalizedString;
   };
 
   /**
    * @private 
    */
-  var centering = function() {
-    $(".vhcenter").each(function(){
-      //initializing variables
+  this.centering = function(element) {
+    element.each(function(){
       var $self = jQuery(this);
-      //get the dimensions using dimensions plugin
       var width = $self.width();
       var height = $self.height();
-      //get the paddings
       var paddingTop = parseInt($self.css("padding-top"));
       var paddingBottom = parseInt($self.css("padding-bottom"));
-      //get the borders
       var borderTop = parseInt($self.css("border-top-width"));
       var borderBottom = parseInt($self.css("border-bottom-width"));
-      //get the media of padding and borders
       var mediaBorder = (borderTop+borderBottom)/2;
       var mediaPadding = (paddingTop+paddingBottom)/2;
-      //get the type of positioning
       var positionType = $self.parent().css("position");
-      // get the half minus of width and height
       var halfWidth = (width/2)*(-1);
       var halfHeight = ((height/2)*(-1))-mediaPadding-mediaBorder;
-      // initializing the css properties
       var cssProp = {
         position: 'absolute'
       };
@@ -94,62 +77,6 @@ function $App()
       $self.css(cssProp);
     });
   }
-  
-  /**
-   * プレビュー画面を表示する
-   * @returns void
-   */
-  this.showPreview = function(storyId)
-  {
-    $("#preview > *").click(this.click);
-    $("#thumbnail").attr("src","/icon/story_image/medium/" + storyId);
-    $("#preview").show();
-  }
-  
-  /**
-   * 表示モードを「ローディング中」に切り替える
-   */
-  this.showLoading = function()
-  {
-    $("#preview").show();
-    $("#loading").show();
-    $("#reader").hide();
-    $("#finish").hide();
-    $("#error").hide();
-  };
-
-  /**
-   * 表示モードを「マンガ閲覧中」に切り替える
-   */
-  this.showReader = function()
-  {
-    $("#preview").hide();
-    $("#loading").hide();
-    $("#reader").show();
-    $("#finish").hide();
-    $("#error").hide();
-  };
-
-  /**
-   * 表示モードを通信エラーに切り替える
-   */
-  this.showError = function()
-  {
-    $("#preview").show();
-    $("#loading").hide();
-    $("#reader").hide();
-    $("#finish").hide();
-    $("#error").show();
-  };
-
-  this.showFinished = function()
-  {
-    $("#preview").hide();
-    $("#loading").hide();
-    $("#reader").show();
-    $("#finish").show();
-    $("#error").hide();
-  };
 
   /**
    * 多言語対応のリソースを読み込む
@@ -190,27 +117,13 @@ function $App()
     return string;
   };
 
-  /**
-   * @public
-   */
-  this.click = function()
-  {
-    Reader.openStory(App.storyId);
-  };
-
-  /**
-   * どこまで読んだか？ローカルブックマークを記録する
-   */
-  this.bookmark = function(storyId,sceneIndex)
-  {
-  };
 
   /**
    * QueryStringを解析して連想配列にデコードする
    * @param String str QueryString
    * @returns Array デコード結果
    */
-  var parseQueryString = function(str)
+  this.parseQueryString = function(str)
   {
     var hash = {};
     if(str == 'undefined') {

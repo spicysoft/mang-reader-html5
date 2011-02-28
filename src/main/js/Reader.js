@@ -7,7 +7,9 @@ function $Reader()
 {
   var FPS = 10;
   var IE  = /MSIE/.test(navigator.userAgent)&&!window.opera;
-
+  if (IE) {
+    $("#canvas").replaceWith('<div id="canvas"></div>');
+  }
   var reader = $("#mangh5r");
   var width  = reader.width();
   var height = reader.height();
@@ -27,29 +29,45 @@ function $Reader()
   var currentSceneIndex;
 
   /**
+   * コンストラクター
+   * @returns
+   */
+  var constructor = function() {
+  };
+
+  /**
    * 指定したマンガの話をリーダーで開く。
    */
   this.openStory = function(_storyId)
   {
-    App.showLoading();
+    if (sceneImages != null) {
+      for (var n = 0;n < scenes.length;n++) {
+        var i = sceneImages[n];
+        if (i != undefined) {
+          i.onload = null;
+        }
+      }
+    }
+    sceneImages = [];
     storyId = _storyId;
     scenes = null;
-    sceneImages = [];
     currentSceneIndex = 0;
-    
+    storyMetaFile = null;
+
+    showLoading();
     App.apiStoryMetaFile(storyId,
         function(json) {
           storyMetaFile = json;
           scenes = storyMetaFile['scenes'];
           if (scenes.length == 0) {
-            App.showFinished();
+            showFinished();
           } else {
-            App.showReader();
+            showReader();
             jumpToScene(0);
           }
         },
         function() {
-          App.showError();
+          showError();
         }
     );
   };
@@ -82,7 +100,6 @@ function $Reader()
     fetchSceneImage(newSceneIndex);
 
     currentSceneIndex = newSceneIndex;
-    App.bookmark(storyId,currentSceneIndex);
 
     var arguments = {
         "comic_title" : storyMetaFile["comic_title"] ,
@@ -91,9 +108,9 @@ function $Reader()
         "scene_number" : newSceneIndex+1,
         "number_of_scenes": scenes.length
     };
-    var format = _("{comic_title} / #{story_number} {story_title} ({scene_number} / {number_of_scenes} frames)");
+    var format = _('hover_status');
     var title  = App.sprintf(format,arguments);
-    $("#ui").attr("title",title);
+    $("#preview > *").attr("title",title);
 
     function onloaded() {
       var scene = scenes[currentSceneIndex];
@@ -142,11 +159,6 @@ function $Reader()
     }
   };
 
-  var onClick = function ()
-  {
-    goNext();
-  };
-
   /**
    * 次のシーンへ進める
    */
@@ -156,7 +168,7 @@ function $Reader()
     if (next < scenes.length) {
       jumpToScene(currentSceneIndex + 1);
     } else {
-      App.showFinished();
+      showFinished();
     }
   };
 
@@ -198,6 +210,77 @@ function $Reader()
     }
   };
 
-  $("#reader").click(onClick);
+  /**
+   * プレビュー画面を表示する
+   * @returns void
+   */
+  this.showPreview = function(_storyId)
+  {
+    storyId = _storyId;
+    $("#thumbnail").attr("src","/icon/story_image/medium/" + storyId);
+    App.centering($(".vhcenter"));
+    $("#preview").show();
+    $("#preview > *").click(function() { Reader.openStory(storyId) });
+  }
+  
+  /**
+   * 表示モードを「ローディング中」に切り替える
+   */
+  var showLoading = function()
+  {
+    $("#preview").show();
+    $("#loading").show();
+    $("#reader").hide();
+    $("#finish").hide();
+    $("#error").hide();
+  };
+
+  /**
+   * 表示モードを「マンガ閲覧中」に切り替える
+   */
+  var showReader = function()
+  {
+    $("#preview").hide();
+    $("#loading").hide();
+    $("#reader").show();
+    $("#finish").hide();
+    $("#error").hide();
+    $("#reader").click(function() { goNext(); });
+  };
+
+  /**
+   * 表示モードを通信エラーに切り替える
+   */
+  var showError = function()
+  {
+    $("#preview").show();
+    $("#loading").hide();
+    $("#reader").hide();
+    $("#finish").hide();
+    $("#error").show();
+  };
+
+  var showFinished = function()
+  {
+    $("#onemore").click(function() { Reader.openStory(storyId) });
+    var next_story_id = storyMetaFile["next_story_id"];
+    if (next_story_id != false) {
+      $("#next").click(function() { 
+        Reader.openStory(next_story_id);
+      });
+      $("#next").show();
+    } else {
+      $("#next").hide();
+    }
+
+    App.centering($(".vhcenter"));
+    $("#preview").hide();
+    $("#loading").hide();
+    $("#reader").show();
+    $("#error").hide();
+    $("#finish").show();
+  };
+
+  constructor();
 }
 
