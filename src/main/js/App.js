@@ -12,15 +12,26 @@ var strings = {};
  */
 $(function() {
   App = new $App(); 
-  var GET = App.parseQueryString(location.search);
-  var storyId = GET['storyId'];
-  if (storyId == undefined) {
-    alert("storyId isn't defined.");
-  }
   Reader = new $Reader();
-  Reader.showPreview(storyId);
 
+  var storyId = getStoryId();
+  Reader.showPreview(storyId);
+  /**
+   * URLアンカーからストーリー番号を取り出す
+   * @returns int
+   */
+  function getStoryId()
+  {
+    var hash = location.hash;
+    if (hash == undefined || hash == null || hash.length <= 2) {
+      return 0;
+    }
+    var storyId = Math.floor(hash.substring(1));
+    return storyId;
+  }
 });
+
+
 
 /**
  * App Class definition.
