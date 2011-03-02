@@ -16,6 +16,7 @@ $(function() {
 
   var storyId = getStoryId();
   Reader.showPreview(storyId);
+  
   /**
    * URLアンカーからストーリー番号を取り出す
    * @returns int
@@ -53,40 +54,47 @@ function $App()
   };
 
   /**
-   * @private 
+   * windowのセンターにオブジェクトを配置する
+   * @public
    */
   this.centering = function(element) {
     element.each(function(){
+      var $window = $(window);
+      var windowHeight = $window.height();
+      var windowWidth  = $window.width();
+
       var $self = jQuery(this);
       var width = $self.width();
       var height = $self.height();
-      var paddingTop = parseInt($self.css("padding-top"));
-      var paddingBottom = parseInt($self.css("padding-bottom"));
-      var borderTop = parseInt($self.css("border-top-width"));
-      var borderBottom = parseInt($self.css("border-bottom-width"));
+      var paddingTop = toInt($self.css("padding-top"));
+      var paddingBottom = toInt($self.css("padding-bottom"));
+      var borderTop = toInt($self.css("border-top-width"));
+      var borderBottom = toInt($self.css("border-bottom-width"));
       var mediaBorder = (borderTop+borderBottom)/2;
       var mediaPadding = (paddingTop+paddingBottom)/2;
       var positionType = $self.parent().css("position");
-      var halfWidth = (width/2)*(-1);
-      var halfHeight = ((height/2)*(-1))-mediaPadding-mediaBorder;
+      var halfWidth =  width /2;
+      var halfHeight = height/2 + mediaPadding +mediaBorder;
+
       var cssProp = {
         position: 'absolute'
       };
-
       cssProp.height = height;
-      cssProp.top = '50%';
-      cssProp.marginTop = halfHeight;
-
+      cssProp.top = windowHeight/2 - halfHeight;
+      cssProp.marginTop = 0;
       cssProp.width = width;
-      cssProp.left = '50%';
-      cssProp.marginLeft = halfWidth;
-
+      cssProp.left = windowWidth/2 - halfWidth;
+      cssProp.marginLeft = 0;
       if(positionType == 'static') {
         $self.parent().css("position","relative");
       }
-
       $self.css(cssProp);
     });
+    
+    function toInt(v) {
+      var i = parseInt(v);
+      return isNaN(i) ? 0 : i;
+    }
   }
 
   /**

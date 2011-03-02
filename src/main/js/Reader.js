@@ -218,9 +218,10 @@ function $Reader()
   {
     storyId = _storyId;
     $("#thumbnail").attr("src","/icon/story_image/medium/" + storyId);
-    App.centering($(".vhcenter"));
+    $("#preview_ui").show();
     $("#preview").show();
     $("#preview > *").click(function() { Reader.openStory(storyId) });
+    App.centering($("#preview_ui"));
   }
   
   /**
@@ -228,6 +229,7 @@ function $Reader()
    */
   var showLoading = function()
   {
+    $("#preview_ui").hide();
     $("#preview").show();
     $("#loading").show();
     $("#reader").hide();
@@ -273,12 +275,12 @@ function $Reader()
       $("#next").hide();
     }
 
-    App.centering($(".vhcenter"));
     $("#preview").hide();
     $("#loading").hide();
     $("#reader").show();
     $("#error").hide();
     $("#finish").show();
+    App.centering($("#finish_ui"));
   };
 
   constructor();

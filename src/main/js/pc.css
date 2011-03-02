@@ -76,16 +76,6 @@ button:active {
     font-size: 140%;
 }
 
-.vhcenter {
-	/* Java script will position center vertically.*/
-}
-
-.vhcenter > div {
-    position: absolute;
-    left: 0;
-    top: 0;
-}
-
 #mangh5r {
 	position: absolute;
 	left: 0;
@@ -101,10 +91,6 @@ button:active {
 #preview_ui {
     z-index: 10;
     position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
 }
 
 #thumbnail {
@@ -145,13 +131,72 @@ button:active {
 #finish_ui {
     z-index: 11;
     position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
 }
 
 
 #error {
 	z-index: 10;
 }
+
+.sprite_button {
+    display: block;
+    cursor:pointer;
+    padding:0px;
+    margin: 4px 10px 4px;
+}
+
+span#read {
+	background: url(ja.png) -0 -0;
+	width:141px;
+	height:45px;
+}
+
+span#read:hover {
+    background: url(ja.png) -141px -0px;
+    width:141px;
+    height:45px;
+}
+
+span#read:active {
+    background: url(ja.png) -282px -0px;
+    width:141px;
+    height:45px;
+}
+
+
+span#next {
+    background: url(ja.png) -0px -45px;
+    width:141px;
+    height:45px;
+}
+
+span#next:hover {
+    background: url(ja.png) -141px -45px;
+    width:141px;
+    height:45px;
+}
+
+span#next:active {
+    background: url(ja.png) -282px -45px;
+    width:141px;
+    height:45px;
+}
+
+span#onemore {
+    background: url(ja.png) -0px -90px;
+    width:140px;
+    height:22px;
+}
+
+span#onemore:hover {
+    background: url(ja.png) -141px -90px;
+    width:140px;
+    height:22px;
+}
+
+span#onemore:active {
+    background: url(ja.png) -282px -90px;
+    width:140px;
+    height:22px;
+}
+
