@@ -6,37 +6,7 @@ body {
 	width: 100%;
 	margin: 0;
 	overflow: hidden;
-}
-
-button {
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-top: 1px solid #ccc;
-	border-right: 1px solid #999;
-	border-bottom: 1px solid #999;
-	border-left: 1px solid #ccc;
-	font-weight: bold;
-    font-size: 120%;
-	cursor: pointer;
-	color: #666;
-	padding: 6px 20px 4px;
-	background: -moz-linear-gradient(top, #fff, #F1F1F1 1%, #F1F1F1 50%, #DFDFDF 99%,
-		#ccc);
-	background: -webkit-gradient(linear, left top, left bottom, from(#fff),
-		color-stop(0.01, #F1F1F1), color-stop(0.5, #F1F1F1),
-		color-stop(0.99, #DFDFDF), to(#ccc) );
-}
-
-button:hover {
-	background: -moz-linear-gradient(top, #fff, #e1e1e1 1%, #e1e1e1 50%, #cfcfcf 99%,
-		#ccc);
-	background: -webkit-gradient(linear, left top, left bottom, from(#fff),
-		color-stop(0.01, #e1e1e1), color-stop(0.5, #e1e1e1),
-		color-stop(0.99, #cfcfcf), to(#ccc) );
-}
-
-button:active {
-	background: #ccc;
+	position: fixed;
 }
 
 .stage {
@@ -111,15 +81,22 @@ button:active {
 	z-index: 1;
 }
 
-#reader_canvas {
+#canvas {
 	z-index: 2;
+	cursor: pointer;
+	display:block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
 }
 
 #reader *{
     cursor: pointer;
 }
 
-#reader_loading {
+#unloaded {
 	z-index: 10;
 	cursor: wait;
 }
@@ -142,7 +119,7 @@ button:active {
     display: block;
     cursor:pointer;
     padding:0px;
-    margin: 4px 10px 4px;
+    margin: 4px 4px 4px;
 }
 
 span#read {
@@ -198,5 +175,41 @@ span#onemore:active {
     background: url(ja.png) -282px -90px;
     width:140px;
     height:22px;
+}
+
+span#vote {
+    background: url(ja.png) -0px -112px;
+    width:141px;
+    height:45px;
+}
+
+span#vote:hover {
+    background: url(ja.png) -141px -112px;
+    width:141px;
+    height:45px;
+}
+
+span#vote:active {
+    background: url(ja.png) -282px -112px;
+    width:141px;
+    height:45px;
+}
+
+span#bookmark {
+    background: url(ja.png) -0px -157px;
+    width:141px;
+    height:45px;
+}
+
+span#bookmark:hover {
+    background: url(ja.png) -141px -157px;
+    width:141px;
+    height:45px;
+}
+
+span#bookmark:active {
+    background: url(ja.png) -282px -157px;
+    width:141px;
+    height:45px;
 }
 

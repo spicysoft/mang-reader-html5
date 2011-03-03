@@ -12,23 +12,31 @@ var strings = {};
  */
 $(function() {
   App = new $App(); 
-  Reader = new $Reader();
+  var params = getRealParameters();
 
-  var storyId = getStoryId();
-  Reader.showPreview(storyId);
-  
-  /**
-   * URLアンカーからストーリー番号を取り出す
-   * @returns int
+  Reader = new $Reader(params['member']);
+  Reader.showPreview(params['storyId']);
+
+  /** URLアンカーからアプリケーション固有のパラメータを取得し
+   * 名前つき配列に格納する
    */
-  function getStoryId()
+  function getRealParameters()
+  {
+    var raw  = getParametersFromAnchor();
+    var real = {};
+    real['storyId'] = Math.floor(raw[0]);
+    real['member']  = 2 <= raw.length && raw[1] == 'member';
+    return real;
+  }
+  
+  /** URLアンカーからカンマ区切りのパラメーターを取得する */
+  function getParametersFromAnchor()
   {
     var hash = location.hash;
     if (hash == undefined || hash == null || hash.length <= 2) {
-      return 0;
+      return [0];
     }
-    var storyId = Math.floor(hash.substring(1));
-    return storyId;
+    return hash.substring(1).split(",");
   }
 });
 
@@ -36,6 +44,9 @@ $(function() {
 
 /**
  * App Class definition.
+ *
+ * アプリケーション固有の実装はここに書かない。
+ * このクラスはブラウザ間の違い等の吸収やヘルパーの提供の役割
  * @constructor
  */
 function $App()

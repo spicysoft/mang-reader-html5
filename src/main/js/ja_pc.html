@@ -5,7 +5,7 @@
     <include type="javascript" src_interns="src/main/js/App.js,src/main/js/Reader.js,src/main/js/SceneAnimator.js,src/main/js/strings.js" src_externs="lib/jquery-1.5.min.js:lib/closure-compiler/jquery-1.5.externs.js"/>
     <include type="css" src="src/main/js/pc.css"/>
 </head>
-<body>
+<body scrolling="no">
     <div id="mangh5r">
       <div id="preview" class="stage">
         <img id="thumbnail" class="ui" title="クリックするとマンガ閲覧をスタートします"/>
@@ -23,8 +23,10 @@
         <div class="mask"></div>
         <div id="finish_ui" class="vhcenter">
             <div>
-                <span id="next" class="sprite_button" title="続きを読む"></span>
+                <span id="next" class="sprite_button" title="続きを読む"></span><br />
                 <span id="onemore" class="sprite_button" title="もう一回読む"></span><br />
+                <span id="vote" class="sprite_button" title="イイネ"></span><br />
+                <span id="bookmark" class="sprite_button" title="ブックマーク"></span>
             </div>
         </div>
       </div>

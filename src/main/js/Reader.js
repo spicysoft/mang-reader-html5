@@ -3,25 +3,25 @@
  * MVCのコンポーネントに相当する処理を行う。
  * @constructor
  */
-function $Reader()
+function $Reader(_member)
 {
+  var member = _member;
   var FPS = 10;
   var IE  = /MSIE/.test(navigator.userAgent)&&!window.opera;
   if (IE) {
-    $("#canvas").replaceWith('<div id="canvas"></div>');
+    // canvasが実装されていないのでdivに置換
+    // style="background: #000;"を定義しないとクリッカブルにならない
+    $("#canvas").replaceWith('<div id="canvas" style="background: #000;"></div>');
   }
-  var reader = $("#mangh5r");
-  var width  = reader.width();
-  var height = reader.height();
+
+  var width  = $(window).width();
+  var height = $(window).height();
+  $("#mangh5r").width(width);
+  $("#mangh5r").height(height);
+  $("#canvas").width(width);
+  $("#canvas").height(height);
 
   var SceneAnimator = new $SceneAnimator(width,height,FPS);
-
-  var canvas = $("#canvas")[0];
-  canvas.width  = width;
-  canvas.style.width = width + "px";
-  canvas.height = height;
-  canvas.style.height = width + "px";
-
   var storyId;
   var storyMetaFile;
   var scenes;
@@ -220,7 +220,7 @@ function $Reader()
     $("#thumbnail").attr("src","/icon/story_image/medium/" + storyId);
     $("#preview_ui").show();
     $("#preview").show();
-    $("#preview > *").click(function() { Reader.openStory(storyId) });
+    $("#preview > *").click(function(event) { Reader.openStory(storyId);event.preventDefault(); });
     App.centering($("#preview_ui"));
   }
   
@@ -247,7 +247,7 @@ function $Reader()
     $("#reader").show();
     $("#finish").hide();
     $("#error").hide();
-    $("#reader").click(function() { goNext(); });
+    $("#canvas").click(function(event) { goNext();event.preventDefault(); });
   };
 
   /**
@@ -264,17 +264,38 @@ function $Reader()
 
   var showFinished = function()
   {
-    $("#onemore").click(function() { Reader.openStory(storyId) });
     var next_story_id = storyMetaFile["next_story_id"];
-    if (next_story_id != false) {
-      $("#next").click(function() { 
-        Reader.openStory(next_story_id);
-      });
-      $("#next").show();
-    } else {
-      $("#next").hide();
+    var comic_id = storyMetaFile["comic_id"];
+    
+    $("#onemore").click(function(event) { Reader.openStory(storyId);event.preventDefault(); });
+    if (member) {
+      $("#vote").click(function() { parent.document.location.href = '/comic/view/' + comic_id + '/vote_story/' + storyId + '/1/done/'; });
+      $("#bookmark").click(function() { parent.document.location.href = '/comic/view/' + comic_id + '/bookmark/done/'; });
     }
 
+    if (next_story_id != false) {
+      $("#next").click(function() { 
+        if (member) {
+          Reader.openStory(next_story_id);
+        } else {
+          parent.document.location.href = '/comic/view/' + comic_id + '/story/' + next_story_id;
+        }
+      });
+      $("#bookmark").hide();
+      $("#next").show();
+    } else {
+      if (member) {
+        $("#bookmark").show();
+      } else {
+        $("#bookmark").hide();
+      }
+      $("#next").hide();
+    }
+    if (member) {
+      $("#vote").show();
+    } else {
+      $("#vote").hide();
+    }
     $("#preview").hide();
     $("#loading").hide();
     $("#reader").show();
