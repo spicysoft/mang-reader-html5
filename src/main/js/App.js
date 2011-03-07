@@ -8,7 +8,9 @@ var strings = {};
 
 /**
  * スタートアップ処理。
+ * 
  * App シングルトンインスタンスを生成して処理を委譲する。
+ * 
  */
 $(function() {
   App = new $App(); 
@@ -46,11 +48,15 @@ $(function() {
  * App Class definition.
  *
  * アプリケーション固有の実装はここに書かない。
- * このクラスはブラウザ間の違い等の吸収やヘルパーの提供の役割
+ * このクラスはブラウザ間の違い等の吸収やヘルパーの提供の役割。
+ * 
  * @constructor
  */
 function $App()
 {
+  this.IE = false;
+  this.IE_VER = false;
+
   /**
    * コンストラクター実装
    */
@@ -59,9 +65,20 @@ function $App()
     if (typeof window.console != 'object'){
       window.console = {log:function(){},debug:function(){},info:function(){},warn:function(){},error:function(){},assert:function(){},dir:function(){},dirxml:function(){},trace:function(){},group:function(){},groupEnd:function(){},time:function(){},timeEnd:function(){},profile:function(){},profileEnd:function(){},count:function(){}};
     }
-    this.apiRoot = '/api';
-    this.languageId = 0;
     _ = this.getLocalizedString;
+
+    if (navigator.appName == 'Microsoft Internet Explorer') {
+      this.IE = true;
+      var ua = navigator.userAgent;
+      var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+      if (re.exec(ua) != null) {
+        this.IE_VER = parseFloat( RegExp.$1 );
+      } else {
+        this.IE_VER = 6;
+      }
+    } else {
+      this.IE = false;
+    }
   };
 
   /**
@@ -173,42 +190,6 @@ function $App()
       }
     }
     return hash;
-  };
-
-  /**
-   * [サーバーAPIとの通信メソッド]
-   * サーバーからシーン画像を取得する
-   * @return Image ただし非同期なので読み込み完了していることは保証されない
-   */
-  this.apiSceneImage = function(sceneId)
-  {
-    var i = new Image();
-    i.src = this.apiRoot + '/sceneImage/' + sceneId;
-    return i;
-  };
-
-  /**
-   * [サーバーAPIとの通信メソッド]
-   *
-   * Story Metaファイルを取得する
-   * @param storyId ストーリー番号
-   * @param fnSuccess 成功時のコールバック
-   * @param fnError 失敗時のコールバック
-   * @returns void 非同期通信です。通信を開始後、完了をまたずにすぐに処理が戻ります。
-   */
-  this.apiStoryMetaFile = function(storyId,fnSuccess,fnError) 
-  {
-    var settings = {
-        'url': this.apiRoot + '/storyMetaFile/' + storyId,
-        'type': 'get',
-        'async': true,
-        'cache': false,
-        'dataType' : 'json',
-        'success' : function(json) { fnSuccess(json); },
-        'error': function() { fnError();}
-    };
-
-    $.ajax(settings);
   };
 
   this.constructor();

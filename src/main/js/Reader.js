@@ -7,15 +7,15 @@ function $Reader(_member)
 {
   var member = _member;
   var FPS = 10;
-  var IE  = /MSIE/.test(navigator.userAgent)&&!window.opera;
-  if (IE) {
+  var API_ROOT = '/api';
+
+  if (App.IE) {
     // canvasが実装されていないのでdivに置換
     // style="background: #000;"を定義しないとクリッカブルにならない
     $("#canvas").replaceWith('<div id="canvas" style="background: #000;"></div>');
   }
 
-  var IE7 = window.XMLHttpRequest && (/*@cc_on!@*/false) && !(document.documentMode >=8);
-  if (IE7) {
+  if (App.IE && App.IE_VER < 8) {
     var width  = $(window).width();
     var height = $(window).height();
     $("#mangh5r").width(width);
@@ -67,7 +67,7 @@ function $Reader(_member)
     storyMetaFile = null;
 
     showLoading();
-    App.apiStoryMetaFile(storyId,
+    apiStoryMetaFile(storyId,
         function(json) {
           storyMetaFile = json;
           scenes = storyMetaFile['scenes'];
@@ -98,7 +98,7 @@ function $Reader(_member)
       if (n < under && sceneImages[n] != undefined) {
         sceneImages[n] = undefined;
       } else if (n <= prefetch && sceneImages[n] == undefined) {
-        sceneImages[n] = App.apiSceneImage(scenes[n]['id']);
+        sceneImages[n] = apiSceneImage(scenes[n]['id']);
       }
     }
   };
@@ -158,7 +158,7 @@ function $Reader(_member)
     var h = i.height;
     var dx = (width - w) / 2 + x;
     var dy = (height - h) / 2 + y;
-    if (IE) {
+    if (App.IE) {
       i.style.position = 'absolute';
       i.style.left = dx;
       i.style.top  = dy;
@@ -314,6 +314,45 @@ function $Reader(_member)
     $("#error").hide();
     $("#finish").show();
     App.centering($("#finish_ui"));
+  };
+
+  /**
+   * [サーバーAPIとの通信メソッド]
+   * サーバーからシーン画像を取得する
+   * @private
+   * @return Image ただし非同期なので読み込み完了していることは保証されない
+   */
+  var apiSceneImage = function(sceneId)
+  {
+    var i = new Image();
+    i.src = API_ROOT + '/sceneImage/' + sceneId;
+    return i;
+  };
+
+  /**
+   * [サーバーAPIとの通信メソッド]
+   *
+   * Story Metaファイルを取得する
+   * 
+   * @private
+   * @param storyId ストーリー番号
+   * @param fnSuccess 成功時のコールバック
+   * @param fnError 失敗時のコールバック
+   * @returns void 非同期通信です。通信を開始後、完了をまたずにすぐに処理が戻ります。
+   */
+  var apiStoryMetaFile = function(storyId,fnSuccess,fnError) 
+  {
+    var settings = {
+        'url': API_ROOT + '/storyMetaFile/' + storyId,
+        'type': 'get',
+        'async': true,
+        'cache': false,
+        'dataType' : 'json',
+        'success' : function(json) { fnSuccess(json); },
+        'error': function() { fnError();}
+    };
+
+    $.ajax(settings);
   };
 
   constructor();
