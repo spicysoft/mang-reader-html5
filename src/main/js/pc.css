@@ -101,6 +101,10 @@ body {
 	cursor: wait;
 }
 
+#info {
+	z-index: 9;
+}
+
 #finish {
 	z-index: 10;
 }

@@ -4,7 +4,6 @@
 var App;
 var Reader;
 var _;
-var strings = {};
 
 /**
  * スタートアップ処理。
@@ -70,9 +69,9 @@ function $App()
     if (navigator.appName == 'Microsoft Internet Explorer') {
       this.IE = true;
       var ua = navigator.userAgent;
-      var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+      var re  = /MSIE ([0-9]{1,}[\.0-9]{0,})/;//;new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
       if (re.exec(ua) != null) {
-        this.IE_VER = parseFloat( RegExp.$1 );
+        this.IE_VER = parseFloat( re.$1 );
       } else {
         this.IE_VER = 6;
       }

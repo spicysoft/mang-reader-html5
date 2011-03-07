@@ -146,6 +146,7 @@ class HtmlCompiler
             $tmp = tempnam(sys_get_temp_dir(),'shc');
             $jar = self::JAR_CLOSURE;
             $cmd= "java -jar $jar $opt_js $opt_ex ".
+                  " --logging_level 1 ".
                   " --compilation_level ADVANCED_OPTIMIZATIONS ".
                   " --js_output_file $tmp";
             $this->cmd($cmd);
