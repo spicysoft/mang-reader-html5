@@ -14,12 +14,24 @@ function $Reader(_member)
     $("#canvas").replaceWith('<div id="canvas" style="background: #000;"></div>');
   }
 
-  var width  = $(window).width();
-  var height = $(window).height();
-  $("#mangh5r").width(width);
-  $("#mangh5r").height(height);
-  $("#canvas").width(width);
-  $("#canvas").height(height);
+  var IE7 = window.XMLHttpRequest && (/*@cc_on!@*/false) && !(document.documentMode >=8);
+  if (IE7) {
+    var width  = $(window).width();
+    var height = $(window).height();
+    $("#mangh5r").width(width);
+    $("#mangh5r").height(height);
+    $("#canvas").width(width);
+    $("#canvas").height(height);
+  } else {
+    var reader = $("#mangh5r");
+    var width  = reader.width();
+    var height = reader.height();
+    var canvas = $("#canvas")[0];
+    canvas.width  = width;
+    canvas.style.width = width + "px";
+    canvas.height = height;
+    canvas.style.height = width + "px";
+  }
 
   var SceneAnimator = new $SceneAnimator(width,height,FPS);
   var storyId;
