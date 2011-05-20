@@ -48,6 +48,10 @@ class HtmlCompiler
         $this->sources = array();
         $this->res_dir = $res_dir;
         $this->dst_dir = $dst_dir;
+
+        self::mkdir_if_not_exists($res_dir);
+        self::mkdir_if_not_exists($dst_dir);
+
         $dst_html = $dst_dir.DIRECTORY_SEPARATOR.self::filename($src_html);
 
         $html = $this->load($src_html);
@@ -57,6 +61,14 @@ class HtmlCompiler
         file_put_contents($dst_html,$html);
         $this->copy_resources($res_dir,$dst_dir);
         $this->copy_sources();
+    }
+
+    private static function mkdir_if_not_exists($dir){
+        if(file_exists($dir)){
+            return false;
+        }
+        mkdir($dir, 0777, true);
+        return true;
     }
 
     private function copy_sources()
