@@ -7,12 +7,12 @@ var _;
 
 /**
  * スタートアップ処理。
- * 
+ *
  * App シングルトンインスタンスを生成して処理を委譲する。
- * 
+ *
  */
 $(function() {
-  App = new $App(); 
+  App = new $App();
   var params = getRealParameters();
 
   Reader = new $Reader(params['member']);
@@ -29,7 +29,7 @@ $(function() {
     real['member']  = 2 <= raw.length && raw[1] == 'member';
     return real;
   }
-  
+
   /** URLアンカーからカンマ区切りのパラメーターを取得する */
   function getParametersFromAnchor()
   {
@@ -48,7 +48,7 @@ $(function() {
  *
  * アプリケーション固有の実装はここに書かない。
  * このクラスはブラウザ間の違い等の吸収やヘルパーの提供の役割。
- * 
+ *
  * @constructor
  */
 function $App()
@@ -69,9 +69,9 @@ function $App()
     if (navigator.appName == 'Microsoft Internet Explorer') {
       this.IE = true;
       var ua = navigator.userAgent;
-      var re  = /MSIE ([0-9]{1,}[\.0-9]{0,})/;//;new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
-      if (re.exec(ua) != null) {
-        this.IE_VER = parseFloat( re.$1 );
+      var re  = ua.match(/MSIE ([0-9]{1,}[\.0-9]{0,})/);
+      if (re != null) {
+        this.IE_VER = parseFloat( re[1] );
       } else {
         this.IE_VER = 6;
       }
@@ -117,7 +117,7 @@ function $App()
       }
       $self.css(cssProp);
     });
-    
+
     function toInt(v) {
       var i = parseInt(v);
       return isNaN(i) ? 0 : i;

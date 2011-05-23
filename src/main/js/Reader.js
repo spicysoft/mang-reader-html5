@@ -252,10 +252,14 @@ function $Reader(_member) {
     $("#reader").show();
     $("#finish").hide();
     $("#error").hide();
-    $("#canvas").unbind('click');
-    $("#canvas").click(function(event) {
+    $("#canvas").unbind('mouseup');
+    $("#canvas").mouseup(function(event) {
       goNext();
-      event.preventDefault();
+      if (App.IE) {
+        event.returnValue = false
+      }else{
+        event.preventDefault();
+      }
     });
     var format = _("Loading images");
     var args = {
@@ -289,7 +293,11 @@ function $Reader(_member) {
     
     $("#onemore").click(function(event) {
       Reader.openStory(storyId);
-      event.preventDefault();
+      if (App.IE) {
+        event.returnValue = false
+      }else{
+        event.preventDefault();
+      }
     });
     if (member) {
       $("#vote").click(
