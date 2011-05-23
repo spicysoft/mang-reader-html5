@@ -1,6 +1,6 @@
 /**
  * マンガを読み込み中のUI処理を行う MVCのコンポーネントに相当する処理を行う。
- * 
+ *
  * @constructor
  */
 function $Reader(_member) {
@@ -96,7 +96,7 @@ function $Reader(_member) {
 
   /**
    * コマ毎の初期化
-   * 
+   *
    * @return void
    */
   var jumpToScene = function(newSceneIndex) {
@@ -124,7 +124,7 @@ function $Reader(_member) {
     };
 
     var i = sceneImages[currentSceneIndex];
-    if (i !== undefined && i.complete === true) {
+    if (i !== undefined && i.hasLoaded()) {
       onloaded();
     } else {
       $("#unloaded").show();
@@ -135,12 +135,12 @@ function $Reader(_member) {
 
   /**
    * 画面描画
-   * 
+   *
    * @return void
    */
   var paint = function() {
     var i = sceneImages[currentSceneIndex];
-    if (i === undefined || i.complete === false) {
+    if (i === undefined || !i.hasLoaded()) {
       return;
     }
 
@@ -152,8 +152,8 @@ function $Reader(_member) {
     var dy = (height - h) / 2 + y;
     if (App.IE) {
       i.style.position = 'absolute';
-      i.style.left = dx;
-      i.style.top = dy;
+      i.style.posLeft = dx;
+      i.style.posTop = dy;
       $("#canvas").empty().append(i);
     } else {
       var context = canvas.getContext("2d");
@@ -177,7 +177,7 @@ function $Reader(_member) {
 
   /**
    * スクロールをひとつ先に進める
-   * 
+   *
    * @private
    * @return void
    */
@@ -200,7 +200,7 @@ function $Reader(_member) {
 
   /**
    * アニメーションの各フレーム処理の実行
-   * 
+   *
    * @private
    */
   var animation = function() {
@@ -215,7 +215,7 @@ function $Reader(_member) {
 
   /**
    * プレビュー画面を表示する
-   * 
+   *
    * @returns void
    */
   this.showPreview = function(_storyId) {
@@ -290,7 +290,7 @@ function $Reader(_member) {
     $("#next").unbind('click');
     $("#vote").unbind('click');
     $("#bookmark").unbind('click');
-    
+
     $("#onemore").click(function(event) {
       Reader.openStory(storyId);
       if (App.IE) {
@@ -347,21 +347,26 @@ function $Reader(_member) {
 
   /**
    * [サーバーAPIとの通信メソッド] サーバーからシーン画像を取得する
-   * 
+   *
    * @private
    * @return Image ただし非同期なので読み込み完了していることは保証されない
    */
   var apiSceneImage = function(sceneId) {
     var i = new Image();
+    i.hasLoaded = function(){
+      //IE9でImage.completeが動作しない場合があるので、Image.widthを見て
+      //ロードが完了したか判断する
+      return this.width > 0;
+    };
     i.src = API_ROOT + '/sceneImage/' + sceneId;
     return i;
   };
 
   /**
    * [サーバーAPIとの通信メソッド]
-   * 
+   *
    * Story Metaファイルを取得する
-   * 
+   *
    * @private
    * @param storyId
    *          ストーリー番号
