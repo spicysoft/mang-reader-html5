@@ -151,9 +151,7 @@ function $Reader(_member) {
     var dx = (width - w) / 2 + x;
     var dy = (height - h) / 2 + y;
     if (App.IE) {
-      i.style.position = 'absolute';
-      i.style.posLeft = dx;
-      i.style.posTop = dy;
+      i.setAttribute("style", "position: absolute; top: " + dy + "px; left:" + dx + "px;");
       $("#canvas").empty().append(i);
     } else {
       var context = canvas.getContext("2d");
