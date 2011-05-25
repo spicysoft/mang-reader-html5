@@ -148,10 +148,10 @@ function $Reader(_member) {
     var y = SceneAnimator.y();
     var w = i.width;
     var h = i.height;
-    var dx = (width - w) / 2 + x;
+    var dx = (width - w) / 2 + 	x;
     var dy = (height - h) / 2 + y;
     if (App.IE) {
-      i.setAttribute("style", "position: absolute; top: " + dy + "px; left:" + dx + "px;");
+      i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
       $("#canvas").empty().append(i);
     } else {
       var context = canvas.getContext("2d");
