@@ -223,6 +223,7 @@ function $Reader(_member) {
     $("#preview").show();
     $("#preview > *").unbind('click');
     $("#preview > *").click(function(event) {
+      _gaq.push(['_trackPageview', '/event/viewer/open/'+storyId]);
       Reader.openStory(storyId);
       event.preventDefault();
     });
