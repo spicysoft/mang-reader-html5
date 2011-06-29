@@ -1,0 +1,53 @@
+@charset "utf-8";
+
+/*
+This css was written by CSSSprite Extension (copyright (c) 2010 Risa Yuguchi <risa.yuguchi@gmail.com>).
+ Eveyone can delete this comments.
+ Thank you for using this extension.
+*/
+
+.csssprite {background-image: url(ja.png);background-repeat: no-repeat;text-indent:-9999px;overflow: hidden;display:block;}
+
+/* each setting */
+
+/* for #next_click */
+#next_click {background-position: -1px -279px;width: 452px;height: 92px;}
+
+/* for #next_normal */
+#next_normal {background-position: -1px -187px;width: 452px;height: 92px;}
+
+/* for #bookmark_click */
+#bookmark_click {background-position: -214px -116px;width: 212px;height: 75px;}
+
+/* for #bookmark_disable */
+#bookmark_disable {background-position: -427px -118px;width: 212px;height: 68px;}
+
+/* for #bookmark_normal */
+#bookmark_normal {background-position: -1px -118px;width: 212px;height: 68px;}
+
+/* for #like_disable */
+#like_disable {background-position: -427px -50px;width: 212px;height: 68px;}
+
+/* for #like_normal */
+#like_normal {background-position: -1px -49px;width: 212px;height: 68px;}
+
+/* for #like_click */
+#like_click {background-position: -214px -46px;width: 212px;height: 77px;}
+
+/* for #back_click */
+#back_click {background-position: -539px -1px;width: 154px;height: 51px;}
+
+/* for #top_click */
+#top_click {background-position: -240px -1px;width: 155px;height: 51px;}
+
+/* for #back_normal */
+#back_normal {background-position: -392px -2px;width: 149px;height: 47px;}
+
+/* for #top_normal */
+#top_normal {background-position: -94px -2px;width: 149px;height: 47px;}
+
+/* for #close_click */
+#close_click {background-position: -45px 0;width: 51px;height: 51px;}
+
+/* for #close */
+#close {background-position: 0 -2px;width: 47px;height: 47px;}
