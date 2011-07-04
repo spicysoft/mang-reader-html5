@@ -52,15 +52,7 @@ body {
 	top: 0;
 	height: 100%;
 	width: 100%;
-}
-
-#preview {
-	z-index: 1;
-}
-
-#preview_ui {
-    z-index: 10;
-    position: absolute;
+	padding: 0;
 }
 
 #thumbnail {
@@ -73,9 +65,22 @@ body {
 }
 
 #loading {
-	z-index: 10;
-	cursor: wait;
+  z-index: 10;
+  position: relative;
+  cursor: wait;
+  top:80%;
+  text-align:center;
 }
+
+#loading .message {
+  color: white;
+  font-size: 160%;
+  padding: 8px 4px;
+  background-color: black;
+  border-style: solid;
+  border-width: thin;
+}
+
 
 #reader {
 	z-index: 1;
@@ -114,106 +119,46 @@ body {
     position: absolute;
 }
 
+#menu {
+    position: absolute;
+    z-index:     10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: block;
+    text-align: center;
+    margin: 0;
+    background-color: black;
+}
+
+#prev_scene {
+    z-index:  12;
+    position: relative;
+    top:      0px;
+    float:    left;
+    margin: 4px 8px 4px 8px;
+}
+
+#first_scene {
+    z-index:  12;
+    position: relative;
+    top:      0px;
+    float:    right;
+    margin: 4px 8px 4px 8px;
+}
+
+#progress {
+    z-index: 10;
+    width: 100%;
+    top: 50%;
+    color:       white;
+    font-size:   160%;
+    font-weight: bold;
+    margin: 4px 8px 4px 8px;
+    opacity: 0.4;
+}
 
 #error {
-	z-index: 10;
-}
-
-.sprite_button {
-    display: block;
-    cursor:pointer;
-    padding:0px;
-    margin: 4px 4px 4px;
-}
-
-span#read {
-	background: url(ja.png) -0 -0;
-	width:141px;
-	height:45px;
-}
-
-span#read:hover {
-    background: url(ja.png) -141px -0px;
-    width:141px;
-    height:45px;
-}
-
-span#read:active {
-    background: url(ja.png) -282px -0px;
-    width:141px;
-    height:45px;
-}
-
-
-span#next {
-    background: url(ja.png) -0px -45px;
-    width:141px;
-    height:45px;
-}
-
-span#next:hover {
-    background: url(ja.png) -141px -45px;
-    width:141px;
-    height:45px;
-}
-
-span#next:active {
-    background: url(ja.png) -282px -45px;
-    width:141px;
-    height:45px;
-}
-
-span#onemore {
-    background: url(ja.png) -0px -90px;
-    width:140px;
-    height:22px;
-}
-
-span#onemore:hover {
-    background: url(ja.png) -141px -90px;
-    width:140px;
-    height:22px;
-}
-
-span#onemore:active {
-    background: url(ja.png) -282px -90px;
-    width:140px;
-    height:22px;
-}
-
-span#vote {
-    background: url(ja.png) -0px -112px;
-    width:141px;
-    height:45px;
-}
-
-span#vote:hover {
-    background: url(ja.png) -141px -112px;
-    width:141px;
-    height:45px;
-}
-
-span#vote:active {
-    background: url(ja.png) -282px -112px;
-    width:141px;
-    height:45px;
-}
-
-span#bookmark {
-    background: url(ja.png) -0px -157px;
-    width:141px;
-    height:45px;
-}
-
-span#bookmark:hover {
-    background: url(ja.png) -141px -157px;
-    width:141px;
-    height:45px;
-}
-
-span#bookmark:active {
-    background: url(ja.png) -282px -157px;
-    width:141px;
-    height:45px;
+    z-index: 10;
 }
 

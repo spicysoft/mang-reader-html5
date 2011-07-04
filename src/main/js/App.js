@@ -1,47 +1,14 @@
+/*global $, _gaq, window, strings, $Reader */
+if (!window.console) {
+  var console = {};
+}
+
 /**
  * Singleton of $App class.
  */
 var App;
 var Reader;
 var _;
-
-/**
- * スタートアップ処理。
- *
- * App シングルトンインスタンスを生成して処理を委譲する。
- *
- */
-$(function() {
-  App = new $App();
-  var params = getRealParameters();
-
-  Reader = new $Reader(params['member']);
-  Reader.showPreview(params['storyId']);
-
-  /** URLアンカーからアプリケーション固有のパラメータを取得し
-   * 名前つき配列に格納する
-   */
-  function getRealParameters()
-  {
-    var raw  = getParametersFromAnchor();
-    var real = {};
-    real['storyId'] = Math.floor(raw[0]);
-    real['member']  = 2 <= raw.length && raw[1] == 'member';
-    return real;
-  }
-
-  /** URLアンカーからカンマ区切りのパラメーターを取得する */
-  function getParametersFromAnchor()
-  {
-    var hash = location.hash;
-    if (hash == undefined || hash == null || hash.length <= 2) {
-      return [0];
-    }
-    return hash.substring(1).split(",");
-  }
-});
-
-
 
 /**
  * App Class definition.
@@ -70,7 +37,7 @@ function $App()
       this.IE = true;
       var ua = navigator.userAgent;
       var re  = ua.match(/MSIE ([0-9]{1,}[\.0-9]{0,})/);
-      if (re != null) {
+      if (re !== null) {
         this.IE_VER = parseFloat( re[1] );
       } else {
         this.IE_VER = 6;
@@ -90,13 +57,17 @@ function $App()
       var windowHeight = $window.height();
       var windowWidth  = $window.width();
 
-      var $self = jQuery(this);
+      String.prototype.toInt = function(){
+        var i = parseInt(this, 10);
+        return isNaN(i) ? 0 : i;
+      };
+      var $self = $(this);
       var width = $self.width();
       var height = $self.height();
-      var paddingTop = toInt($self.css("padding-top"));
-      var paddingBottom = toInt($self.css("padding-bottom"));
-      var borderTop = toInt($self.css("border-top-width"));
-      var borderBottom = toInt($self.css("border-bottom-width"));
+      var paddingTop    = $self.css("padding-top").toInt();
+      var paddingBottom = $self.css("padding-bottom").toInt();
+      var borderTop     = $self.css("border-top-width").toInt();
+      var borderBottom  = $self.css("border-bottom-width").toInt();
       var mediaBorder = (borderTop+borderBottom)/2;
       var mediaPadding = (paddingTop+paddingBottom)/2;
       var positionType = $self.parent().css("position");
@@ -117,27 +88,22 @@ function $App()
       }
       $self.css(cssProp);
     });
-
-    function toInt(v) {
-      var i = parseInt(v);
-      return isNaN(i) ? 0 : i;
-    }
-  }
+  };
 
   /**
    * 多言語対応のリソースを読み込む
    */
   this.getLocalizedString = function(english) {
-    if (strings == undefined) {
+    if (strings === undefined) {
       return english;
     }
     var string = strings[english];
-    if (string == undefined) {
+    if (string === undefined) {
       return english;
     }
     var lang = 'ja';
     var localized = string[lang];
-    if (localized == undefined) {
+    if (localized === undefined) {
       return english;
     }
     return localized;
@@ -158,7 +124,9 @@ function $App()
     var num = args.length;
     var string = format;
     for (var key in args) {
-      string = string.replace("{" + (key) + "}",args[key]);
+      if(args.hasOwnProperty(key)){
+        string = string.replace("{" + (key) + "}",args[key]);
+      }
     }
     return string;
   };
@@ -184,8 +152,8 @@ function $App()
       var j = str[i].split("=");
       var name  = j[0];
       var value = j[1];
-      if(name != ''){
-        hash[name] = value == undefined ? true : decodeURIComponent(value);
+      if(name !== ''){
+        hash[name] = value === undefined ? true : decodeURIComponent(value);
       }
     }
     return hash;
@@ -195,3 +163,42 @@ function $App()
 }
 
 
+/**
+ * スタートアップ処理。
+ *
+ * App シングルトンインスタンスを生成して処理を委譲する。
+ *
+ */
+$(function() {
+  console.log("start");
+  
+  /**
+   *  URLアンカーからカンマ区切りのパラメーターを取得する
+   */
+  function getParametersFromAnchor() {
+    var hash = location.hash;
+    if (hash === undefined || hash === null || hash.length <= 2) {
+      return [0];
+    }
+    return hash.substring(1).split(",");
+  }
+  
+  /** URLアンカーからアプリケーション固有のパラメータを取得し
+   *  名前つき配列に格納する
+   */
+  function getRealParameters() {
+    var raw  = getParametersFromAnchor();
+    var real = {};
+    real.storyId = Math.floor(raw[0]);
+    real.member  = 2 <= raw.length && raw[1] == 'member';
+    return real;
+  }
+
+  App = new $App();
+  var params = getRealParameters();
+  Reader = new $Reader(params.member);
+  console.log("openStory:start:" + params.storyId);
+  Reader.openStory(params.storyId);
+  _gaq.push(['_trackPageview', '/event/viewer/open/'+params.storyId]);
+  console.log("started");
+});

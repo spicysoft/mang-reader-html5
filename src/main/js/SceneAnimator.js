@@ -57,6 +57,8 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
 
   /** スクロール中はtrue */
   var scrolling = false;
+  var scrollable = false;
+  
   /** スクロール動作数 */
   var actionCount;
   /** スクロール */
@@ -69,10 +71,7 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
   var imageWidth;
   /** 描画エリアの縦幅 */
   var imageHeight;
-  /** コマ画像の横幅 */
-  var imageWidth;
-  /** コマ画像の縦幅 */
-  var imageHeight;
+
   /** 中心からのコマの相対横位置 */
   var scrolledPixelsX = 0;
   /** 中心からのコマの相対縦位置 */
@@ -97,8 +96,86 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
   /**
    * スクロール初期化
    */
-  var initializeWhenLoaded = this.initializeWhenLoaded = function(_image,_course,_speed) 
-  {
+  var initializeWhenUnloaded = this.initializeWhenUnloaded = function() {
+    action     = 0;
+    actionCount= 0;
+    scrolling  = false;
+    scrollable = false;
+  };
+
+  this.x = function() {
+    return scrolledPixelsX / ADJUST_SCALE;
+  };
+
+  this.y = function() {
+    return scrolledPixelsY / ADJUST_SCALE;
+  };
+
+  /**
+   * スクロール不要のシーンもしくは スクロールが完了してるかどうか？
+   */
+  this.isAtScrollEnd = function() {
+    return actionCount === 0 || (scrolling === false && action === actionCount);
+  };
+
+  /**
+   * シーンのスクロールアニメーションの先頭フレームにいるか？先頭フレームである場合true
+   */
+  this.isAtScrollStart = function() {
+    return actionCount !== 0 && scrolling === false && action === 0;
+  };
+
+  /**
+   * スクロール中かどうか？スクロール中の場合はtrue
+   */
+  var isScrolling = this.isScrolling = function() {
+    return scrolling;
+  };
+
+  /**
+   * スクロールを開始する
+   */
+  this.startScroll = function() {
+    scrolling = true;
+  };
+
+  /**
+   * 移動ピクセル数設定
+   */
+  var caliculate = function() {
+    if (actionCount <= action) {
+      return;
+    }
+
+    movePixelX = X_VECTOR[course][action];
+    movePixelY = Y_VECTOR[course][action];
+    if (movePixelX !== 0 && movePixelY !== 0) {
+      var moveAreaWidth = limitRight - limitLeft;
+      var moveAreaHeight = limitBottom - limitTop;
+      if (moveAreaWidth < moveAreaHeight) {
+        if (moveAreaWidth !== 0){
+          movePixelX = movePixelX * moveAreaHeight / moveAreaWidth;  
+        }
+      } else if (moveAreaWidth > moveAreaHeight) {
+        if (moveAreaHeight !== 0){
+          movePixelY = movePixelY * moveAreaWidth / moveAreaHeight;
+        }
+      }
+    }
+    if (movePixelX !== 0) {
+      movePixelX = speed * ADJUST_SCALE * ADJUST_SCALE / movePixelX;
+    }
+    if (movePixelY !== 0) {
+      movePixelY = speed * ADJUST_SCALE * ADJUST_SCALE / movePixelY;
+    }
+  };
+
+
+  /**
+   * スクロール初期化
+   */
+  var initializeWhenLoaded = this.initializeWhenLoaded = function(_image,_course,_speed) {
+    
     initializeWhenUnloaded();
     speed        = _speed;
     course       = _course;
@@ -121,7 +198,7 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
       scrolledPixelsY = START_Y_POSITION[course] * limitBottom;
       scrollable = true;
     }
-    if (course == 0) {
+    if (course === 0) {
       scrollable = false;
     }
     if (!scrollable) { 
@@ -129,92 +206,6 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     }
     caliculate();
     scrolling = false;
-  };
-
-  /**
-   * スクロール初期化
-   */
-  var initializeWhenUnloaded = this.initializeWhenUnloaded = function() {
-    action     = 0;
-    actionCount= 0;
-    scrolling  = false;
-    scrollable = false;
-  };
-
-  this.x = function() 
-  {
-    return scrolledPixelsX / ADJUST_SCALE;
-  };
-
-  this.y = function()
-  {
-    return scrolledPixelsY / ADJUST_SCALE;
-  };
-
-  /**
-   * スクロール不要のシーンもしくは スクロールが完了してるかどうか？
-   */
-  this.isAtScrollEnd = function() {
-    return actionCount == 0 || (scrolling == false && action == actionCount);
-  };
-
-  /**
-   * シーンのスクロールアニメーションの先頭フレームにいるか？先頭フレームである場合true
-   */
-  this.isAtScrollStart = function() {
-    return actionCount != 0 && scrolling == false && action == 0;
-  };
-
-  /**
-   * スクロール中かどうか？スクロール中の場合はtrue
-   */
-  var isScrolling = this.isScrolling = function() {
-    return scrolling;
-  };
-
-  /**
-   * スクロールを完了させる
-   */
-  this.skipScroll = function() {
-    while (action < actionCount && isScrolling()) {
-      step();
-    }
-  };
-
-  /**
-   * スクロールを開始する
-   */
-  this.startScroll = function() {
-    scrolling = true;
-  };
-
-  /**
-   * 移動ピクセル数設定
-   */
-  var caliculate = function() {
-    if (actionCount <= action) {
-      return;
-    }
-
-    movePixelX = X_VECTOR[course][action];
-    movePixelY = Y_VECTOR[course][action];
-    if (movePixelX != 0 && movePixelY != 0) {
-      var moveAreaWidth = limitRight - limitLeft;
-      var moveAreaHeight = limitBottom - limitTop;
-      if (moveAreaWidth < moveAreaHeight) {
-        if (moveAreaWidth != 0)
-          movePixelX = movePixelX * moveAreaHeight / moveAreaWidth;
-      } else if (moveAreaWidth > moveAreaHeight) {
-        if (moveAreaHeight != 0)
-          movePixelY = movePixelY * moveAreaWidth / moveAreaHeight;
-      }
-    }
-    if (movePixelX != 0) {
-      movePixelX = speed * ADJUST_SCALE * ADJUST_SCALE / movePixelX;
-    }
-    if (movePixelY != 0) {
-      movePixelY = speed * ADJUST_SCALE * ADJUST_SCALE / movePixelY;
-    }
   };
 
   /**
@@ -232,8 +223,8 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
 
     var moved= false;
     // X軸
-    if (movePixelX != 0 && scrolledPixelsX >= limitLeft
-        && scrolledPixelsX <= limitRight) {
+    if (movePixelX !== 0 && scrolledPixelsX >= limitLeft &&
+       scrolledPixelsX <= limitRight) {
       // 動作に対応したベクトルに速度をかけて加算
       scrolledPixelsX += movePixelX;
       // 行き過ぎた場合は限界まで戻す。
@@ -246,8 +237,8 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
       }
     }
     // Y軸
-    if (movePixelY != 0 && scrolledPixelsY >= limitTop
-        && scrolledPixelsY <= limitBottom) {
+    if (movePixelY !== 0 && scrolledPixelsY >= limitTop &&
+       scrolledPixelsY <= limitBottom) {
       scrolledPixelsY += movePixelY;
       if (scrolledPixelsY <= limitTop) {
         scrolledPixelsY = limitTop;
@@ -263,6 +254,15 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
       if(action >= actionCount){
         scrolling = false;
       }
+    }
+  };
+  
+  /**
+   * スクロールを完了させる
+   */
+  this.skipScroll = function() {
+    while (action < actionCount && isScrolling()) {
+      step();
     }
   };
 
