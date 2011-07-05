@@ -78,6 +78,24 @@ function $Reader(_member) {
     }
   };
 
+  var ajax_get = function(url, datatype, fnSuccess, fnError){
+    var settings = {
+      'url' : url,
+      'type' : 'get',
+      'async' : true,
+      'cache' : false,
+      'dataType' : datatype,
+      'success' : function(json) {
+        fnSuccess(json);
+      },
+      'error' : function(req, status, error) {
+        console.log(this);
+        fnError();
+      }
+    };
+    $.ajax(settings);
+  };
+  
   /**
    * [サーバーAPIとの通信メソッド]
    *
@@ -90,23 +108,27 @@ function $Reader(_member) {
    * @returns void    非同期通信です。通信を開始後、完了をまたずにすぐに処理が戻ります。
    */
   var apiStoryMetaFile = function(storyId, fnSuccess, fnError) {
-    var settings = {
-      'url' : API_ROOT + '/storyMetaFile/' + storyId,
-      'type' : 'get',
-      'async' : true,
-      'cache' : false,
-      'dataType' : 'json',
-      'success' : function(json) {
-        fnSuccess(json);
-      },
-      'error' : function(req, status, error) {
-        console.log(this);
-        fnError();
-      }
-    };
-
-    $.ajax(settings);
+    ajax_get(API_ROOT + '/storyMetaFile/' + storyId, 'json', fnSuccess, fnError);
   };
+  
+  /**
+   * [サーバーAPIとの通信メソッド]
+   * 
+   * イイネ投票する
+   */
+  var apiVoteStory = function(comicId, storyId, value, fnSuccess, fnError){
+    ajax_get('/comic/view/' + comicId + '/vote_story/' + storyId + '/' + value + '/done',
+     'xml', fnSuccess, fnError);
+　};
+
+  /**
+   * [サーバーAPIとの通信メソッド]
+   * 
+   * イイネ投票する
+   */
+  var apiBookmark = function(comicId, fnSuccess, fnError){
+    ajax_get('/comic/view/' + comicId +'/bookmark/done/', 'xml', fnSuccess, fnError);
+　};
 
   var updateSceneCount = function(){
     $("#progress_total").text(scenes.length);
@@ -124,62 +146,55 @@ function $Reader(_member) {
     $("#error").show();
   };
 
-
+  var goToNextStory = function(next_story_id, comic_id){
+    if(next_story_id === false){
+      parent.document.location.href = '/comic/view/'+comic_id+'/story/_undelivered';
+    }else{
+      if (member) {
+        this.openStory(next_story_id);
+      } else {
+        parent.document.location.href = '/comic/landing/nomember?next=/comic/view/'+
+          comic_id+'/story/'+next_story_id;
+      }
+    }
+  };
+  
   var showFinished = function() {
     var next_story_id = storyMetaFile.next_story_id;
     var comic_id = storyMetaFile.comic_id;
-
-    $("#onemore").unbind('click');
+    console.log("next:"+ next_story_id);
+    showMenu(0);
     $("#next").unbind('click');
     $("#vote").unbind('click');
     $("#bookmark").unbind('click');
 
-    $("#onemore").click(function(event) {
-      this.openStory(storyId);
-      if (App.IE) {
-        event.returnValue = false;
-      }else{
-        event.preventDefault();
-      }
-    });
     if (member) {
       $("#vote").click(
           function() {
-            parent.document.location.href = '/comic/view/' + comic_id +
-             '/vote_story/' + storyId + '/1/done/';
+            apiVoteStory(comic_id, storyId, 1, function(){
+              goToNextStory(next_story_id, comic_id);
+            },function(){showError()});
           });
       $("#bookmark").click(
-          function() {
-            parent.document.location.href = '/comic/view/' + comic_id +
-             '/bookmark/done/';
-          });
+        function() {
+          apiBookmark(comic_id, function(){
+            goToNextStory(next_story_id, comic_id);
+          },function(){showError()});
+        });
+      $("#vote").show();
+      $("#bookmark").show();
+      $("#vote_disable").hide();
+      $("#bookmark_disable").hide();
+    }else{
+      $("#vote").hide();
+      $("#bookmark").hide();
+      $("#vote_disable").show();
+      $("#bookmark_disable").show();
     }
 
-    if (next_story_id !== false) {
-      $("#next").click(
-          function() {
-            if (member) {
-              this.openStory(next_story_id);
-            } else {
-              parent.document.location.href = '/comic/view/' + comic_id +
-               '/story/' + next_story_id;
-            }
-          });
-      $("#bookmark").hide();
-      $("#next").show();
-    } else {
-      if (member) {
-        $("#bookmark").show();
-      } else {
-        $("#bookmark").hide();
-      }
-      $("#next").hide();
-    }
-    if (member) {
-      $("#vote").show();
-    } else {
-      $("#vote").hide();
-    }
+    $("#next").click(function() {
+      goToNextStory(next_story_id, comic_id);
+    });
     $("#preview").hide();
     $("#loading").hide();
     $("#reader").show();
@@ -225,6 +240,7 @@ function $Reader(_member) {
    * @return void
    */
   var jumpToScene = function(newSceneIndex) {
+    hideMenu();
     fetchSceneImage(newSceneIndex);
     currentSceneIndex = newSceneIndex;
     updateSceneCount();
@@ -334,12 +350,28 @@ function $Reader(_member) {
     }
   };
   
+  
   var menuIsVisible = false;
+  var hide_menu = function(){
+      $("#menu").fadeTo(fadeout, "0.0", function(){
+        if(!menuIsVisible){
+          return;
+        }
+        $("#menu").css({cursor:"pointer"});
+        $("#prev_scene").unbind("click", goPrev);
+        $("#prev_scene").css({cursor:"default"});
+        $("#first_scene").unbind("click", show_first_click);
+        $("#first_scene").css({cursol:"default"});
+        $("#menu").click(menu_click);
+        $("#menu").mouseover(menu_click);
+        menuIsVisible = false;
+      });
+  };
+    
   /**
    * メニューを表示する
    */
   var showMenu = function (lifetime, fadeout){
-    console.log("showMenu");
     if(menuIsVisible){
       return;
     }
@@ -355,21 +387,9 @@ function $Reader(_member) {
     $("#first_scene").css({cursor:"pointer"});
     
     $("#menu").css({"opacity":"1.0"});
-    setTimeout(function(){
-      $("#menu").fadeTo(fadeout, "0.0", function(){
-        if(!menuIsVisible){
-          return;
-        }
-        $("#menu").css({cursor:"pointer"});
-        $("#prev_scene").unbind("click", goPrev);
-        $("#prev_scene").css({cursor:"default"});
-        $("#first_scene").unbind("click", show_first_click);
-        $("#first_scene").css({cursol:"default"});
-        $("#menu").click(menu_click);
-        $("#menu").mouseover(menu_click);
-        menuIsVisible = false;
-      });
-    }, lifetime);
+    if(0 < lifetime){
+      setTimeout(hide_menu, lifetime);
+    }
     menuIsVisible = true;
   };
 
@@ -377,7 +397,6 @@ function $Reader(_member) {
    * 表示モードを「ローディング中」に切り替える
    */
   var showLoading = function() {
-    console.log("showLoading");
     showMenu(2000,2000);
     $("#loading").show();
     $("#reader").hide();

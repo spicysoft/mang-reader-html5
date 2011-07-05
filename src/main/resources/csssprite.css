@@ -1,25 +1,25 @@
 @charset "utf-8";
 
 .sprite {
-  background-image: url(ja.png);
+  background-image:  url(ja.png);
   background-repeat: no-repeat;
-  text-indent:-9999px;
-  overflow: hidden;
-  display:block;
-  margin: 4px 4px 4px;
+  text-indent:       -9999px;
+  overflow:          hidden;
+  display:           block;
+  margin:            4px 4px 4px;
 }
 
-#next_click        {background-position: -1px -279px;width: 452px;height: 92px;}
-#next_normal       {background-position: -1px -187px;width: 452px;height: 92px;}
-#bookmark_click    {background-position: -214px -116px;width: 212px;height: 75px;}
-#bookmark_disable  {background-position: -427px -118px;width: 212px;height: 68px;}
-#bookmark_normal   {background-position: -1px -118px;width: 212px;height: 68px;}
-#like_disable      {background-position: -427px -50px;width: 212px;height: 68px;}
-#like_normal       {background-position: -1px -49px;width: 212px;height: 68px;}
-#like_click        {background-position: -214px -46px;width: 212px;height: 77px;}
-#prev_scene:hover  {background-position: -541px -2px; width: 149px; height: 47px;}
-#prev_scene        {background-position: -392px -2px; width: 149px; height: 47px;}
-#first_scene:hover {background-position: -243px -2px; width: 149px; height: 47px;}
-#first_scene       {background-position: -94px  -2px; width: 149px; height: 47px;}
-#close_click       {background-position: -45px   0px; width: 51px;  height: 47px;}
-#close             {background-position:   0px  -2px; width: 47px;  height: 47px;}
+#next:hover        {background-position: -1px -279px;   width: 452px; height: 92px;}
+#next              {background-position: -1px -187px;   width: 452px; height: 92px;}
+#bookmark:hover    {background-position: -214px -118px; width: 212px; height: 68px;}
+#bookmark_disable  {background-position: -427px -118px; width: 212px; height: 68px;}
+#bookmark          {background-position: -1px -118px;   width: 212px; height: 68px;}
+#vote_disable      {background-position: -427px -49px;  width: 212px; height: 68px;}
+#vote              {background-position: -1px -49px;    width: 212px; height: 68px;}
+#vote:hover        {background-position: -214px -50px;  width: 212px; height: 68px;}
+#prev_scene:hover  {background-position: -541px -2px;   width: 149px; height: 47px;}
+#prev_scene        {background-position: -392px -2px;   width: 149px; height: 47px;}
+#first_scene:hover {background-position: -243px -2px;   width: 149px; height: 47px;}
+#first_scene       {background-position: -94px  -2px;   width: 149px; height: 47px;}
+#close_click       {background-position: -45px   0px;   width: 51px;  height: 47px;}
+#close             {background-position:   0px  -2px;   width: 47px;  height: 47px;}
