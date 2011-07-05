@@ -20,7 +20,7 @@ function $Reader(_member) {
   var scenes;
   var sceneImages;
   var currentSceneIndex = 0;
-  
+
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
     // style="background: #000;"を定義しないとクリッカブルにならない
@@ -48,7 +48,7 @@ function $Reader(_member) {
   }
   var SceneAnimator = new $SceneAnimator(width, height, FPS);
 
-  
+
   /**
    * 画面描画
    *
@@ -66,7 +66,7 @@ function $Reader(_member) {
     var h = i.height;
     var dx = (width - w) / 2 + x;
     var dy = (height - h) / 2 + y;
-          
+
     if (App.IE) {
       i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
       $("#canvas").empty().append(i);
@@ -76,36 +76,6 @@ function $Reader(_member) {
       context.fillRect(0, 0, width, height);
       context.drawImage(i, dx, dy);
     }
-  };
-  
-  /**
-   * メニューを表示する
-   */
-  var showMenu = function (lifetime, fadeout){
-    console.log("showMenu");
-    //unbind click menu
-    //bind   click prev
-    //bind   click first
-    $("#menu").css({"opacity":"1.0"});
-    setTimeout(function(){
-      $("#menu").fadeTo(fadeout, "0.0", function(){
-        //unbind click
-        //unbind click
-        $("#menu").click(function(e){showMenu(3000,2000);});
-      });
-    }, lifetime);
-  };
-
-  /**
-   * 表示モードを「ローディング中」に切り替える
-   */
-  var showLoading = function() {
-    console.log("showLoading");
-    showMenu(2000,2000);
-    $("#loading").show();
-    $("#reader").hide();
-    $("#finish").hide();
-    $("#error").hide();
   };
 
   /**
@@ -137,7 +107,7 @@ function $Reader(_member) {
 
     $.ajax(settings);
   };
-  
+
   var updateSceneCount = function(){
     $("#progress_total").text(scenes.length);
     $("#progress_current").text(currentSceneIndex+1);
@@ -217,7 +187,7 @@ function $Reader(_member) {
     $("#finish").show();
     App.centering($("#finish_ui"));
   };
-  
+
   /**
    * [サーバーAPIとの通信メソッド] サーバーからシーン画像を取得する
    *
@@ -234,7 +204,7 @@ function $Reader(_member) {
     i.src = API_ROOT + '/sceneImage/' + sceneId;
     return i;
   };
-  
+
   /**
    * 指定したシーン番号のシーン読み込みを準備する。 またこの内部でプリロード、破棄処理も行う。 現在は一括ロード。
    */
@@ -249,7 +219,7 @@ function $Reader(_member) {
       }
     }
   };
-  
+
   /**
    * コマ毎の初期化
    * @return void
@@ -274,6 +244,7 @@ function $Reader(_member) {
       var scene = scenes[currentSceneIndex];
       SceneAnimator.initializeWhenLoaded(i, scene.scroll_course,
           scene.scroll_speed);
+      //clickイベントをunbind
       $("#loading").hide();
       paint();
     }
@@ -281,11 +252,14 @@ function $Reader(_member) {
     if (i !== undefined && i.hasLoaded()) {
       onloaded();
     } else {
+      showMenu();
+      //clickイベントを出す
       $("#loading").show();
       SceneAnimator.initializeWhenUnloaded();
       i.onload = onloaded;
     }
   };
+  
   /**
    * 次のシーンへ進める
    */
@@ -311,7 +285,7 @@ function $Reader(_member) {
       setTimeout(animation, 1000 / FPS / 1.5);
     }
   };
-  
+
   /**
    * スクロールをひとつ先に進める
    *
@@ -334,25 +308,101 @@ function $Reader(_member) {
       throw "Illega state";
     }
   };
+
+
+  /**
+   * 前のコマに戻る
+   */
+  var goPrevScene = function() {
+    var prev = currentSceneIndex - 1;
+    if (0 <= prev) {
+      jumpToScene(prev);
+    }
+  };
+
+  /**
+   * スクロールをひとつ前に戻す
+   *
+   * @private
+   * @return void
+   */
+  var goPrev= function() {
+    if (SceneAnimator.canSkipBack()) {
+      SceneAnimator.skipBack();
+    } else if (0 < currentSceneIndex) {
+      goPrevScene();
+    }
+  };
   
+  var menuIsVisible = false;
+  /**
+   * メニューを表示する
+   */
+  var showMenu = function (lifetime, fadeout){
+    console.log("showMenu");
+    if(menuIsVisible){
+      return;
+    }
+    var menu_click = function(e){showMenu(3000,2000);};
+    var show_first_click = function(e){jumpToScene(0);};
+    
+    $("#menu").unbind("click", menu_click);
+    $("#menu").unbind("mouse_over", menu_click);
+    $("#menu").css({cursor:"default"});
+    $("#prev_scene").click(goPrev);
+    $("#prev_scene").css({cursor:"pointer"});
+    $("#first_scene").click(show_first_click);
+    $("#first_scene").css({cursor:"pointer"});
+    
+    $("#menu").css({"opacity":"1.0"});
+    setTimeout(function(){
+      $("#menu").fadeTo(fadeout, "0.0", function(){
+        if(!menuIsVisible){
+          return;
+        }
+        $("#menu").css({cursor:"pointer"});
+        $("#prev_scene").unbind("click", goPrev);
+        $("#prev_scene").css({cursor:"default"});
+        $("#first_scene").unbind("click", show_first_click);
+        $("#first_scene").css({cursol:"default"});
+        $("#menu").click(menu_click);
+        $("#menu").mouseover(menu_click);
+        menuIsVisible = false;
+      });
+    }, lifetime);
+    menuIsVisible = true;
+  };
+
+  /**
+   * 表示モードを「ローディング中」に切り替える
+   */
+  var showLoading = function() {
+    console.log("showLoading");
+    showMenu(2000,2000);
+    $("#loading").show();
+    $("#reader").hide();
+    $("#finish").hide();
+    $("#error").hide();
+  };
+
   /**
    * 表示モードを「マンガ閲覧中」に切り替える
    */
   var showReader = function() {
-          console.log("showReader");
     $("#loading").hide();
     $("#reader").show();
     $("#finish").hide();
     $("#error").hide();
-    $("#canvas").unbind('mouseup');
-    $("#canvas").mouseup(function(event) {
+    var canvas_click = function(event) {
       goNext();
       if (App.IE) {
         event.returnValue = false;
       }else{
         event.preventDefault();
       }
-    });
+    };
+    $("#canvas").unbind('mouseup',canvas_click);
+    $("#canvas").mouseup(canvas_click);
     var format = _("Loading images");
     var args = {
       "story_number"   : storyMetaFile.story_number,
@@ -396,30 +446,6 @@ function $Reader(_member) {
     });
   };
 
-  /**
-   * スクロールをひとつ前に戻す
-   *
-   * @private
-   * @return void
-   */
-  var goPrev= function() {
-    console.log("prev!");
-  };
-
-  /**
-   * 次のシーンへ進める
-   */
-  var goPrevScene = function() {
-    var prev = currentSceneIndex - 1;
-    if (0 <= prev) {
-      jumpToScene(prev);
-    }
-  };
-
-  var goToFirst = function(){
-
-  };
-  
   this.openStory = openStory;
 }
 
