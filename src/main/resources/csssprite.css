@@ -6,48 +6,60 @@ This css was written by CSSSprite Extension (copyright (c) 2010 Risa Yuguchi <ri
  Thank you for using this extension.
 */
 
-.csssprite {background-image: url(ja.png);background-repeat: no-repeat;text-indent:-9999px;overflow: hidden;display:block;}
+.csssprite {background-image: url(../img/csssprite.png);background-repeat: no-repeat;text-indent:-9999px;overflow: hidden;display:block;}
 
 /* each setting */
 
-/* for #next_click */
-#next_click {background-position: -1px -279px;width: 452px;height: 92px;}
+/* for #start */
+#start {background-position: -359px -155px;width: 61px;height: 61px;}
 
-/* for #next_normal */
-#next_normal {background-position: -1px -187px;width: 452px;height: 92px;}
-
-/* for #bookmark_click */
-#bookmark_click {background-position: -214px -116px;width: 212px;height: 75px;}
-
-/* for #bookmark_disable */
-#bookmark_disable {background-position: -427px -118px;width: 212px;height: 68px;}
-
-/* for #bookmark_normal */
-#bookmark_normal {background-position: -1px -118px;width: 212px;height: 68px;}
-
-/* for #like_disable */
-#like_disable {background-position: -427px -50px;width: 212px;height: 68px;}
-
-/* for #like_normal */
-#like_normal {background-position: -1px -49px;width: 212px;height: 68px;}
-
-/* for #like_click */
-#like_click {background-position: -214px -46px;width: 212px;height: 77px;}
-
-/* for #back_click */
-#back_click {background-position: -539px -1px;width: 154px;height: 51px;}
-
-/* for #top_click */
-#top_click {background-position: -240px -1px;width: 155px;height: 51px;}
-
-/* for #back_normal */
-#back_normal {background-position: -392px -2px;width: 149px;height: 47px;}
+/* for #start_click */
+#start_click {background-position: -298px -155px;width: 61px;height: 61px;}
 
 /* for #top_normal */
-#top_normal {background-position: -94px -2px;width: 149px;height: 47px;}
+#top_normal {background-position: -258px 0;width: 100px;height: 33px;}
+
+/* for #next_click */
+#next_click {background-position: 0 -218px;width: 300px;height: 62px;}
+
+/* for #next_normal */
+#next_normal {background-position: 0 -156px;width: 300px;height: 62px;}
+
+/* for #bookmark_click */
+#bookmark_click {background-position: -141px -108px;width: 141px;height: 52px;}
+
+/* for #bookmark_disable */
+#bookmark_disable {background-position: -281px -109px;width: 142px;height: 47px;}
+
+/* for #bookmark_normal */
+#bookmark_normal {background-position: 0 -109px;width: 141px;height: 47px;}
+
+/* for #like_disable */
+#like_disable {background-position: -281px -64px;width: 142px;height: 46px;}
+
+/* for #like_normal */
+#like_normal {background-position: 0 -64px;width: 141px;height: 46px;}
+
+/* for #like_click */
+#like_click {background-position: -141px -62px;width: 142px;height: 52px;}
+
+/* for #back_click */
+#back_click {background-position: -96px -30px;width: 104px;height: 36px;}
+
+/* for #top_click */
+#top_click {background-position: -157px 0;width: 105px;height: 36px;}
+
+/* for #back_normal */
+#back_normal {background-position: -198px -31px;width: 100px;height: 33px;}
+
+/* for #back_normal */
+#back_normal {background-position: 0 -31px;width: 100px;height: 33px;}
+
+/* for #top_normal */
+#top_normal {background-position: -61px 0;width: 100px;height: 33px;}
 
 /* for #close_click */
-#close_click {background-position: -45px 0;width: 51px;height: 51px;}
+#close_click {background-position: -29px 0;width: 35px;height: 36px;}
 
 /* for #close */
-#close {background-position: 0 -2px;width: 47px;height: 47px;}
+#close {background-position: 0 0;width: 33px;height: 33px;}
