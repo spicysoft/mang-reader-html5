@@ -20,7 +20,9 @@ function $Reader(_member) {
   var scenes;
   var sceneImages;
   var currentSceneIndex = 0;
-
+  
+  var menuIsVisible = false;
+  
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
     // style="background: #000;"を定義しないとクリッカブルにならない
@@ -90,6 +92,8 @@ function $Reader(_member) {
       },
       'error' : function(req, status, error) {
         console.log(this);
+        console.log(status);
+        console.log(error);
         fnError();
       }
     };
@@ -158,50 +162,6 @@ function $Reader(_member) {
       }
     }
   };
-  
-  var showFinished = function() {
-    var next_story_id = storyMetaFile.next_story_id;
-    var comic_id = storyMetaFile.comic_id;
-    console.log("next:"+ next_story_id);
-    showMenu(0);
-    $("#next").unbind('click');
-    $("#vote").unbind('click');
-    $("#bookmark").unbind('click');
-
-    if (member) {
-      $("#vote").click(
-          function() {
-            apiVoteStory(comic_id, storyId, 1, function(){
-              goToNextStory(next_story_id, comic_id);
-            },function(){showError()});
-          });
-      $("#bookmark").click(
-        function() {
-          apiBookmark(comic_id, function(){
-            goToNextStory(next_story_id, comic_id);
-          },function(){showError()});
-        });
-      $("#vote").show();
-      $("#bookmark").show();
-      $("#vote_disable").hide();
-      $("#bookmark_disable").hide();
-    }else{
-      $("#vote").hide();
-      $("#bookmark").hide();
-      $("#vote_disable").show();
-      $("#bookmark_disable").show();
-    }
-
-    $("#next").click(function() {
-      goToNextStory(next_story_id, comic_id);
-    });
-    $("#preview").hide();
-    $("#loading").hide();
-    $("#reader").show();
-    $("#error").hide();
-    $("#finish").show();
-    App.centering($("#finish_ui"));
-  };
 
   /**
    * [サーバーAPIとの通信メソッド] サーバーからシーン画像を取得する
@@ -240,7 +200,7 @@ function $Reader(_member) {
    * @return void
    */
   var jumpToScene = function(newSceneIndex) {
-    hideMenu();
+    hideMenu(2000);
     fetchSceneImage(newSceneIndex);
     currentSceneIndex = newSceneIndex;
     updateSceneCount();
@@ -268,7 +228,7 @@ function $Reader(_member) {
     if (i !== undefined && i.hasLoaded()) {
       onloaded();
     } else {
-      showMenu();
+      showMenu(2000,2000);
       //clickイベントを出す
       $("#loading").show();
       SceneAnimator.initializeWhenUnloaded();
@@ -276,6 +236,119 @@ function $Reader(_member) {
     }
   };
   
+
+  /**
+   * 前のコマに戻る
+   */
+  var goPrevScene = function() {
+    var prev = currentSceneIndex - 1;
+    if (0 <= prev) {
+      jumpToScene(prev);
+    }
+  };
+
+  /**
+   * スクロールをひとつ前に戻す
+   *
+   * @private
+   * @return void
+   */
+  var goPrev= function() {
+    if (SceneAnimator.canSkipBack()) {
+      SceneAnimator.skipBack();
+    } else if (0 < currentSceneIndex) {
+      goPrevScene();
+    }
+  };
+  
+  var show_first_click = function(e){jumpToScene(0);};
+  var menu_click = function(e){showMenu(3000,2000);};
+      
+  var hideMenu = function(fadeout){
+    if(!menuIsVisible){
+      return;
+    }
+    menuIsVisible = false;
+                
+    $("#menu").fadeTo(fadeout, "0.0", function(){
+      $("#menu").css({cursor:"pointer"});
+      $("#prev_scene").unbind("click", goPrev);
+      $("#prev_scene").css({cursor:"default"});
+      $("#first_scene").unbind("click", show_first_click);
+      $("#first_scene").css({cursol:"default"});
+      $("#menu").click(menu_click);
+      $("#menu").mouseover(menu_click);
+    });
+  };
+  
+  /**
+   * メニューを表示する
+   */
+  var showMenu = function (lifetime, fadeout){
+    if(menuIsVisible){
+      return;
+    }
+    menuIsVisible = true;
+    
+    $("#menu").unbind("click", menu_click);
+    $("#menu").unbind("mouse_over", menu_click);
+    $("#menu").css({cursor:"default"});
+    $("#prev_scene").click(goPrev);
+    $("#prev_scene").css({cursor:"pointer"});
+    $("#first_scene").click(show_first_click);
+    $("#first_scene").css({cursor:"pointer"});
+    
+    $("#menu").css({"opacity":"1.0"});
+    if(0 < lifetime){
+      setTimeout(function(){hideMenu(fadeout);}, lifetime);
+    }
+  };
+
+  
+  var showFinished = function() {
+    var next_story_id = storyMetaFile.next_story_id;
+    var comic_id = storyMetaFile.comic_id;
+    console.log("next:"+ next_story_id);
+    showMenu(0);
+    $("#next").unbind('click');
+    $("#vote").unbind('click');
+    $("#bookmark").unbind('click');
+
+    if (member) {
+      $("#vote").click(
+          function() {
+            apiVoteStory(comic_id, storyId, 1, function(){
+              goToNextStory(next_story_id, comic_id);
+            },function(){showError();});
+          });
+      $("#bookmark").click(
+        function() {
+          apiBookmark(comic_id, function(){
+            goToNextStory(next_story_id, comic_id);
+          },function(){showError();});
+        });
+      $("#vote").show();
+      $("#bookmark").show();
+      $("#vote_disable").hide();
+      $("#bookmark_disable").hide();
+    }else{
+      $("#vote").hide();
+      $("#bookmark").hide();
+      $("#vote_disable").show();
+      $("#bookmark_disable").show();
+    }
+
+    $("#next").click(function() {
+      goToNextStory(next_story_id, comic_id);
+    });
+    $("#preview").hide();
+    $("#loading").hide();
+    $("#reader").show();
+    $("#error").hide();
+    $("#finish").show();
+    App.centering($("#finish_ui"));
+  };
+
   /**
    * 次のシーンへ進める
    */
@@ -323,74 +396,6 @@ function $Reader(_member) {
     } else {
       throw "Illega state";
     }
-  };
-
-
-  /**
-   * 前のコマに戻る
-   */
-  var goPrevScene = function() {
-    var prev = currentSceneIndex - 1;
-    if (0 <= prev) {
-      jumpToScene(prev);
-    }
-  };
-
-  /**
-   * スクロールをひとつ前に戻す
-   *
-   * @private
-   * @return void
-   */
-  var goPrev= function() {
-    if (SceneAnimator.canSkipBack()) {
-      SceneAnimator.skipBack();
-    } else if (0 < currentSceneIndex) {
-      goPrevScene();
-    }
-  };
-  
-  
-  var menuIsVisible = false;
-  var hide_menu = function(){
-      $("#menu").fadeTo(fadeout, "0.0", function(){
-        if(!menuIsVisible){
-          return;
-        }
-        $("#menu").css({cursor:"pointer"});
-        $("#prev_scene").unbind("click", goPrev);
-        $("#prev_scene").css({cursor:"default"});
-        $("#first_scene").unbind("click", show_first_click);
-        $("#first_scene").css({cursol:"default"});
-        $("#menu").click(menu_click);
-        $("#menu").mouseover(menu_click);
-        menuIsVisible = false;
-      });
-  };
-    
-  /**
-   * メニューを表示する
-   */
-  var showMenu = function (lifetime, fadeout){
-    if(menuIsVisible){
-      return;
-    }
-    var menu_click = function(e){showMenu(3000,2000);};
-    var show_first_click = function(e){jumpToScene(0);};
-    
-    $("#menu").unbind("click", menu_click);
-    $("#menu").unbind("mouse_over", menu_click);
-    $("#menu").css({cursor:"default"});
-    $("#prev_scene").click(goPrev);
-    $("#prev_scene").css({cursor:"pointer"});
-    $("#first_scene").click(show_first_click);
-    $("#first_scene").css({cursor:"pointer"});
-    
-    $("#menu").css({"opacity":"1.0"});
-    if(0 < lifetime){
-      setTimeout(hide_menu, lifetime);
-    }
-    menuIsVisible = true;
   };
 
   /**

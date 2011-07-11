@@ -198,6 +198,7 @@ $(function() {
   var params = getRealParameters();
   Reader = new $Reader(params.member);
   console.log("openStory:start:" + params.storyId);
+  console.log("openStory:auto:" + params.auto);
   Reader.openStory(params.storyId);
   _gaq.push(['_trackPageview', '/event/viewer/open/'+params.storyId]);
   console.log("started");
