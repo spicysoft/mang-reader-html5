@@ -4,16 +4,19 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <include type="javascript" src_interns="src/main/js/strings.js,src/main/js/Reader.js,src/main/js/App.js,src/main/js/SceneAnimator.js" src_externs="lib/jquery-1.5.min.js:lib/closure-compiler/jquery-1.5.externs.js,src/main/js/ga.js:src/main/js/ga.js"/>
     <include type="css" src="src/main/js/pc.css"/>
-    <include type="css" src="src/main/resources/csssprite.css"/>
 </head>
 <body scrolling="no">
     <div id="mangh5r">
+      <div id="preview" class="stage">
+        <img id="thumbnail" class="ui" title="クリックするとマンガ閲覧をスタートします"/>
+        <div id="preview_ui" class="vhcenter"><span id="start" class="sprite preview_btn" title="マンガを読む"></span></div>
+      </div>
       <div id="loading" ><span class="message">読み込み中</span></span></div>
       <div id="reader" class="stage">
         <canvas id="canvas"></canvas>
         <div id="info" class="msg"></div>
       </div>
-      <div id="menu">
+      <div id="menu" style="display:none;">
         <div id="prev_scene" class="sprite" title="前のコマへ"></div>
         <div id="first_scene" class="sprite" title="最初から読む"></div>
         <div id="progress" ><span id="progress_current">--</span>/<span id="progress_total">--</span>コマ</div>
@@ -21,12 +24,12 @@
       <div id="finish" class="stage">
         <div class="mask"></div>
         <div id="finish_ui" class="vhcenter">
-            <div id="next"             class="sprite" title="次の話へ"></div>
             <div id="finish_actions">
               <span id="vote"             class="sprite" title="イイネを押して次へ"></span>
               <span id="vote_disable"     class="sprite" style="display:none;" title="イイネを押すにはログインが必要です"></span>
               <span id="bookmark"         class="sprite" title="ブックマークを押して次へ"></span>
               <span id="bookmark_disable" class="sprite" style="display:none;" title="ブックマークを押すにはログインが必要です"></span>
+              <div id="next"  class="sprite" title="次の話へ"></div>
             </div>
         </div>
       </div>

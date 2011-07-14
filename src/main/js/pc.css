@@ -20,7 +20,7 @@ body {
 
 .ui {
 	z-index: 10;
-	cursor: pointer;
+    	cursor: pointer;
 }
 
 .mask {
@@ -60,13 +60,30 @@ body {
 	padding: 0;
 }
 
+#preview {
+	z-index: 1;
+}
+
+#preview_ui {
+    z-index: 10;
+    position: absolute;
+    cursor: pointer;
+}
+
+#preview_ui .preview_btn {
+    top: 50%;
+    left: 50%;
+    margin-left: -30px;
+    margin-top: -30px;
+    position: absolute;
+}
+
+
 #thumbnail {
     z-index: 2;
 	position: absolute;
 	left: 0;
 	top: 0;
-	height: 100%;
-	width: 100%;
 }
 
 #loading {
@@ -79,7 +96,7 @@ body {
 
 #loading .message {
   color: white;
-  font-size: 160%;
+  font-size: 120%;
   padding: 8px 4px;
   background-color: black;
   border-style: solid;
@@ -125,16 +142,16 @@ body {
 }
 
 #menu {
-    position: absolute;
-    z-index:     10;
-    left: 0;
-    top: 0;
-    width: 100%;
-    display: block;
+    position:   absolute;
+    z-index:    10;
+    left:       0;
+    top:        0;
+    width:      100%;
+    display:    block;
     text-align: center;
-    margin: 0;
+    margin:     0;
     background-color: rgba(0,0,0,0.4);
-    filter: alpha(opacity = 40);
+    filter:           alpha(opacity = 40);
 }
 
 #prev_scene {
@@ -154,29 +171,28 @@ body {
 }
 
 #next {
-    z-index: 14;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -46px -226px;
+    z-index:  14;
+    position: relative;
+    margin:auto;
 }
 
 #finish_actions {
     position: absolute;
-    bottom:   20%;
+    bottom:   10%;
+    text-aling:center;
 }
 
 #vote, #vote_disable {
     z-index:  14;
     position: relative;
     float:    right;
-    margin:   8px 12px;
+    margin:   8px 0px 8px 12px;
 }
 #bookmark, #bookmark_disable {
     z-index:  14;
     position: relative;
     float:    left;
-    margin:   8px 12px;
+    margin:   8px 12px 8px 0px;
 }
 
 #progress {
@@ -192,4 +208,37 @@ body {
 #error {
     z-index: 10;
 }
+
+.sprite {
+  background-image:  url(ja.png);
+  background-repeat: no-repeat;
+  text-indent:       -9999px;
+  overflow:          hidden;
+  display:           block;
+}
+
+#close       {background-position:     0 0; width: 33px; height: 33px;}
+#close:hover {background-position: -33px 0; width: 33px; height: 33px;}
+
+#first_scene         {background-position:  -66px 0; width: 100px; height: 32px;}
+#first_scene:hover   {background-position: -165px 0; width: 100px; height: 32px;}
+#first_scene_disable {background-position: -265px 0; width: 100px; height: 32px;}
+
+#prev_scene         {background-position:      0 -32px; width: 100px; height: 32px;}
+#prev_scene:hover   {background-position:  -99px -32px; width: 100px; height: 32px;}
+#prev_scene_disable {background-position: -199px -32px; width: 100px; height: 32px;}
+
+#vote         {background-position:      0 -64px; width: 141px; height: 46px;}
+#vote:hover   {background-position: -141px -64px; width: 141px; height: 46px;}
+#vote_disable {background-position: -282px -64px; width: 141px; height: 46px;}
+
+#bookmark         {background-position:      0 -109px; width: 141px;height: 46px;}
+#bookmark:hover   {background-position: -141px -109px; width: 141px;height: 46px;}
+#bookmark_disable {background-position: -282px -109px; width: 142px;height: 46px;}
+
+#next {background-position: 0 -156px;width: 300px;height: 62px;}
+#next:hover {background-position: 0 -218px;width: 300px;height: 62px;}
+
+#start {background-position: -299px -156px;width: 61px;height: 61px;}
+#start:hover {background-position: -360px -156px;width: 61px;height: 61px;}
 

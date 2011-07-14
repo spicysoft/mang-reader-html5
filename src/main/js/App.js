@@ -1,7 +1,4 @@
 /*global $, _gaq, window, strings, $Reader */
-if (!window.console) {
-  var console = {};
-}
 
 /**
  * Singleton of $App class.
@@ -28,12 +25,12 @@ function $App()
    */
   this.constructor = function()
   {
-    if (typeof window.console != 'object'){
+    if (typeof window.console !== 'object'){
       window.console = {log:function(){},debug:function(){},info:function(){},warn:function(){},error:function(){},assert:function(){},dir:function(){},dirxml:function(){},trace:function(){},group:function(){},groupEnd:function(){},time:function(){},timeEnd:function(){},profile:function(){},profileEnd:function(){},count:function(){}};
     }
     _ = this.getLocalizedString;
 
-    if (navigator.appName == 'Microsoft Internet Explorer') {
+    if (navigator.appName === 'Microsoft Internet Explorer') {
       this.IE = true;
       var ua = navigator.userAgent;
       var re  = ua.match(/MSIE ([0-9]{1,}[\.0-9]{0,})/);
@@ -77,13 +74,11 @@ function $App()
       var cssProp = {
         position: 'absolute'
       };
-      cssProp.height = height;
       cssProp.top = windowHeight/2 - halfHeight;
       cssProp.marginTop = 0;
-      cssProp.width = width;
       cssProp.left = windowWidth/2 - halfWidth;
       cssProp.marginLeft = 0;
-      if(positionType == 'static') {
+      if(positionType === 'static') {
         $self.parent().css("position","relative");
       }
       $self.css(cssProp);
@@ -140,7 +135,7 @@ function $App()
   this.parseQueryString = function(str)
   {
     var hash = {};
-    if(str == 'undefined') {
+    if(str === 'undefined') {
       console.log('GET:Empty');
       return hash;
     }
@@ -171,7 +166,7 @@ function $App()
  */
 $(function() {
   console.log("start");
-  
+
   /**
    *  URLアンカーからカンマ区切りのパラメーターを取得する
    */
@@ -182,7 +177,7 @@ $(function() {
     }
     return hash.substring(1).split(",");
   }
-  
+
   /** URLアンカーからアプリケーション固有のパラメータを取得し
    *  名前つき配列に格納する
    */
@@ -190,7 +185,8 @@ $(function() {
     var raw  = getParametersFromAnchor();
     var real = {};
     real.storyId = Math.floor(raw[0]);
-    real.member  = 2 <= raw.length && raw[1] == 'member';
+    real.member  = 2 <= raw.length && raw[1] === 'member';
+    real.auto    = 3 <= raw.length && raw[2] === 'auto';
     return real;
   }
 
@@ -198,8 +194,10 @@ $(function() {
   var params = getRealParameters();
   Reader = new $Reader(params.member);
   console.log("openStory:start:" + params.storyId);
-  console.log("openStory:auto:" + params.auto);
-  Reader.openStory(params.storyId);
-  _gaq.push(['_trackPageview', '/event/viewer/open/'+params.storyId]);
+  if(!params.auto){
+    Reader.showPreview(params.storyId);
+  }else{
+    Reader.openStory(params.storyId);
+  }
   console.log("started");
 });

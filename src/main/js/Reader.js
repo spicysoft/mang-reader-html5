@@ -1,7 +1,4 @@
 /*global $, _, _gaq, window, strings, App, $SceneAnimator */
-if (!window.console) {
-  var console = {};
-}
 
 /**
  * マンガを読み込み中のUI処理を行う MVCのコンポーネントに相当する処理を行う。
@@ -20,9 +17,10 @@ function $Reader(_member) {
   var scenes;
   var sceneImages;
   var currentSceneIndex = 0;
-  
+
   var menuIsVisible = false;
-  
+  var isLoading = false;
+
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
     // style="background: #000;"を定義しないとクリッカブルにならない
@@ -99,7 +97,7 @@ function $Reader(_member) {
     };
     $.ajax(settings);
   };
-  
+
   /**
    * [サーバーAPIとの通信メソッド]
    *
@@ -114,20 +112,20 @@ function $Reader(_member) {
   var apiStoryMetaFile = function(storyId, fnSuccess, fnError) {
     ajax_get(API_ROOT + '/storyMetaFile/' + storyId, 'json', fnSuccess, fnError);
   };
-  
+
   /**
    * [サーバーAPIとの通信メソッド]
-   * 
+   *
    * イイネ投票する
    */
   var apiVoteStory = function(comicId, storyId, value, fnSuccess, fnError){
     ajax_get('/comic/view/' + comicId + '/vote_story/' + storyId + '/' + value + '/done',
      'xml', fnSuccess, fnError);
-　};
+  };
 
   /**
    * [サーバーAPIとの通信メソッド]
-   * 
+   *
    * イイネ投票する
    */
   var apiBookmark = function(comicId, fnSuccess, fnError){
@@ -235,7 +233,7 @@ function $Reader(_member) {
       i.onload = onloaded;
     }
   };
-  
+
 
   /**
    * 前のコマに戻る
@@ -260,16 +258,16 @@ function $Reader(_member) {
       goPrevScene();
     }
   };
-  
+
   var show_first_click = function(e){jumpToScene(0);};
   var menu_click = function(e){showMenu(3000,2000);};
-      
+
   var hideMenu = function(fadeout){
     if(!menuIsVisible){
       return;
     }
     menuIsVisible = false;
-                
+
     $("#menu").fadeTo(fadeout, "0.0", function(){
       $("#menu").css({cursor:"pointer"});
       $("#prev_scene").unbind("click", goPrev);
@@ -280,7 +278,7 @@ function $Reader(_member) {
       $("#menu").mouseover(menu_click);
     });
   };
-  
+
   /**
    * メニューを表示する
    */
@@ -289,7 +287,7 @@ function $Reader(_member) {
       return;
     }
     menuIsVisible = true;
-    
+
     $("#menu").unbind("click", menu_click);
     $("#menu").unbind("mouse_over", menu_click);
     $("#menu").css({cursor:"default"});
@@ -297,14 +295,14 @@ function $Reader(_member) {
     $("#prev_scene").css({cursor:"pointer"});
     $("#first_scene").click(show_first_click);
     $("#first_scene").css({cursor:"pointer"});
-    
+
     $("#menu").css({"opacity":"1.0"});
     if(0 < lifetime){
       setTimeout(function(){hideMenu(fadeout);}, lifetime);
     }
   };
 
-  
+
   var showFinished = function() {
     var next_story_id = storyMetaFile.next_story_id;
     var comic_id = storyMetaFile.comic_id;
@@ -353,6 +351,9 @@ function $Reader(_member) {
    * 次のシーンへ進める
    */
   var goNextScene = function() {
+    if(isLoading){
+      return;
+    }
     var next = currentSceneIndex + 1;
     if (next < scenes.length) {
       jumpToScene(currentSceneIndex + 1);
@@ -402,6 +403,7 @@ function $Reader(_member) {
    * 表示モードを「ローディング中」に切り替える
    */
   var showLoading = function() {
+    isLoading = true;
     showMenu(2000,2000);
     $("#loading").show();
     $("#reader").hide();
@@ -433,12 +435,14 @@ function $Reader(_member) {
       "story_title"    : storyMetaFile.story_title,
       "number_of_story": storyMetaFile.number_of_story
     };
+    isLoading = false;
   };
 
   /**
    * 指定したマンガの話をリーダーで開く。
    */
   var openStory = function(_storyId) {
+    storyId = _storyId;
     if (sceneImages !== undefined) {
       console.log(sceneImages);
       for ( var n = 0; n < sceneImages.length; n++) {
@@ -449,7 +453,6 @@ function $Reader(_member) {
       }
     }
     sceneImages = [];
-    storyId = _storyId;
     scenes = null;
     currentSceneIndex = 0;
     storyMetaFile = null;
@@ -468,6 +471,25 @@ function $Reader(_member) {
     }, function() {
       showError();
     });
+    _gaq.push(['_trackPageview', '/event/viewer/open/'+storyId]);
+  };
+
+  /**
+   * プレビュー画面を表示する
+   *
+   * @returns void
+   */
+  this.showPreview = function(_storyId) {
+    $("#thumbnail").attr("src", "/icon/story_image/medium/" + _storyId);
+    $("#preview_ui").show();
+    $("#preview").show();
+    $("#preview > *").unbind('click');
+    $("#preview > *").click(function(event) {
+      openStory(_storyId);
+      event.preventDefault();
+      $("#preview").hide();
+    });
+    App.centering($("#thumbnail"));
   };
 
   this.openStory = openStory;
