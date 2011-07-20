@@ -96,7 +96,7 @@ body {
 
 #loading .message {
   color: white;
-  font-size: 120%;
+  font-size: 140%;
   padding: 8px 4px;
   background-color: black;
   border-style: solid;
@@ -198,11 +198,12 @@ body {
 #progress {
     z-index: 10;
     width: 100%;
-    top: 50%;
+    heght:100%;
     color:       white;
-    font-size:   160%;
+    font-size:   120%;
     font-weight: bold;
-    margin: 4px 8px 4px 8px;
+    margin-top: 0.5em;
+    position:absolute;
 }
 
 #error {

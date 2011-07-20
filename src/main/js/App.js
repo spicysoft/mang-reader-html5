@@ -61,6 +61,7 @@ function $App()
       var $self = $(this);
       var width = $self.width();
       var height = $self.height();
+      console.log("centering w:" +width + " h:" + height);
       var paddingTop    = $self.css("padding-top").toInt();
       var paddingBottom = $self.css("padding-bottom").toInt();
       var borderTop     = $self.css("border-top-width").toInt();
