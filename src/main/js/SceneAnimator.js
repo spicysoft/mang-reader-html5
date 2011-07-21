@@ -155,7 +155,6 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     if (actionCount <= action) {
       return;
     }
-    console.log("caliculate");
     movePixelX = X_VECTOR[course][action];
     movePixelY = Y_VECTOR[course][action];
     if (movePixelX !== 0 && movePixelY !== 0) {
@@ -177,7 +176,6 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     if (movePixelY !== 0) {
       movePixelY = speed * ADJUST_SCALE * ADJUST_SCALE / movePixelY;
     }
-    console.log("caliculate done");
   };
 
 

@@ -154,7 +154,7 @@ body {
     filter:           alpha(opacity = 40);
 }
 
-#prev_scene {
+#prev_scene, #prev_scene_disable {
     z-index:  12;
     position: relative;
     top:      0px;
@@ -162,7 +162,7 @@ body {
     margin:   4px 8px 4px 8px;
 }
 
-#first_scene {
+#first_scene, #first_scene_disable {
     z-index:  12;
     position: relative;
     top:      0px;
@@ -240,6 +240,6 @@ body {
 #next {background-position: 0 -156px;width: 300px;height: 62px;}
 #next:hover {background-position: 0 -218px;width: 300px;height: 62px;}
 
-#start {background-position: -299px -156px;width: 61px;height: 61px;}
-#start:hover {background-position: -360px -156px;width: 61px;height: 61px;}
+#start {background-position: -300px -156px;width: 60px;height: 61px;}
+#start:hover {background-position: -361px -156px;width: 60px;height: 61px;}
 
