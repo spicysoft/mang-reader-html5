@@ -151,12 +151,16 @@ function $Reader(_member) {
     $("#error").show();
   };
 
-  var goToNextStory = function(next_story_id, comic_id){
+  var goToNextStory = function(next_story_id, comic_id, param){
     if(next_story_id === false){
       parent.document.location.href = '/comic/view/'+comic_id+'/story/_undelivered';
     }else{
       if (member) {
-        this.openStory(next_story_id);
+        var after_param = '';
+        if(param !== ""){
+          after_param = "?after="+param;
+        }
+        parent.document.location.href = '/comic/view/'+comic_id+'/story/'+next_story_id+after_param;
       } else {
         parent.document.location.href = '/comic/landing/nomember?next=/comic/view/'+
           comic_id+'/story/'+next_story_id;
@@ -304,7 +308,7 @@ function $Reader(_member) {
     $("#menu").show();
     $("#menu").css({cursor:"default", opacity:"1.0"});
 
-    if(currentSceneIndex == 0){
+    if(currentSceneIndex === 0){
       $("#prev_scene").hide();
       $("#first_scene").hide();
       $("#prev_scene_disable").show();
@@ -350,13 +354,13 @@ function $Reader(_member) {
       $("#vote").click(
           function() {
             apiVoteStory(comic_id, storyId, 1, function(){
-              goToNextStory(next_story_id, comic_id);
+              goToNextStory(next_story_id, comic_id, "vote");
             },function(){showError();});
           });
       $("#bookmark").click(
         function() {
           apiBookmark(comic_id, function(){
-            goToNextStory(next_story_id, comic_id);
+            goToNextStory(next_story_id, comic_id, "bookmark");
           },function(){showError();});
         });
       $("#vote").show();
@@ -371,7 +375,7 @@ function $Reader(_member) {
     }
 
     $("#next").click(function() {
-      goToNextStory(next_story_id, comic_id);
+      goToNextStory(next_story_id, comic_id, "");
     });
     $("#preview").hide();
     $("#loading").hide();
