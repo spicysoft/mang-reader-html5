@@ -67,6 +67,7 @@ function $Reader(_member) {
     var dx = (width - w) / 2 + x;
     var dy = (height - h) / 2 + y;
 
+    console.log("dx:" + dx + " dy:" +dy);
     if (App.IE) {
       i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
       $("#canvas").empty().append(i);
@@ -175,6 +176,7 @@ function $Reader(_member) {
    * @return Image ただし非同期なので読み込み完了していることは保証されない
    */
   var apiSceneImage = function(sceneId) {
+    console.log("apiSceneImage:" + sceneId);
     var i = new Image();
     i.hasLoaded = function(){
       //IE9でImage.completeが動作しない場合があるので、Image.widthを見て
@@ -224,7 +226,7 @@ function $Reader(_member) {
     var i = sceneImages[currentSceneIndex];
     function onloaded() {
       var scene = scenes[currentSceneIndex];
-      console.log(scene);
+      console.log("scene onloaded:" + currentSceneIndex);
       SceneAnimator.initializeWhenLoaded(i, scene["scroll_course"], scene["scroll_speed"]);
       //clickイベントをunbind
       $("#loading").hide();
@@ -341,6 +343,15 @@ function $Reader(_member) {
     }
   };
 
+  var hideAll = function(){
+    $("#menu").hide();
+    $("#next").hide();
+    $("#vote").hide();
+    $("#bookmark").hide();
+    $("#loading").show();
+    $("#canvas").css({cursor:"wait"});
+  };
+
   var showFinished = function() {
     var next_story_id = storyMetaFile["next_story_id"];
     var comic_id = storyMetaFile["comic_id"];
@@ -356,12 +367,14 @@ function $Reader(_member) {
             apiVoteStory(comic_id, storyId, 1, function(){
               goToNextStory(next_story_id, comic_id, "vote");
             },function(){showError();});
+            hideAll();
           });
       $("#bookmark").click(
         function() {
           apiBookmark(comic_id, function(){
             goToNextStory(next_story_id, comic_id, "bookmark");
           },function(){showError();});
+          hideAll();
         });
       $("#vote").show();
       $("#bookmark").show();
@@ -376,6 +389,7 @@ function $Reader(_member) {
 
     $("#next").click(function() {
       goToNextStory(next_story_id, comic_id, "");
+      hideAll();
     });
     $("#preview").hide();
     $("#loading").hide();
@@ -451,6 +465,7 @@ function $Reader(_member) {
   var showLoading = function() {
     isLoading = true;
     showMenu(2000,2000);
+    $("#canvas").css({cursol:"wait"});
     $("#loading").show();
     $("#reader").hide();
     $("#finish").hide();
@@ -461,6 +476,7 @@ function $Reader(_member) {
    * 表示モードを「マンガ閲覧中」に切り替える
    */
   var showReader = function() {
+    $("#canvas").css({cursol:"default"});
     $("#loading").hide();
     $("#reader").show();
     $("#finish").hide();
@@ -541,8 +557,6 @@ function $Reader(_member) {
       event.preventDefault();
       $("#preview").hide();
     });
-
-
   };
 
   this.openStory = openStory;
