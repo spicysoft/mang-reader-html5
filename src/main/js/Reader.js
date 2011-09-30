@@ -67,15 +67,30 @@ function $Reader(_member) {
     var dx = (width - w) / 2 + x;
     var dy = (height - h) / 2 + y;
 
-    console.log("dx:" + dx + " dy:" +dy);
+    console.log("dx:" + dx + " dy:" +dy + " i.w:" + w  + "i.h:" + h + " c.w:" + width + " c.h:" + height);
+
     if (App.IE) {
       i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
       $("#canvas").empty().append(i);
     } else {
       var context = canvas.getContext("2d");
+
+
       context.fillStyle = canvas.style.background;
       context.fillRect(0, 0, width, height);
+
+      //Android2.1以下のCanvas drawImageバグ対応
+      //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
+      //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
+      if(App.ANDROID21){
+        context.save();
+        var rate =  Math.sqrt(320 /screen.width);
+        context.scale(rate, rate);
+      }
       context.drawImage(i, dx, dy);
+      if(App.ANDROID21){
+        context.restore();
+      }
     }
     console.log("paint done");
   };
@@ -264,6 +279,7 @@ function $Reader(_member) {
    * @return void
    */
   var goPrev= function() {
+    hideFinished();
     if (SceneAnimator.canSkipBack()) {
       SceneAnimator.skipBack();
     } else if (0 < currentSceneIndex) {
@@ -271,7 +287,11 @@ function $Reader(_member) {
     }
   };
 
-  var show_first_click = function(e){jumpToScene(0);};
+  var show_first_click = function(e){
+    hideFinished();
+    jumpToScene(0);
+  };
+
   var menu_click = function(e){showMenu(3000,2000);};
   var menu_mouse_over = function(e){showMenu(0);}
   var menuIsVisible = function(){
@@ -352,6 +372,11 @@ function $Reader(_member) {
     $("#canvas").css({cursor:"wait"});
   };
 
+  var hideFinished = function(){
+    $("#finish").hide();
+    $("#finish_actions").hide();
+  };
+
   var showFinished = function() {
     var next_story_id = storyMetaFile["next_story_id"];
     var comic_id = storyMetaFile["comic_id"];
@@ -396,6 +421,7 @@ function $Reader(_member) {
     $("#reader").show();
     $("#error").hide();
     $("#finish").show();
+    $("#finish_actions").show();
 
     var $window = $(window);
     var windowHeight = $window.height();

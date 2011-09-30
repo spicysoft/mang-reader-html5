@@ -19,6 +19,7 @@ function $App()
 {
   this.IE = false;
   this.IE_VER = false;
+  this.ANDROID21 = false;
 
   /**
    * コンストラクター実装
@@ -30,9 +31,10 @@ function $App()
     }
     _ = this.getLocalizedString;
 
+    var ua = navigator.userAgent;
     if (navigator.appName === 'Microsoft Internet Explorer') {
       this.IE = true;
-      var ua = navigator.userAgent;
+
       var re  = ua.match(/MSIE ([0-9]{1,}[\.0-9]{0,})/);
       if (re !== null) {
         this.IE_VER = parseFloat( re[1] );
@@ -42,6 +44,11 @@ function $App()
     } else {
       this.IE = false;
     }
+
+    if (/Android\s2\.[0|1]/.test(ua)) {
+      this.ANDROID21 = true;
+    }
+
   };
 
   /**
