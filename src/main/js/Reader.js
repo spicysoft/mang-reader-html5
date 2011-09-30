@@ -131,22 +131,22 @@ function $Reader(_member) {
   };
 
   /**
-   * [サーバーAPIとの通信メソッド]
+   * [サーバーAPI]
    *
    * イイネ投票する
    */
   var apiVoteStory = function(comicId, storyId, value, fnSuccess, fnError){
-    ajax_get('/comic/view/' + comicId + '/vote_story/' + storyId + '/' + value + '/done',
-     'xml', fnSuccess, fnError);
+    ajax_get('/api/voteStory/'+comicId + '/' + storyId + '/' + value ,
+     'json', fnSuccess, fnError);
   };
 
   /**
-   * [サーバーAPIとの通信メソッド]
+   * [サーバーAPI]
    *
-   * イイネ投票する
+   * ブックマークする
    */
   var apiBookmark = function(comicId, fnSuccess, fnError){
-    ajax_get('/comic/view/' + comicId +'/bookmark/done/', 'xml', fnSuccess, fnError);
+    ajax_get('/api/bookmark/'+comicId, 'json', fnSuccess, fnError);
   };
 
   var updateSceneCount = function(){
@@ -207,8 +207,8 @@ function $Reader(_member) {
    * またこの内部でプリロード、破棄処理も行う。 現在は一括ロード。
    */
   var fetchSceneImage = function(sceneIndex) {
-    var under = sceneIndex - 1;
-    var prefetch = sceneIndex + 5;
+    var under = sceneIndex - 2;
+    var prefetch = sceneIndex + 10;
     for ( var n = 0; n < scenes.length; n++) {
       if (n < under && sceneImages[n] !== undefined) {
         sceneImages[n] = undefined;
