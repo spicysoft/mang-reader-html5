@@ -94,6 +94,8 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
   var readerHeight = _readerHeight;
 
   var reverse = false;
+  var dirFwd = true;
+
   /**
    * スクロール初期化
    */
@@ -103,6 +105,7 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     scrolling  = false;
     scrollable = false;
     reverse = false;
+    dirFwd = true;
   };
 
   this.x = function() {
@@ -124,15 +127,17 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
    * シーンのスクロールアニメーションの先頭フレームにいるか？先頭フレームである場合true
    */
   this.isAtScrollStart = function() {
-    return actionCount !== 0 && scrolling === false && action === 0;
+    if(reverse){
+      return actionCount != 0 && scrolling == false && action >= actionCount;
+    }else{
+      return actionCount != 0 && scrolling == false && action <= 0;
+    }
   };
 
-  /**
-   */
-  this.canSkipBack = function() {
-    return actionCount !== 0 && actionCount <= action;
-  };
-
+  this.startBackScroll = function(){
+    scrolling = true;
+    action = actionCount-1;
+  }
 
   /**
    * スクロール中かどうか？スクロール中の場合はtrue
@@ -192,25 +197,47 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     actionCount  = X_VECTOR[course].length;
     limitRight   = (imageWidth - readerWidth) * ADJUST_SCALE / 2;
     limitLeft    = - limitRight;
+
+    scrollable_x = false;
+    scrollable_y = false;
+
     if (limitRight <= 0) {
       scrolledPixelsX = 0;
     } else {
-      scrolledPixelsX = START_X_POSITION[course] * limitRight;
-      scrollable = true;
+      scrolledPixelsX = (reverse ? -1 : 1) * START_X_POSITION[course] * limitRight;
+      scrollable_x = true;
     }
     limitBottom = (imageHeight - readerHeight) * ADJUST_SCALE / 2;
     limitTop    = -limitBottom;
     if (limitBottom <= 0) {
       scrolledPixelsY = 0;
     } else {
-      scrolledPixelsY = START_Y_POSITION[course] * limitBottom;
+      scrolledPixelsY = (reverse ? -1 : 1) * START_Y_POSITION[course] * limitBottom;
+      scrollable_y = true;
+    }
+    scrollable = false;
+    if (course != 0 && (scrollable_x || scrollable_y)) {
       scrollable = true;
+      if(course > 4){
+        if(!scrollable_x){
+          course = 1;
+        }else{
+          if(course == SCROLL_N || course == SCROLL_RZ){
+            course = 3;
+          }else{
+            course = 4;
+          }
+        }
+      }
     }
-    if (course === 0) {
-      scrollable = false;
-    }
+
     if (!scrollable) {
       actionCount = 0;
+    }
+    if (reverse && action < actionCount) {
+      action = actionCount;
+    }else{
+      action = 0;
     }
     caliculate();
     scrolling = false;

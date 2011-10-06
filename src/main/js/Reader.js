@@ -7,7 +7,7 @@
  */
 function $Reader(_member) {
   var member = _member;
-  var FPS = 10;
+  var FPS = 33;
   var API_ROOT = '/api';
   var width = 0;
   var height = 0;
@@ -26,6 +26,16 @@ function $Reader(_member) {
     $("#canvas").replaceWith(
         '<div id="canvas" style="background: #000;"></div>');
   }
+
+  var act_start = App.isSmartPhone?"touchstart":"mousedown";
+
+  var prevent_default = function(event) {
+    if (App.IE) {
+      event.returnValue = false;
+    }else{
+      event.preventDefault();
+    }
+  };
 
   var canvas;
   if (App.IE && App.IE_VER < 8) {
@@ -54,7 +64,6 @@ function $Reader(_member) {
    * @return void
    */
   var paint = function() {
-    console.log("paint");
     var i = sceneImages[currentSceneIndex];
     if (i === undefined || !i.hasLoaded()) {
       return;
@@ -67,14 +76,12 @@ function $Reader(_member) {
     var dx = (width - w) / 2 + x;
     var dy = (height - h) / 2 + y;
 
-    console.log("dx:" + dx + " dy:" +dy + " i.w:" + w  + "i.h:" + h + " c.w:" + width + " c.h:" + height);
-
+    //console.log("dx:" + dx + " dy:" +dy + " i.w:" + w  + "i.h:" + h + " c.w:" + width + " c.h:" + height);
     if (App.IE) {
       i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
       $("#canvas").empty().append(i);
     } else {
       var context = canvas.getContext("2d");
-
 
       context.fillStyle = canvas.style.background;
       context.fillRect(0, 0, width, height);
@@ -84,7 +91,8 @@ function $Reader(_member) {
       //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
       if(App.ANDROID21){
         context.save();
-        var rate =  Math.sqrt(320 /screen.width);
+        var rate =  Math.sqrt(320/screen.width);
+        console.log("scaled rate:" + rate + " " + screen.width + " " + (320/screen.width));
         context.scale(rate, rate);
       }
       context.drawImage(i, dx, dy);
@@ -92,15 +100,15 @@ function $Reader(_member) {
         context.restore();
       }
     }
-    console.log("paint done");
   };
 
-  var ajax_get = function(url, datatype, fnSuccess, fnError){
+
+  var ajax = function(url, datatype, fnSuccess, fnError, method, cache){
     var settings = {
       'url' : url,
-      'type' : 'get',
+      'type' : method,
       'async' : true,
-      'cache' : false,
+      'cache' : cache,
       'dataType' : datatype,
       'success' : function(json) {
         fnSuccess(json);
@@ -115,6 +123,14 @@ function $Reader(_member) {
     $.ajax(settings);
   };
 
+  var ajax_get = function(url, datatype, fnSuccess, fnError, cache){
+    ajax(url, datatype, fnSuccess, fnError, 'get', cache);
+  };
+
+  var ajax_post = function(url, datatype, fnSuccess, fnError){
+    ajax(url, datatype, fnSuccess, fnError, 'post', false);
+  };
+
   /**
    * [サーバーAPIとの通信メソッド]
    *
@@ -127,7 +143,7 @@ function $Reader(_member) {
    * @returns void    非同期通信です。通信を開始後、完了をまたずにすぐに処理が戻ります。
    */
   var apiStoryMetaFile = function(storyId, fnSuccess, fnError) {
-    ajax_get(API_ROOT + '/storyMetaFile/' + storyId, 'json', fnSuccess, fnError);
+    ajax_get(API_ROOT + '/storyMetaFile/' + storyId, 'json', fnSuccess, fnError, true);
   };
 
   /**
@@ -136,7 +152,7 @@ function $Reader(_member) {
    * イイネ投票する
    */
   var apiVoteStory = function(comicId, storyId, value, fnSuccess, fnError){
-    ajax_get('/api/voteStory/'+comicId + '/' + storyId + '/' + value ,
+    ajax_post('/api/voteStory/'+comicId + '/' + storyId + '/' + value ,
      'json', fnSuccess, fnError);
   };
 
@@ -146,14 +162,12 @@ function $Reader(_member) {
    * ブックマークする
    */
   var apiBookmark = function(comicId, fnSuccess, fnError){
-    ajax_get('/api/bookmark/'+comicId, 'json', fnSuccess, fnError);
+    ajax_post('/api/bookmark/'+comicId, 'json', fnSuccess, fnError);
   };
 
   var updateSceneCount = function(){
-    console.log("updateSceneCount");
     $("#progress_total").text(scenes.length);
     $("#progress_current").text(currentSceneIndex+1);
-    console.log("updateSceneCount done");
   };
 
   /**
@@ -191,11 +205,10 @@ function $Reader(_member) {
    * @return Image ただし非同期なので読み込み完了していることは保証されない
    */
   var apiSceneImage = function(sceneId) {
-    console.log("apiSceneImage:" + sceneId);
     var i = new Image();
     i.hasLoaded = function(){
-      //IE9でImage.completeが動作しない場合があるので、Image.widthを見て
-      //ロードが完了したか判断する
+      //IE9でImage.completeが動作しない場合があるので、
+      //Image.widthを見てロードが完了したか判断する
       return this.width > 0;
     };
     i.src = API_ROOT + '/sceneImage/' + sceneId;
@@ -207,12 +220,14 @@ function $Reader(_member) {
    * またこの内部でプリロード、破棄処理も行う。 現在は一括ロード。
    */
   var fetchSceneImage = function(sceneIndex) {
-    var under = sceneIndex - 2;
-    var prefetch = sceneIndex + 10;
+    console.log("fetchSceneImage");
+    var under = sceneIndex - 4;
+    var prefetch = sceneIndex + 12;
     for ( var n = 0; n < scenes.length; n++) {
       if (n < under && sceneImages[n] !== undefined) {
         sceneImages[n] = undefined;
-      } else if (n <= prefetch && sceneImages[n] === undefined) {
+      } else if (under <= n && n <= prefetch && sceneImages[n] === undefined) {
+        console.log("apiSceneImage:" + n);
         sceneImages[n] = apiSceneImage(scenes[n].id);
       }
     }
@@ -243,7 +258,6 @@ function $Reader(_member) {
       var scene = scenes[currentSceneIndex];
       console.log("scene onloaded:" + currentSceneIndex);
       SceneAnimator.initializeWhenLoaded(i, scene["scroll_course"], scene["scroll_speed"]);
-      //clickイベントをunbind
       $("#loading").hide();
       isLoading = false;
       paint();
@@ -261,7 +275,6 @@ function $Reader(_member) {
     console.log("jupmToScene done");
   };
 
-
   /**
    * 前のコマに戻る
    */
@@ -272,27 +285,47 @@ function $Reader(_member) {
     }
   };
 
+  var hideFinished = function(){
+    $("#finish").hide();
+    $("#finish_actions").hide();
+  };
+
+  var activate_button = function(item, time){
+    console.log("activate_button");
+    item.addClass("active");
+    if(0 < time){
+      setTimeout(function(){
+        item.removeClass("active");
+      },time);
+    }
+  };
+
   /**
    * スクロールをひとつ前に戻す
    *
    * @private
    * @return void
    */
-  var goPrev= function() {
+  var goPrev= function(e) {
+    activate_button($("#prev_scene"), 500);
     hideFinished();
-    if (SceneAnimator.canSkipBack()) {
-      SceneAnimator.skipBack();
-    } else if (0 < currentSceneIndex) {
+    if (0 < currentSceneIndex) {
       goPrevScene();
     }
+    prevent_default(e);
   };
 
   var show_first_click = function(e){
+    activate_button($("#first_scene"), 500);
     hideFinished();
     jumpToScene(0);
+    prevent_default(e);
   };
 
-  var menu_click = function(e){showMenu(3000,2000);};
+  var menu_click = function(e){
+    showMenu(3000,2000);
+    prevent_default(e);
+  };
   var menu_mouse_over = function(e){showMenu(0);}
   var menuIsVisible = function(){
     return parseInt($("#menu").css("opacity"), 10) === 1;
@@ -307,11 +340,11 @@ function $Reader(_member) {
     $("#menu").unbind("mouseout", hideMenu);
     $("#menu").fadeTo(fadeout, "0.0", function(){
       $("#menu").css({cursor:"pointer"});
-      $("#prev_scene").unbind("click", goPrev);
+      $("#prev_scene").unbind(act_start, goPrev);
       $("#prev_scene").css({cursor:"default"});
-      $("#first_scene").unbind("click", show_first_click);
+      $("#first_scene").unbind(act_start, show_first_click);
       $("#first_scene").css({cursol:"default"});
-      $("#menu").click(menu_click);
+      $("#menu").bind(act_start, menu_click);
       $("#menu").mouseover(menu_mouse_over);
     });
   };
@@ -324,8 +357,7 @@ function $Reader(_member) {
       return;
     }
     console.log("show menu:" + lifetime);
-
-    $("#menu").unbind("click", menu_click);
+    $("#menu").unbind(act_start, menu_click);
     $("#menu").unbind("mouseover", menu_mouse_over);
     $("#menu").show();
     $("#menu").css({cursor:"default", opacity:"1.0"});
@@ -340,12 +372,11 @@ function $Reader(_member) {
       $("#first_scene").show();
       $("#prev_scene_disable").hide();
       $("#first_scene_disable").hide();
-      $("#prev_scene").click(goPrev);
+      $("#prev_scene").bind(act_start, goPrev);
       $("#prev_scene").css({cursor:"pointer"});
-      $("#first_scene").click(show_first_click);
+      $("#first_scene").bind(act_start, show_first_click);
       $("#first_scene").css({cursor:"pointer"});
     }
-
 
     if(0 < lifetime){
       setTimeout(function(){hideMenu(fadeout);}, lifetime);
@@ -364,42 +395,49 @@ function $Reader(_member) {
   };
 
   var hideAll = function(){
+    console.log("hideAll");
     $("#menu").hide();
     $("#next").hide();
     $("#vote").hide();
+    $("#vote_disable").hide();
+    $("#bookmark_disable").hide();
     $("#bookmark").hide();
     $("#loading").show();
     $("#canvas").css({cursor:"wait"});
   };
 
-  var hideFinished = function(){
-    $("#finish").hide();
-    $("#finish_actions").hide();
-  };
-
   var showFinished = function() {
+    console.log("showFinished");
     var next_story_id = storyMetaFile["next_story_id"];
     var comic_id = storyMetaFile["comic_id"];
     console.log("next:"+ next_story_id);
     showMenu(0);
-    $("#next").unbind('click');
-    $("#vote").unbind('click');
-    $("#bookmark").unbind('click');
+    $("#next").unbind(act_start);
+    $("#vote").unbind(act_start);
+    $("#bookmark").unbind(act_start);
 
     if (member) {
-      $("#vote").click(
-          function() {
-            apiVoteStory(comic_id, storyId, 1, function(){
-              goToNextStory(next_story_id, comic_id, "vote");
+      $("#vote").bind(act_start,
+          function(e) {
+            activate_button($("#vote"), 0);
+            setTimeout(function(){
+              apiVoteStory(comic_id, storyId, 1, function(){
+                goToNextStory(next_story_id, comic_id, "vote");
+              },function(){showError();});
+              hideAll();
+            },0);
+            prevent_default(e);
+          });
+      $("#bookmark").bind(act_start,
+        function(e) {
+          activate_button($("#bookmark"), 0);
+          setTimeout(function(){
+            apiBookmark(comic_id, function(){
+              goToNextStory(next_story_id, comic_id, "bookmark");
             },function(){showError();});
             hideAll();
-          });
-      $("#bookmark").click(
-        function() {
-          apiBookmark(comic_id, function(){
-            goToNextStory(next_story_id, comic_id, "bookmark");
-          },function(){showError();});
-          hideAll();
+          },0);
+          prevent_default(e);
         });
       $("#vote").show();
       $("#bookmark").show();
@@ -412,10 +450,15 @@ function $Reader(_member) {
       $("#bookmark_disable").show();
     }
 
-    $("#next").click(function() {
-      goToNextStory(next_story_id, comic_id, "");
-      hideAll();
-    });
+    $("#next").bind(act_start,
+      function(e) {
+        activate_button($("#next"), 0);
+        setTimeout(function(){
+          goToNextStory(next_story_id, comic_id, "");
+        },0);
+        hideAll();
+        prevent_default(e);
+      });
     $("#preview").hide();
     $("#loading").hide();
     $("#reader").show();
@@ -458,7 +501,7 @@ function $Reader(_member) {
       paint();
     }
     if (SceneAnimator.isScrolling()) {
-      setTimeout(animation, 1000 / FPS / 1.5);
+      setTimeout(animation, 1000 / FPS);
     }
   };
 
@@ -469,20 +512,28 @@ function $Reader(_member) {
    * @return void
    */
   var goNext = function() {
+    SceneAnimator.reverse = false;
+    SceneAnimator.dirFwd = true;
+
+    console.log("goNext");
     if (SceneAnimator.isAtScrollStart()) {
+      console.log("isAtScrollStart");
       SceneAnimator.startScroll();
       animation();
 
     } else if (SceneAnimator.isScrolling()) {
+      console.log("isScrolling");
       SceneAnimator.skipScroll();
       paint();
 
     } else if (SceneAnimator.isAtScrollEnd()) {
+      console.log("isAtScrollEnd");
       goNextScene();
 
     } else {
       throw "Illega state";
     }
+    console.log("goNext done");
   };
 
   /**
@@ -509,14 +560,11 @@ function $Reader(_member) {
     $("#error").hide();
     var canvas_click = function(event) {
       goNext();
-      if (App.IE) {
-        event.returnValue = false;
-      }else{
-        event.preventDefault();
-      }
+      prevent_default(event);
     };
-    $("#canvas").unbind('mouseup',canvas_click);
-    $("#canvas").mouseup(canvas_click);
+    $("#canvas").unbind(act_start,canvas_click);
+    $("#canvas").bind(act_start,canvas_click);
+
     var format = _("Loading images");
     var args = {
       "story_number"   : storyMetaFile.story_number,
@@ -580,8 +628,8 @@ function $Reader(_member) {
     $("#preview > *").unbind('click');
     $("#preview > *").click(function(event) {
       openStory(_storyId);
-      event.preventDefault();
       $("#preview").hide();
+      prevent_default(event);
     });
   };
 

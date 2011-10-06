@@ -15,17 +15,18 @@ var _;
  *
  * @constructor
  */
-function $App()
-{
+function $App() {
+
   this.IE = false;
   this.IE_VER = false;
   this.ANDROID21 = false;
+  this.isSmartPhone = false;
 
   /**
    * コンストラクター実装
    */
-  this.constructor = function()
-  {
+  this.constructor = function(){
+
     if (typeof window.console !== 'object'){
       window.console = {log:function(){},debug:function(){},info:function(){},warn:function(){},error:function(){},assert:function(){},dir:function(){},dirxml:function(){},trace:function(){},group:function(){},groupEnd:function(){},time:function(){},timeEnd:function(){},profile:function(){},profileEnd:function(){},count:function(){}};
     }
@@ -47,6 +48,13 @@ function $App()
 
     if (/Android\s2\.[0|1]/.test(ua)) {
       this.ANDROID21 = true;
+      this.isSmartPhone = true;
+    } else if (/Android/.test(ua)){
+      this.isSmartPhone = true;
+    } else if (/iPhone\sOS/.test(ua)){
+      this.isSmartPhone = true;
+    } else {
+      this.isSmartPhone = false;
     }
 
   };
