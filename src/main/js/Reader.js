@@ -182,14 +182,14 @@ function $Reader(_member) {
   };
 
   var goToNextStory = function(next_story_id, comic_id, param){
+    var after_param = '';
+    if(param !== ""){
+      after_param = "?after="+param;
+    }
     if(next_story_id === false){
-      parent.document.location.href = '/comic/view/'+comic_id+'/story/_undelivered';
+      parent.document.location.href = '/comic/view/'+comic_id+'/story/_undelivered'+after_param;
     }else{
       if (member) {
-        var after_param = '';
-        if(param !== ""){
-          after_param = "?after="+param;
-        }
         parent.document.location.href = '/comic/view/'+comic_id+'/story/'+next_story_id+after_param;
       } else {
         parent.document.location.href = '/comic/landing/nomember?next=/comic/view/'+
@@ -267,7 +267,7 @@ function $Reader(_member) {
       onloaded();
     } else {
       isLoading = true;
-      showMenu(2000,2000);
+      showMenu(2000,1000);
       $("#loading").show();
       SceneAnimator.initializeWhenUnloaded();
       i.onload = onloaded;
@@ -323,7 +323,7 @@ function $Reader(_member) {
   };
 
   var menu_click = function(e){
-    showMenu(3000,2000);
+    showMenu(3000,1000);
     prevent_default(e);
   };
   var menu_mouse_over = function(e){showMenu(0);}
@@ -389,7 +389,7 @@ function $Reader(_member) {
            e.clientY <= rect.bottom ){
           return;
         }
-        hideMenu(2000);
+        hideMenu(1000);
       });
     }
   };
@@ -541,7 +541,7 @@ function $Reader(_member) {
    */
   var showLoading = function() {
     isLoading = true;
-    showMenu(2000,2000);
+    showMenu(2000,1000);
     $("#canvas").css({cursol:"wait"});
     $("#loading").show();
     $("#reader").hide();
