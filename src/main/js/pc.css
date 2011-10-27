@@ -221,28 +221,29 @@ body {
   display:           block;
 }
 
-#close         {background-position:     0 0; width: 33px; height: 33px;}
-#close:hover, #close.active {background-position: -33px 0; width: 33px; height: 33px;}
 
-#first_scene         {background-position:  -66px 0; width: 100px; height: 32px;}
-#first_scene:hover, #first_scene.active {background-position: -165px 0; width: 100px; height: 32px;}
-#first_scene_disable {background-position: -265px 0; width: 100px; height: 32px;}
+#close {background-position: -301px -33px;width: 32px;height: 32px;}
+#close:hover, #close.active {background-position: -334px -33px;width: 32px;height: 32px;}
 
-#prev_scene         {background-position:      0 -32px; width: 100px; height: 32px;}
-#prev_scene:hover, #prev_scene.active {background-position:  -99px -32px; width: 100px; height: 32px;}
-#prev_scene_disable {background-position: -199px -32px; width: 100px; height: 32px;}
+#first_scene {background-position: 0 0;width: 100px;height: 32px;}
+#first_scene:hover, #first_scene.active  {background-position: -200px 0;width: 100px;height: 32px;}
+#first_scene_disable {background-position: -100px 0;width: 100px;height: 32px;}
 
-#vote         {background-position:      0 -64px; width: 141px; height: 46px;}
-#vote:hover, #vote.active {background-position: -141px -64px; width: 141px; height: 46px;}
-#vote_disable {background-position: -282px -64px; width: 141px; height: 46px;}
+#prev_scene {background-position: 0 -33px;width: 100px;height: 32px;}
+#prev_scene:hover, #prev_scene.active {background-position: -200px -33px;width: 100px;height: 32px;}
+#prev_scene_disable {background-position: -100px -33px;width: 100px;height: 32px;}
 
-#bookmark         {background-position:      0 -109px; width: 141px;height: 46px;}
-#bookmark:hover, #bookmark.active {background-position: -141px -109px; width: 141px;height: 46px;}
-#bookmark_disable {background-position: -282px -109px; width: 142px;height: 46px;}
+#vote {background-position: 0 -121px;width: 141px;height: 54px;}
+#vote_disable {background-position: -142px -121px;width: 141px;height: 54px;}
+#vote:hover, #vote.active  {background-position: -284px -121px;width: 141px;height: 54px;}
 
-#next         {background-position: 0 -156px;width: 300px;height: 62px;}
-#next:hover, #next.active {background-position: 0 -218px;width: 300px;height: 62px;}
+#bookmark  {background-position: 0 -66px;width: 141px;height: 54px;}
+#bookmark_disable {background-position: -142px -66px;width: 141px;height: 54px;}
+#bookmark:hover, #bookmark.active {background-position: -284px -66px;width: 141px;height: 54px;}
 
-#start         {background-position: -300px -156px;width: 60px;height: 61px;}
-#start:hover, #start.active {background-position: -361px -156px;width: 60px;height: 61px;}
+#next {background-position: 0 -176px;width: 300px;height: 62px;}
+#next:hover, #next.active{background-position: 0 -239px;width: 300px;height: 62px;}
+
+#start  {background-position: -301px -176px;width: 62px;height: 62px;}
+#start:hover, #start.active {background-position: -301px -239px;width: 62px;height: 62px;}
 
