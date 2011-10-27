@@ -217,7 +217,7 @@ body {
 }
 
 .sprite {
-  background-image:  url(ja.png);
+  background-image:  url(ja.png?v=2);
   background-repeat: no-repeat;
   text-indent:       -9999px;
   overflow:          hidden;
