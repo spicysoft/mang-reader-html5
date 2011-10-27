@@ -185,17 +185,20 @@ body {
     text-aling:center;
 }
 
+#finish_social_actions {
+    margin:auto;
+}
 #vote, #vote_disable {
     z-index:  14;
     position: relative;
     float:    right;
-    margin:   8px 0px 8px 12px;
+    margin:   8px 8px 8px 8px;
 }
 #bookmark, #bookmark_disable {
     z-index:  14;
     position: relative;
     float:    left;
-    margin:   8px 12px 8px 0px;
+    margin:   8px 8px 8px 8px;
 }
 
 #progress {
