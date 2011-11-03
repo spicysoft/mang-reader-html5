@@ -28,6 +28,7 @@ function $Reader(_member) {
   }
 
   var act_start = App.isSmartPhone?"touchstart":"mousedown";
+  var act_button = App.isSmartPhone?"touchend":"mouseup";
 
   var prevent_default = function(event) {
     if (App.IE) {
@@ -56,7 +57,6 @@ function $Reader(_member) {
     canvas.style.height = width + "px";
   }
   var SceneAnimator = new $SceneAnimator(width, height, FPS);
-
 
   /**
    * 画面描画
@@ -101,7 +101,6 @@ function $Reader(_member) {
       }
     }
   };
-
 
   var ajax = function(url, datatype, fnSuccess, fnError, method, cache){
     var settings = {
@@ -340,9 +339,9 @@ function $Reader(_member) {
     $("#menu").unbind("mouseout", hideMenu);
     $("#menu").fadeTo(fadeout, "0.0", function(){
       $("#menu").css({cursor:"pointer"});
-      $("#prev_scene").unbind(act_start, goPrev);
+      $("#prev_scene").unbind(act_button, goPrev);
       $("#prev_scene").css({cursor:"default"});
-      $("#first_scene").unbind(act_start, show_first_click);
+      $("#first_scene").unbind(act_button, show_first_click);
       $("#first_scene").css({cursol:"default"});
       $("#menu").bind(act_start, menu_click);
       $("#menu").mouseover(menu_mouse_over);
@@ -372,9 +371,9 @@ function $Reader(_member) {
       $("#first_scene").show();
       $("#prev_scene_disable").hide();
       $("#first_scene_disable").hide();
-      $("#prev_scene").bind(act_start, goPrev);
+      $("#prev_scene").bind(act_button, goPrev);
       $("#prev_scene").css({cursor:"pointer"});
-      $("#first_scene").bind(act_start, show_first_click);
+      $("#first_scene").bind(act_button, show_first_click);
       $("#first_scene").css({cursor:"pointer"});
     }
 
@@ -412,33 +411,45 @@ function $Reader(_member) {
     var comic_id = storyMetaFile["comic_id"];
     console.log("next:"+ next_story_id);
     showMenu(0);
-    $("#next").unbind(act_start);
-    $("#vote").unbind(act_start);
-    $("#bookmark").unbind(act_start);
+    $("#next").unbind(act_button);
+    $("#vote").unbind(act_button);
+    $("#bookmark").unbind(act_button);
 
     if (member) {
-      $("#vote").bind(act_start,
-          function(e) {
-            activate_button($("#vote"), 0);
-            setTimeout(function(){
-              apiVoteStory(comic_id, storyId, 1, function(){
-                goToNextStory(next_story_id, comic_id, "vote");
-              },function(){showError();});
-              hideAll();
-            },0);
-            prevent_default(e);
-          });
-      $("#bookmark").bind(act_start,
-        function(e) {
-          activate_button($("#bookmark"), 0);
-          setTimeout(function(){
-            apiBookmark(comic_id, function(){
-              goToNextStory(next_story_id, comic_id, "bookmark");
-            },function(){showError();});
-            hideAll();
-          },0);
-          prevent_default(e);
-        });
+      setTimeout(
+        function(){
+          $("#vote").bind(act_start,
+            function(e) {
+              activate_button($("#vote"), 0);
+            });
+          $("#vote").bind(act_button,
+            function(e) {
+              activate_button($("#vote"), 0);
+              setTimeout(function(){
+                apiVoteStory(comic_id, storyId, 1, function(){
+                  goToNextStory(next_story_id, comic_id, "vote");
+                },function(){showError();});
+                hideAll();
+              },0);
+              prevent_default(e);
+            });
+           $("#bookmark").bind(act_start,
+             function(e) {
+               activate_button($("#bookmark"), 0);
+             });
+           $("#bookmark").bind(act_button,
+             function(e) {
+               activate_button($("#bookmark"), 0);
+               setTimeout(function(){
+                 apiBookmark(comic_id, function(){
+                   goToNextStory(next_story_id, comic_id, "bookmark");
+                 },function(){showError();});
+               hideAll();
+             },0);
+             prevent_default(e);
+           });
+         }
+      ,1000);
       $("#vote").show();
       $("#bookmark").show();
       $("#vote_disable").hide();
@@ -449,22 +460,26 @@ function $Reader(_member) {
       $("#vote_disable").show();
       $("#bookmark_disable").show();
     }
-
-    $("#next").bind(act_start,
-      function(e) {
-        activate_button($("#next"), 0);
-        setTimeout(function(){
-          goToNextStory(next_story_id, comic_id, "");
-        },0);
-        hideAll();
-        prevent_default(e);
-      });
+    setTimeout(
+      function(){
+        $("#next").bind(act_start,
+          function(e) {
+            activate_button($("#next"), 0);
+          });
+        $("#next").bind(act_button,
+          function(e) {
+            setTimeout(function(){
+              goToNextStory(next_story_id, comic_id, "");
+            },0);
+            hideAll();
+            prevent_default(e);
+        });}
+      ,1000);
     $("#preview").hide();
     $("#loading").hide();
     $("#reader").show();
     $("#error").hide();
     $("#finish").show();
-    $("#finish_actions").show();
 
     var $window = $(window);
     var windowHeight = $window.height();
@@ -474,6 +489,7 @@ function $Reader(_member) {
     var csstop = windowHeight/2;
     var cssleft = windowWidth/2 - width/2;
     $("#finish_actions").css({top:csstop, left:cssleft});
+    $("#finish_actions").show();
   };
 
   /**
@@ -533,7 +549,6 @@ function $Reader(_member) {
     } else {
       throw "Illega state";
     }
-    console.log("goNext done");
   };
 
   /**
@@ -613,7 +628,6 @@ function $Reader(_member) {
 
   /**
    * プレビュー画面を表示する
-   *
    * @returns void
    */
   this.showPreview = function(_storyId) {
@@ -634,5 +648,6 @@ function $Reader(_member) {
   };
 
   this.openStory = openStory;
+  this.goNext = goNext;
 }
 
