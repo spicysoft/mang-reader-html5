@@ -41,6 +41,7 @@ class HtmlCompiler
     private $sources;
     private $res_dir;
     private $dst_dir;
+	const TMPDIR = 'C:/tmp';
 
     public function process($build_type,$src_html,$res_dir,$dst_dir)
     {
@@ -155,7 +156,7 @@ class HtmlCompiler
                 $opt_ex .= "--externs $extern ";
             }
 
-            $tmp = tempnam(sys_get_temp_dir(),'shc');
+            $tmp = tempnam(self::TMPDIR, 'shc');
             $jar = self::JAR_CLOSURE;
             $cmd= "java -jar $jar $opt_js $opt_ex ".
                   " --logging_level 1 ".
@@ -183,7 +184,7 @@ class HtmlCompiler
 
     private function load_compact_css($src)
     {
-        $tmp = tempnam(sys_get_temp_dir(),'shc');
+        $tmp = tempnam(self::TMPDIR, 'shc');
         $jar = self::JAR_YUICOMPRESSOR;
         $cmd = "java -jar $jar $src -o $tmp";
         $this->cmd($cmd);

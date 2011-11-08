@@ -2,7 +2,7 @@
  * コマスクロール関連:ReadingSceneで使用
  * @constructor
  */
-function $SceneAnimator(_readerWidth,_readerHeight,_fps) 
+function $SceneAnimator(_readerWidth,_readerHeight,_fps)
 {
   /**
    * 定数：誤差を減らすため、スクロール位置情報を数倍する。
@@ -57,6 +57,8 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
 
   /** スクロール中はtrue */
   var scrolling = false;
+  var scrollable = false;
+
   /** スクロール動作数 */
   var actionCount;
   /** スクロール */
@@ -69,10 +71,7 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
   var imageWidth;
   /** 描画エリアの縦幅 */
   var imageHeight;
-  /** コマ画像の横幅 */
-  var imageWidth;
-  /** コマ画像の縦幅 */
-  var imageHeight;
+
   /** 中心からのコマの相対横位置 */
   var scrolledPixelsX = 0;
   /** 中心からのコマの相対縦位置 */
@@ -93,43 +92,9 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
   var readerWidth = _readerWidth;
   /** リーダー画面の高さ*/
   var readerHeight = _readerHeight;
-  
-  /**
-   * スクロール初期化
-   */
-  var initializeWhenLoaded = this.initializeWhenLoaded = function(_image,_course,_speed) 
-  {
-    initializeWhenUnloaded();
-    speed        = _speed;
-    course       = _course;
-    imageWidth   = _image.width;
-    imageHeight  = _image.height;
-    actionCount  = X_VECTOR[course].length;
-    limitRight   = (imageWidth - readerWidth) * ADJUST_SCALE / 2;
-    limitLeft    = - limitRight;
-    if (limitRight <= 0) {
-      scrolledPixelsX = 0;
-    } else {
-      scrolledPixelsX = START_X_POSITION[course] * limitRight;
-      scrollable = true;
-    }
-    limitBottom = (imageHeight - readerHeight) * ADJUST_SCALE / 2;
-    limitTop    = -limitBottom;
-    if (limitBottom <= 0) {
-      scrolledPixelsY = 0;
-    } else {
-      scrolledPixelsY = START_Y_POSITION[course] * limitBottom;
-      scrollable = true;
-    }
-    if (course == 0) {
-      scrollable = false;
-    }
-    if (!scrollable) { 
-      actionCount = 0;
-    }
-    caliculate();
-    scrolling = false;
-  };
+
+  var reverse = false;
+  var dirFwd = true;
 
   /**
    * スクロール初期化
@@ -139,15 +104,15 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     actionCount= 0;
     scrolling  = false;
     scrollable = false;
+    reverse = false;
+    dirFwd = true;
   };
 
-  this.x = function() 
-  {
+  this.x = function() {
     return scrolledPixelsX / ADJUST_SCALE;
   };
 
-  this.y = function()
-  {
+  this.y = function() {
     return scrolledPixelsY / ADJUST_SCALE;
   };
 
@@ -155,30 +120,30 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
    * スクロール不要のシーンもしくは スクロールが完了してるかどうか？
    */
   this.isAtScrollEnd = function() {
-    return actionCount == 0 || (scrolling == false && action == actionCount);
+    return actionCount === 0 || (scrolling === false && action === actionCount);
   };
 
   /**
    * シーンのスクロールアニメーションの先頭フレームにいるか？先頭フレームである場合true
    */
   this.isAtScrollStart = function() {
-    return actionCount != 0 && scrolling == false && action == 0;
+    if(reverse){
+      return actionCount != 0 && scrolling == false && action >= actionCount;
+    }else{
+      return actionCount != 0 && scrolling == false && action <= 0;
+    }
   };
+
+  this.startBackScroll = function(){
+    scrolling = true;
+    action = actionCount-1;
+  }
 
   /**
    * スクロール中かどうか？スクロール中の場合はtrue
    */
   var isScrolling = this.isScrolling = function() {
     return scrolling;
-  };
-
-  /**
-   * スクロールを完了させる
-   */
-  this.skipScroll = function() {
-    while (action < actionCount && isScrolling()) {
-      step();
-    }
   };
 
   /**
@@ -195,26 +160,87 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     if (actionCount <= action) {
       return;
     }
-
     movePixelX = X_VECTOR[course][action];
     movePixelY = Y_VECTOR[course][action];
-    if (movePixelX != 0 && movePixelY != 0) {
+    if (movePixelX !== 0 && movePixelY !== 0) {
       var moveAreaWidth = limitRight - limitLeft;
       var moveAreaHeight = limitBottom - limitTop;
       if (moveAreaWidth < moveAreaHeight) {
-        if (moveAreaWidth != 0)
+        if (moveAreaWidth !== 0){
           movePixelX = movePixelX * moveAreaHeight / moveAreaWidth;
+        }
       } else if (moveAreaWidth > moveAreaHeight) {
-        if (moveAreaHeight != 0)
+        if (moveAreaHeight !== 0){
           movePixelY = movePixelY * moveAreaWidth / moveAreaHeight;
+        }
       }
     }
-    if (movePixelX != 0) {
+    if (movePixelX !== 0) {
       movePixelX = speed * ADJUST_SCALE * ADJUST_SCALE / movePixelX;
     }
-    if (movePixelY != 0) {
+    if (movePixelY !== 0) {
       movePixelY = speed * ADJUST_SCALE * ADJUST_SCALE / movePixelY;
     }
+  };
+
+
+  /**
+   * スクロール初期化
+   */
+  var initializeWhenLoaded = this.initializeWhenLoaded = function(_image,_course,_speed) {
+
+    initializeWhenUnloaded();
+    speed        = _speed;
+    course       = _course;
+    imageWidth   = _image.width;
+    imageHeight  = _image.height;
+    actionCount  = X_VECTOR[course].length;
+    limitRight   = (imageWidth - readerWidth) * ADJUST_SCALE / 2;
+    limitLeft    = - limitRight;
+
+    scrollable_x = false;
+    scrollable_y = false;
+
+    if (limitRight <= 0) {
+      scrolledPixelsX = 0;
+    } else {
+      scrolledPixelsX = (reverse ? -1 : 1) * START_X_POSITION[course] * limitRight;
+      scrollable_x = true;
+    }
+    limitBottom = (imageHeight - readerHeight) * ADJUST_SCALE / 2;
+    limitTop    = -limitBottom;
+    if (limitBottom <= 0) {
+      scrolledPixelsY = 0;
+    } else {
+      scrolledPixelsY = (reverse ? -1 : 1) * START_Y_POSITION[course] * limitBottom;
+      scrollable_y = true;
+    }
+    scrollable = false;
+    if (course != 0 && (scrollable_x || scrollable_y)) {
+      scrollable = true;
+      if(course > 4){
+        if(!scrollable_x){
+          course = 1;
+        }else{
+          if(course == SCROLL_N || course == SCROLL_RZ){
+            course = 3;
+          }else{
+            course = 4;
+          }
+        }
+      }
+    }
+
+    if (!scrollable) {
+      actionCount = 0;
+    }
+    if (reverse && action < actionCount) {
+      action = actionCount;
+    }else{
+      action = 0;
+    }
+    caliculate();
+    scrolling = false;
   };
 
   /**
@@ -224,7 +250,7 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     if (!scrolling) {
       return;
     }
-    if (actionCount <= action) {
+    if (!reverse && actionCount <= action || reverse && action < 0) {
       return;
     }
 
@@ -232,10 +258,10 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
 
     var moved= false;
     // X軸
-    if (movePixelX != 0 && scrolledPixelsX >= limitLeft
-        && scrolledPixelsX <= limitRight) {
+    if (movePixelX !== 0 && scrolledPixelsX >= limitLeft &&
+       scrolledPixelsX <= limitRight) {
       // 動作に対応したベクトルに速度をかけて加算
-      scrolledPixelsX += movePixelX;
+      scrolledPixelsX += reverse ? -movePixelX : movePixelX;
       // 行き過ぎた場合は限界まで戻す。
       if (scrolledPixelsX <= limitLeft) {
         scrolledPixelsX = limitLeft;
@@ -246,9 +272,9 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
       }
     }
     // Y軸
-    if (movePixelY != 0 && scrolledPixelsY >= limitTop
-        && scrolledPixelsY <= limitBottom) {
-      scrolledPixelsY += movePixelY;
+    if (movePixelY !== 0 && scrolledPixelsY >= limitTop &&
+       scrolledPixelsY <= limitBottom) {
+      scrolledPixelsY += reverse ? -movePixelY : movePixelY;
       if (scrolledPixelsY <= limitTop) {
         scrolledPixelsY = limitTop;
       } else if (scrolledPixelsY >= limitBottom) {
@@ -259,11 +285,38 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     }
 
     if (!moved) {
-      action++;
-      if(action >= actionCount){
+      if (!reverse) {
+        action++;
+      }else{
+        action--;
+      }
+
+      if(!reverse && action >= actionCount){
+        scrolling = false;
+      }else if (reverse && action < 0){
         scrolling = false;
       }
     }
   };
 
+  /**
+   * スクロールを完了させる
+   */
+  this.skipScroll = function() {
+    while (action < actionCount && isScrolling()) {
+      step();
+    }
+  };
+
+  /**
+   * スクロールを完了させる
+   */
+  this.skipBack = function() {
+    reverse = true;
+    scrolling = true;
+    action--;
+    while (0 < action) {
+      step();
+    }
+  };
 }
