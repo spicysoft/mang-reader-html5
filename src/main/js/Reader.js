@@ -76,7 +76,6 @@ function $Reader(_member) {
     var dx = (width - w) / 2 + x;
     var dy = (height - h) / 2 + y;
 
-    //console.log("dx:" + dx + " dy:" +dy + " i.w:" + w  + "i.h:" + h + " c.w:" + width + " c.h:" + height);
     if (App.IE) {
       i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
       $("#canvas").empty().append(i);
@@ -92,7 +91,6 @@ function $Reader(_member) {
       if(App.ANDROID21){
         context.save();
         var rate =  Math.sqrt(320/screen.width);
-        console.log("scaled rate:" + rate + " " + screen.width + " " + (320/screen.width));
         context.scale(rate, rate);
       }
       context.drawImage(i, dx, dy);
@@ -219,14 +217,12 @@ function $Reader(_member) {
    * またこの内部でプリロード、破棄処理も行う。 現在は一括ロード。
    */
   var fetchSceneImage = function(sceneIndex) {
-    console.log("fetchSceneImage");
     var under = sceneIndex - 4;
     var prefetch = sceneIndex + 12;
     for ( var n = 0; n < scenes.length; n++) {
       if (n < under && sceneImages[n] !== undefined) {
         sceneImages[n] = undefined;
       } else if (under <= n && n <= prefetch && sceneImages[n] === undefined) {
-        console.log("apiSceneImage:" + n);
         sceneImages[n] = apiSceneImage(scenes[n].id);
       }
     }
@@ -255,7 +251,6 @@ function $Reader(_member) {
     var i = sceneImages[currentSceneIndex];
     function onloaded() {
       var scene = scenes[currentSceneIndex];
-      console.log("scene onloaded:" + currentSceneIndex);
       SceneAnimator.initializeWhenLoaded(i, scene["scroll_course"], scene["scroll_speed"]);
       $("#loading").hide();
       isLoading = false;
@@ -271,7 +266,6 @@ function $Reader(_member) {
       SceneAnimator.initializeWhenUnloaded();
       i.onload = onloaded;
     }
-    console.log("jupmToScene done");
   };
 
   /**
@@ -290,7 +284,6 @@ function $Reader(_member) {
   };
 
   var activate_button = function(item, time){
-    console.log("activate_button");
     item.addClass("active");
     if(0 < time){
       setTimeout(function(){
@@ -334,7 +327,6 @@ function $Reader(_member) {
     if(!menuIsVisible()){
       return;
     }
-    console.log("hide menu:" + fadeout);
 
     $("#menu").unbind("mouseout", hideMenu);
     $("#menu").fadeTo(fadeout, "0.0", function(){
@@ -355,7 +347,6 @@ function $Reader(_member) {
     if(menuIsVisible()){
       return;
     }
-    console.log("show menu:" + lifetime);
     $("#menu").unbind(act_start, menu_click);
     $("#menu").unbind("mouseover", menu_mouse_over);
     $("#menu").show();
@@ -394,7 +385,6 @@ function $Reader(_member) {
   };
 
   var hideAll = function(){
-    console.log("hideAll");
     $("#menu").hide();
     $("#next").hide();
     $("#vote").hide();
@@ -406,10 +396,8 @@ function $Reader(_member) {
   };
 
   var showFinished = function() {
-    console.log("showFinished");
     var next_story_id = storyMetaFile["next_story_id"];
     var comic_id = storyMetaFile["comic_id"];
-    console.log("next:"+ next_story_id);
     showMenu(0);
     $("#next").unbind(act_button);
     $("#vote").unbind(act_button);
@@ -531,19 +519,15 @@ function $Reader(_member) {
     SceneAnimator.reverse = false;
     SceneAnimator.dirFwd = true;
 
-    console.log("goNext");
     if (SceneAnimator.isAtScrollStart()) {
-      console.log("isAtScrollStart");
       SceneAnimator.startScroll();
       animation();
 
     } else if (SceneAnimator.isScrolling()) {
-      console.log("isScrolling");
       SceneAnimator.skipScroll();
       paint();
 
     } else if (SceneAnimator.isAtScrollEnd()) {
-      console.log("isAtScrollEnd");
       goNextScene();
 
     } else {
@@ -593,10 +577,8 @@ function $Reader(_member) {
    * 指定したマンガの話をリーダーで開く。
    */
   var openStory = function(_storyId) {
-    console.log("openStory:"+_storyId);
     storyId = _storyId;
     if (sceneImages !== undefined) {
-      console.log(sceneImages);
       for ( var n = 0; n < sceneImages.length; n++) {
         var i = sceneImages[n];
         if (i !== undefined) {
@@ -610,7 +592,6 @@ function $Reader(_member) {
     storyMetaFile = null;
     showLoading();
     apiStoryMetaFile(storyId, function(json) {
-      console.log("apiStoryMetaFile");
       storyMetaFile = json;
       scenes = storyMetaFile["scenes"];
       updateSceneCount();

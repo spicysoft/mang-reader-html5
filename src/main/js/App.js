@@ -76,7 +76,6 @@ function $App() {
       var $self = $(this);
       var width = $self.width();
       var height = $self.height();
-      console.log("centering w:" +width + " h:" + height);
       var paddingTop    = $self.css("padding-top").toInt();
       var paddingBottom = $self.css("padding-bottom").toInt();
       var borderTop     = $self.css("border-top-width").toInt();
@@ -181,8 +180,6 @@ function $App() {
  *
  */
 $(function() {
-  console.log("start");
-
   /**
    *  URLアンカーからカンマ区切りのパラメーターを取得する
    */
@@ -209,11 +206,9 @@ $(function() {
   App = new $App();
   var params = getRealParameters();
   Reader = new $Reader(params.member);
-  console.log("openStory:start:" + params.storyId);
   if(!params.auto){
     Reader.showPreview(params.storyId);
   }else{
     Reader.openStory(params.storyId);
   }
-  console.log("started");
 });
