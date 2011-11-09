@@ -221,8 +221,8 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
       if(course > 4){
         if(!scrollable_x){
           course = 1;
-        }else{
-          if(course == SCROLL_N || course == SCROLL_RZ){
+        }else if(!scrollable_y){
+          if(course == 5 || course == 6){
             course = 3;
           }else{
             course = 4;

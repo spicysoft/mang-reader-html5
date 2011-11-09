@@ -173,7 +173,7 @@ body {
     margin: 4px 8px 4px 8px;
 }
 
-#next {
+#next, #next_disable {
     z-index:  14;
     position: relative;
     margin:auto;
@@ -219,7 +219,7 @@ body {
 }
 
 .sprite {
-  background-image:  url(ja.png?v=2);
+  background-image:  url(ja.png?v=3);
   background-repeat: no-repeat;
   text-indent:       -9999px;
   overflow:          hidden;
@@ -238,17 +238,17 @@ body {
 #prev_scene:hover, #prev_scene.active {background-position: -200px -33px;width: 100px;height: 32px;}
 #prev_scene_disable {background-position: -100px -33px;width: 100px;height: 32px;}
 
-#vote {background-position: 0 -121px;width: 141px;height: 54px;}
+#vote {background-position: 0 -121px;width: 141px;height: 54px;cursor: pointer;}
 #vote_disable {background-position: -142px -121px;width: 141px;height: 54px;}
-#vote:hover, #vote.active  {background-position: -284px -121px;width: 141px;height: 54px;}
+#vote:hover, #vote.active  {background-position: -284px -121px;width: 141px;height: 54px;cursor: pointer;}
 
-#bookmark  {background-position: 0 -66px;width: 141px;height: 54px;}
+#bookmark  {background-position: 0 -66px;width: 141px;height: 54px;cursor: pointer;}
 #bookmark_disable {background-position: -142px -66px;width: 141px;height: 54px;}
-#bookmark:hover, #bookmark.active {background-position: -284px -66px;width: 141px;height: 54px;}
+#bookmark:hover, #bookmark.active {background-position: -284px -66px;width: 141px;height: 54px;cursor: pointer;}
 
-#next {background-position: 0 -176px;width: 300px;height: 62px;}
-#next:hover, #next.active{background-position: 0 -239px;width: 300px;height: 62px;}
+#next {background-position: 0 -176px;width: 300px;height: 62px;cursor: pointer;}
+#next_disable {background-position: 0 -302px;width: 300px;height: 62px;}
+#next:hover, #next.active{background-position: 0 -239px;width: 300px;height: 62px;cursor: pointer;}
 
-#start  {background-position: -301px -176px;width: 62px;height: 62px;}
-#start:hover, #start.active {background-position: -301px -239px;width: 62px;height: 62px;}
-
+#start  {background-position: -301px -176px;width: 62px;height: 62px;cursor: pointer;}
+#start:hover, #start.active {background-position: -301px -239px;width: 62px;height: 62px;cursor: pointer;}

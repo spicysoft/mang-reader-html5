@@ -60,7 +60,6 @@ function $Reader(_member) {
 
   /**
    * 画面描画
-   *
    * @return void
    */
   var paint = function() {
@@ -261,7 +260,7 @@ function $Reader(_member) {
       onloaded();
     } else {
       isLoading = true;
-      showMenu(2000,1000);
+      showMenu(2000,500);
       $("#loading").show();
       SceneAnimator.initializeWhenUnloaded();
       i.onload = onloaded;
@@ -315,26 +314,28 @@ function $Reader(_member) {
   };
 
   var menu_click = function(e){
-    showMenu(3000,1000);
+    showMenu(2000, 500);
     prevent_default(e);
   };
+
   var menu_mouse_over = function(e){showMenu(0);}
   var menuIsVisible = function(){
-    return parseInt($("#menu").css("opacity"), 10) === 1;
+    return $("#menu").css("opacity") > 0.0;
   };
 
   var hideMenu = function(fadeout){
     if(!menuIsVisible()){
+      //console.log("hideMenu:ignored");
       return;
     }
-
+    //console.log("hideMenu:" + fadeout);
     $("#menu").unbind("mouseout", hideMenu);
     $("#menu").fadeTo(fadeout, "0.0", function(){
       $("#menu").css({cursor:"pointer"});
       $("#prev_scene").unbind(act_button, goPrev);
       $("#prev_scene").css({cursor:"default"});
       $("#first_scene").unbind(act_button, show_first_click);
-      $("#first_scene").css({cursol:"default"});
+      $("#first_scene").css({cursor:"default"});
       $("#menu").bind(act_start, menu_click);
       $("#menu").mouseover(menu_mouse_over);
     });
@@ -345,8 +346,10 @@ function $Reader(_member) {
    */
   var showMenu = function (lifetime, fadeout){
     if(menuIsVisible()){
+      //console.log("showMenu:ignored");
       return;
     }
+    //console.log("showMenu:" + lifetime);
     $("#menu").unbind(act_start, menu_click);
     $("#menu").unbind("mouseover", menu_mouse_over);
     $("#menu").show();
@@ -369,8 +372,10 @@ function $Reader(_member) {
     }
 
     if(0 < lifetime){
+      //console.log("menu will hide:" + lifetime);
       setTimeout(function(){hideMenu(fadeout);}, lifetime);
     }else{
+      //console.log("menu will not hide");
       $("#menu").mouseout(function(e){
         var rect = e.currentTarget.getClientRects()[0];
         if(e.clientX >= rect.left  &&
@@ -379,7 +384,8 @@ function $Reader(_member) {
            e.clientY <= rect.bottom ){
           return;
         }
-        hideMenu(1000);
+        //console.log("mouseout!");
+        hideMenu(500);
       });
     }
   };
@@ -388,6 +394,7 @@ function $Reader(_member) {
     $("#menu").hide();
     $("#next").hide();
     $("#vote").hide();
+    $("#next_disable").hide();
     $("#vote_disable").hide();
     $("#bookmark_disable").hide();
     $("#bookmark").hide();
@@ -436,18 +443,24 @@ function $Reader(_member) {
              },0);
              prevent_default(e);
            });
+           $("#vote_disable").hide();
+           $("#vote").show();
+           $("#bookmark_disable").hide();
+           $("#bookmark").show();
          }
       ,1000);
-      $("#vote").show();
-      $("#bookmark").show();
-      $("#vote_disable").hide();
-      $("#bookmark_disable").hide();
+      $("#vote").hide();
+      $("#vote_disable").show();
+      $("#bookmark").hide();
+      $("#bookmark_disable").show();
     }else{
       $("#vote").hide();
       $("#bookmark").hide();
       $("#vote_disable").show();
       $("#bookmark_disable").show();
     }
+    $("#next").hide();
+    $("#next_disable").show();
     setTimeout(
       function(){
         $("#next").bind(act_start,
@@ -461,7 +474,10 @@ function $Reader(_member) {
             },0);
             hideAll();
             prevent_default(e);
-        });}
+        });
+        $("#next_disable").hide();
+        $("#next").show();
+      }
       ,1000);
     $("#preview").hide();
     $("#loading").hide();
@@ -540,8 +556,8 @@ function $Reader(_member) {
    */
   var showLoading = function() {
     isLoading = true;
-    showMenu(2000,1000);
-    $("#canvas").css({cursol:"wait"});
+    showMenu(2000,500);
+    $("#canvas").css({cursor:"wait"});
     $("#loading").show();
     $("#reader").hide();
     $("#finish").hide();
@@ -552,7 +568,7 @@ function $Reader(_member) {
    * 表示モードを「マンガ閲覧中」に切り替える
    */
   var showReader = function() {
-    $("#canvas").css({cursol:"default"});
+    $("#canvas").css({cursor:"pointer"});
     $("#loading").hide();
     $("#reader").show();
     $("#finish").hide();
