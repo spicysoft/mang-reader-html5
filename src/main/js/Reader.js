@@ -5,9 +5,8 @@
  *
  * @constructor
  */
-function $Reader(_member, _superuser) {
+function $Reader(_member) {
   var member = _member;
-  var su = _superuser;
   var FPS = 33;
   var API_ROOT = '/api';
   var width = 0;
@@ -16,43 +15,16 @@ function $Reader(_member, _superuser) {
   var storyId;
   var storyMetaFile;
   var scenes;
-  var pages;
   var sceneImages;
-  var pageImages;
   var currentSceneIndex = 0;
-  var currentPageIndex = 0;
-  var isLoading = false;
 
-  var su_key = "";
-  var su_expire = 0;
-  var t = 0;
+  var isLoading = false;
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
     // style="background: #000;"を定義しないとクリッカブルにならない
     $("#canvas").replaceWith(
         '<div id="canvas" style="background: #000;"></div>');
-  }
-
-  var getUrlVars = function(){
-    var vars = [], hash;
-    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-    for(var i = 0; i < hashes.length; i++) {
-      hash = hashes[i].split('=');
-      vars.push(hash[0]);
-      vars[hash[0]] = hash[1];
-    }
-    return vars;
-  };
-
-  var get_vars = getUrlVars();
-  if(su){
-    su_key = get_vars["k"];
-    su_expire = get_vars["expire"];
-  }
-
-  if(get_vars["t"]){
-    t = get_vars["t"];
   }
 
   var act_start = App.isSmartPhone?"touchstart":"mousedown";
@@ -167,17 +139,7 @@ function $Reader(_member, _superuser) {
    * @returns void    非同期通信です。通信を開始後、完了をまたずにすぐに処理が戻ります。
    */
   var apiStoryMetaFile = function(storyId, fnSuccess, fnError) {
-    var param='';
-    var cache = true;
-    if(su){
-      param = '?mode=superuser&k='+su_key+'&expire='+su_expire;
-      cache = false;
-    }else{
-      if(t > 0){
-        param = "?t="+t;
-      }
-    }
-    ajax_get(API_ROOT + '/storyMetaFile/' + storyId+param, 'json', fnSuccess, fnError, cache);
+    ajax_get(API_ROOT + '/storyMetaFile/' + storyId, 'json', fnSuccess, fnError, true);
   };
 
   /**
@@ -198,11 +160,6 @@ function $Reader(_member, _superuser) {
   var apiBookmark = function(comicId, fnSuccess, fnError){
     ajax_post('/api/bookmark/'+comicId, 'json', fnSuccess, fnError);
   };
-
-  var apiRead = function(storyId, fnSuccess, fnError){
-    ajax_post('/api/read/'+storyId, 'json', fnSuccess, fnError);
-  };
-
 
   var updateSceneCount = function(){
     $("#progress_total").text(scenes.length);
@@ -248,14 +205,9 @@ function $Reader(_member, _superuser) {
     i.hasLoaded = function(){
       //IE9でImage.completeが動作しない場合があるので、
       //Image.widthを見てロードが完了したか判断する
-       console.log(this);
       return this.width > 0;
     };
-    var param = "";
-    if(t > 0){
-      param = "?t="+t;
-    }
-    i.src = API_ROOT + '/sceneImage/' + sceneId + param;
+    i.src = API_ROOT + '/sceneImage/' + sceneId;
     return i;
   };
 
@@ -264,15 +216,13 @@ function $Reader(_member, _superuser) {
    * またこの内部でプリロード、破棄処理も行う。 現在は一括ロード。
    */
   var fetchSceneImage = function(sceneIndex) {
-    console.log(sceneIndex);
     var under = sceneIndex - 4;
     var prefetch = sceneIndex + 12;
     for ( var n = 0; n < scenes.length; n++) {
       if (n < under && sceneImages[n] !== undefined) {
         sceneImages[n] = undefined;
       } else if (under <= n && n <= prefetch && sceneImages[n] === undefined) {
-        console.log(scenes[n]);
-        sceneImages[n] = apiSceneImage(scenes[n]['scene_id']);
+        sceneImages[n] = apiSceneImage(scenes[n].id);
       }
     }
   };
@@ -368,7 +318,7 @@ function $Reader(_member, _superuser) {
     prevent_default(e);
   };
 
-  var menu_mouse_over = function(e){showMenu(0);};
+  var menu_mouse_over = function(e){showMenu(0);}
   var menuIsVisible = function(){
     return $("#menu").css("opacity") > 0.0;
   };
@@ -660,7 +610,6 @@ function $Reader(_member, _superuser) {
     apiStoryMetaFile(storyId, function(json) {
       storyMetaFile = json;
       scenes = storyMetaFile["scenes"];
-      pages = storyMetaFile["pages"];
       updateSceneCount();
       if (scenes.length === 0) {
         showFinished();
@@ -668,7 +617,6 @@ function $Reader(_member, _superuser) {
         showReader();
         jumpToScene(0);
       }
-      apiRead(storyId, function(json){console.log(json);});
     }, function() {
       showError();
     });

@@ -200,16 +200,12 @@ $(function() {
     real.storyId = Math.floor(raw[0]);
     real.member  = 2 <= raw.length && raw[1] === 'member';
     real.auto    = 3 <= raw.length && raw[2] === 'auto';
-    real.superuser = 3 <= raw.length && raw[2] === 'superuser'
-              || 4 <= raw.length && raw[3] === 'superuser';
-    console.log(raw);
-    console.log(real);
     return real;
   }
 
   App = new $App();
   var params = getRealParameters();
-  Reader = new $Reader(params.member, params.superuser);
+  Reader = new $Reader(params.member);
   if(!params.auto){
     Reader.showPreview(params.storyId);
   }else{
