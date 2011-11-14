@@ -139,7 +139,7 @@ function $Reader(_member) {
    * @returns void    非同期通信です。通信を開始後、完了をまたずにすぐに処理が戻ります。
    */
   var apiStoryMetaFile = function(storyId, fnSuccess, fnError) {
-    ajax_get(API_ROOT + '/storyMetaFile/' + storyId, 'json', fnSuccess, fnError, true);
+    ajax_get(API_ROOT + '/storyMetaFile/' + storyId, 'json', fnSuccess, fnError, false);
   };
 
   /**
