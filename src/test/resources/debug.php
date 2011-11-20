@@ -1,14 +1,8 @@
-<!DOCTYPE html><html><head></head><body><div>
+<!DOCTYPE html><html><head></head><body style="background-color: #808080;"><div>
 <div>Development</div>
-<h2>nomember 240</h2>
-<iframe src="/local-test/mr/target/dist-debug/ja_pc.html?t=<?=time()?>#26687" width="240" height="240" frameborder="0" allowfullscreen="true" scrolling="no"></iframe>
-<h2>nomember 320</h2>
-<iframe src="/local-test/mr/target/dist-debug/ja_pc.html?t=<?=time()?>#10915" width="320" height="320" frameborder="0" allowfullscreen="true" scrolling="no"></iframe>
-<h2>member 320</h2>
-<iframe src="/local-test/mr/target/dist-debug/ja_pc.html?t=<?=time()?>#10915,member" width="320" height="320" frameborder="0" allowfullscreen="true" scrolling="no"></iframe>
-<h2>member 320 auto</h2>
-<iframe src="/local-test/mr/target/dist-debug/ja_pc.html?t=<?=time()?>#26687,member,auto" width="320" height="320" frameborder="0" allowfullscreen="true" scrolling="no"></iframe>
-<h2>nomember 480</h2>
-<iframe src="/local-test/mr/target/dist-debug/ja_pc.html?t=<?=time()?>#10915" width="480" height="480" frameborder="0" allowfullscreen="true" scrolling="no"></iframe>
+<h2>member 480</h2>
+<script src="/local-test/mr/target/dist-debug/jquery-1.5.min.js" type="text/javascript" ></script>
+<script src="/local-test/mr/target/dist-debug/Controll.js" type="text/javascript" ></script>
+<iframe id="reader_reader" src="/local-test/mr/target/dist-debug/ja_pc.html?t=<?=time()?>#1925,member" width="480" height="480" frameborder="0" allowfullscreen="true" scrolling="no"></iframe>
 </div>
 </body></html>

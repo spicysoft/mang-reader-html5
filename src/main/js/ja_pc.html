@@ -4,43 +4,64 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <include type="javascript" src_interns="src/main/js/strings.js,src/main/js/Reader.js,src/main/js/App.js,src/main/js/SceneAnimator.js" src_externs="lib/jquery-1.5.min.js:lib/closure-compiler/jquery-1.5.externs.js,src/main/js/ga.js:src/main/js/ga.js"/>
     <include type="css" src="src/main/js/pc.css"/>
+    <script type="text/javascript" >
+      var fileref=document.createElement("link");
+      fileref.setAttribute("rel", "stylesheet");
+      fileref.setAttribute("type", "text/css");
+      if($(window).width() <= 320){
+          fileref.setAttribute("href", "layout.320.css" );
+      }else{
+          fileref.setAttribute("href", "layout.480.css" );
+      }
+      document.getElementsByTagName('head').item(0).appendChild(fileref);
+    </script>
 </head>
 <body scrolling="no">
     <div id="mangh5r">
       <div id="preview" class="stage">
         <img id="thumbnail" class="ui" title="クリックするとマンガ閲覧をスタートします"/>
-        <div id="preview_ui" class="vhcenter"><span id="start" class="sprite preview_btn" title="マンガを読む"></span></div>
+        <div id="preview_ui" class="vhcenter"><span id="start" class="sprite2 preview_btn" title="マンガを読む"></span></div>
       </div>
-      <div id="loading"  style="display:none;"><span class="message">読み込み中</span></span></div>
+      <div id="dialog_loading"  style="display:none;"></div>
       <div id="reader" class="stage">
         <canvas id="canvas"></canvas>
         <div id="info" class="msg"></div>
       </div>
-      <div id="menu" style="display:none;opacity:0;">
-        <div id="prev_scene"          class="sprite" title="前のコマへ"></div>
-        <div id="prev_scene_disable"  class="sprite" title=""></div>
-        <div id="first_scene"         class="sprite" title="最初から読む"></div>
-        <div id="first_scene_disable" class="sprite" title=""></div>
-        <div id="progress" ><span id="progress_current">--</span>/<span id="progress_total">--</span>コマ</div>
+      <div id="menu" style="">
+        <div id="menu_upper">
+          <span id="toggle_reading"    class="sprite"  title="読書モード" ></span>
+          <span id="toggle_original"   class="sprite"  title="原画モード"  style="display:none;"></span>
+          <span id="toggle_scene_view" class="sprite"  title="コマ表示"></span>
+          <span id="toggle_page_view"  class="sprite"  title="ページ表示" style="display:none;"></span>
+        </div>
+        <div id="menu_lower">
+          <span id="prev_scene"   class="sprite disable" title="前のコマへ"></span>
+          <span id="first_scene"  class="sprite disable" title="最初から読む"></span>
+        </div>
+        <div id="menu_center">
+          <span id="progress" ><span id="progress_current">--</span>/<span id="progress_total">--</span></span>
+          <span id="menu_tab_wrap">
+            <span id="menu_tab" class="sprite"  ></span>
+          </span>
+        </div>
       </div>
       <div id="finish" class="stage">
         <div class="mask"></div>
         <div id="finish_ui" class="vhcenter">
             <div id="finish_actions">
               <div id="finish_social_actions">
-                <span id="vote"             class="sprite" title="イイネを押して次へ"></span>
-                <span id="vote_disable"     class="sprite" style="display:none;" title="イイネを押すにはログインが必要です"></span>
-                <span id="bookmark"         class="sprite" title="ブックマークを押して次へ"></span>
-                <span id="bookmark_disable" class="sprite" style="display:none;" title="ブックマークを押すにはログインが必要です"></span>
+                <span id="vote"      class="sprite disable" title="イイネを押して次へ"></span>
+                <span id="bookmark"  class="sprite disable" title="ブックマークを押して次へ"></span>
               </div>
-              <span id="next"  class="sprite" title="次の話へ"></span>
-              <span id="next_disable"  class="sprite" title="" style="display:none"></span>
+              <span id="next"  class="sprite disable" title="次の話へ"></span>
             </div>
         </div>
       </div>
       <div id="error" class="stage">
         <div class="mask"></div>
-        <div class="msg">このマンガは既に削除されたか<br />公開停止になっています。</div>
+        <div id="dialog_error">
+          <span class="msg">このマンガは既に削除されたか<br />公開停止になっています。</span>
+        </div>
       </div>
     </div>
 </body></html>

@@ -1,0 +1,143 @@
+@charset "utf-8";
+
+/*
+This css was written by CSSSprite Extension (copyright (c) 2010 Risa Yuguchi <risa.yuguchi@gmail.com>).
+ Eveyone can delete this comments.
+ Thank you for using this extension.
+*/
+
+.csssprite {background-image: url(/csssprite.png);background-repeat: no-repeat;text-indent:-9999px;overflow: hidden;display:block;}
+
+/* each setting */
+
+/* for #footermenu_number_bar_fullscreen */
+#footermenu_number_bar_fullscreen {background-position: 0 -174px;width: 545px;height: 28px;}
+
+/* for #footermenu_number_bar_author */
+#footermenu_number_bar_author {background-position: -330px -29px;width: 131px;height: 28px;}
+
+/* for #footermenu_mode_coma_normal */
+#footermenu_mode_coma_normal {background-position: 0 -58px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_coma_hover */
+#footermenu_mode_coma_hover {background-position: -102px -58px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_original_click */
+#footermenu_mode_original_click {background-position: -204px -145px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_original_disable */
+#footermenu_mode_original_disable {background-position: -306px -145px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_original_hover */
+#footermenu_mode_original_hover {background-position: -102px -145px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_original_normal */
+#footermenu_mode_original_normal {background-position: 0 -145px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_page_click */
+#footermenu_mode_page_click {background-position: -204px -116px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_page_disable */
+#footermenu_mode_page_disable {background-position: -306px -116px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_page_hover */
+#footermenu_mode_page_hover {background-position: -102px -116px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_page_normal */
+#footermenu_mode_page_normal {background-position: 0 -116px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_standard_click */
+#footermenu_mode_standard_click {background-position: -204px -87px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_standard_disable */
+#footermenu_mode_standard_disable {background-position: -306px -87px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_standard_hover */
+#footermenu_mode_standard_hover {background-position: -102px -87px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_standard_normal */
+#footermenu_mode_standard_normal {background-position: 0 -87px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_coma_click */
+#footermenu_mode_coma_click {background-position: -204px -58px;width: 101px;height: 28px;}
+
+/* for #footermenu_mode_coma_disable */
+#footermenu_mode_coma_disable {background-position: -306px -58px;width: 101px;height: 28px;}
+
+/* for #footermenu_number_bar */
+#footermenu_number_bar {background-position: -360px 0;width: 101px;height: 28px;}
+
+/* for #footermenu_next_coma_normal */
+#footermenu_next_coma_normal {background-position: 0 -29px;width: 59px;height: 28px;}
+
+/* for #footermenu_next_coma_hover */
+#footermenu_next_coma_hover {background-position: -60px -29px;width: 59px;height: 28px;}
+
+/* for #footermenu_next_coma_click */
+#footermenu_next_coma_click {background-position: -120px -29px;width: 59px;height: 28px;}
+
+/* for #footermenu_back_coma_normal */
+#footermenu_back_coma_normal {background-position: -120px 0;width: 59px;height: 28px;}
+
+/* for #footermenu_next_coma_disable */
+#footermenu_next_coma_disable {background-position: -180px -29px;width: 59px;height: 28px;}
+
+/* for #footermenu_back_coma_click */
+#footermenu_back_coma_click {background-position: -240px 0;width: 59px;height: 28px;}
+
+/* for #footermenu_back_coma_disable */
+#footermenu_back_coma_disable {background-position: -300px 0;width: 59px;height: 28px;}
+
+/* for #footermenu_back_coma_hover */
+#footermenu_back_coma_hover {background-position: -180px 0;width: 59px;height: 28px;}
+
+/* for #footermenu_mode_fullscreen_hover */
+#footermenu_mode_fullscreen_hover {background-position: -270px -29px;width: 29px;height: 28px;}
+
+/* for #footermenu_mode_fullscreen_click */
+#footermenu_mode_fullscreen_click {background-position: -300px -29px;width: 29px;height: 28px;}
+
+/* for #footermenu_back0normal */
+#footermenu_back0normal {background-position: 0 0;width: 29px;height: 28px;}
+
+/* for #footermenu_back0hover */
+#footermenu_back0hover {background-position: -30px 0;width: 29px;height: 28px;}
+
+/* for #footermenu_back0disable */
+#footermenu_back0disable {background-position: -90px 0;width: 29px;height: 28px;}
+
+/* for #footermenu_mode_fullscreen_normal */
+#footermenu_mode_fullscreen_normal {background-position: -240px -29px;width: 29px;height: 28px;}
+
+/* for #footermenu_back0click */
+#footermenu_back0click {background-position: -60px 0;width: 29px;height: 28px;}
+
+/* for #popmenu_mode_standard */
+#popmenu_mode_standard {background-position: -767px 0;width: 218px;height: 249px;}
+
+/* for #popmenu_mode_origina */
+#popmenu_mode_origina {background-position: -548px 0;width: 218px;height: 249px;}
+
+/* for #popmenu_mode_coma */
+#popmenu_mode_coma {background-position: -549px -251px;width: 195px;height: 159px;}
+
+/* for #popmenu_mode_page */
+#popmenu_mode_page {background-position: -756px -250px;width: 195px;height: 159px;}
+
+/* for #fullscreen_next_koma_disable */
+#fullscreen_next_koma_disable {background-position: -342px -273px;width: 170px;height: 68px;}
+
+/* for #fullscreen_back_koma_push */
+#fullscreen_back_koma_push {background-position: -171px -204px;width: 170px;height: 68px;}
+
+/* for #fullscreen_back_koma_normal */
+#fullscreen_back_koma_normal {background-position: 0 -204px;width: 170px;height: 68px;}
+
+/* for #fullscreen_back_koma_disable */
+#fullscreen_back_koma_disable {background-position: -342px -204px;width: 170px;height: 68px;}
+
+/* for #fullscreen_next_koma_normal */
+#fullscreen_next_koma_normal {background-position: 0 -273px;width: 170px;height: 68px;}
+
+/* for #fullscreen_next_koma_push */
+#fullscreen_next_koma_push {background-position: -171px -273px;width: 170px;height: 68px;}

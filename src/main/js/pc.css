@@ -23,7 +23,7 @@ body {
 
 .ui {
   z-index: 10;
-      cursor: pointer;
+  cursor: pointer;
 }
 
 .mask {
@@ -81,9 +81,8 @@ body {
     position: absolute;
 }
 
-
 #thumbnail {
-    z-index: 2;
+  z-index: 2;
   position: absolute;
   left: 0;
   top: 0;
@@ -106,7 +105,6 @@ body {
   border-width: thin;
 }
 
-
 #reader {
   z-index: 1;
 }
@@ -115,11 +113,11 @@ body {
   z-index: 2;
   cursor: pointer;
   display:block;
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
 }
 
 #reader *{
@@ -145,19 +143,28 @@ body {
 }
 
 #menu {
-    position:   absolute;
-    z-index:    10;
-    left:       0;
-    top:        0;
-    width:      100%;
-    display:    block;
-    text-align: center;
-    margin:     0;
-    background-color: rgba(0,0,0,0.4);
-    filter:           alpha(opacity = 40);
+    position:         absolute;
+    z-index:          10;
+    left:             0;
+    top:              0;
+    width:            100%;
+    display:          block;
+    text-align:       center;
+    margin:           0;
+    background-color: rgba(0,0,0,0.75);
+    filter:           alpha(opacity = 75);
 }
 
-#prev_scene, #prev_scene_disable {
+#menu_upper {
+    position:         relative;
+    width:            100%;
+}
+#menu_lower {
+    position:         relative;
+    width:            100%;
+}
+
+#toggle_reading, #toggle_original {
     z-index:  12;
     position: relative;
     top:      0px;
@@ -165,7 +172,7 @@ body {
     margin:   4px 8px 4px 8px;
 }
 
-#first_scene, #first_scene_disable {
+#toggle_scene_view, #toggle_page_view {
     z-index:  12;
     position: relative;
     top:      0px;
@@ -173,10 +180,44 @@ body {
     margin: 4px 8px 4px 8px;
 }
 
-#next, #next_disable {
-    z-index:  14;
+
+#prev_scene {
+    z-index:  12;
+    position: relative;
+    top:      0px;
+    float:    left;
+    margin:   4px 8px 4px 8px;
+}
+
+#first_scene {
+    z-index:  12;
+    position: relative;
+    top:      0px;
+    float:    right;
+    margin: 4px 8px 4px 8px;
+}
+
+#menu_center {
+    position:absolute;
+    width:100%;
+    height:100%;
+    text-aligh:center
+}
+#menu_tab {
+    z-index:12;
     position: relative;
     margin:auto;
+}
+#menu_tab_wrap {
+    position:absolute;
+    width:100%;
+    bottom: 10%;
+}
+
+#next {
+    z-index:  14;
+    position: relative;
+    margin: auto;
 }
 
 #finish_actions {
@@ -187,19 +228,19 @@ body {
 
 #finish_social_actions {
     margin:auto;
-    width:316px;
+    width:100%;
 }
-#vote, #vote_disable {
+#vote {
     z-index:  14;
     position: relative;
     float:    right;
-    margin:   8px 8px 8px 8px;
+    margin:   auto;
 }
-#bookmark, #bookmark_disable {
+#bookmark {
     z-index:  14;
     position: relative;
     float:    left;
-    margin:   8px 8px 8px 8px;
+    margin:   auto;
 }
 
 #progress {
@@ -209,46 +250,11 @@ body {
     color:       white;
     font-size:   120%;
     font-weight: bold;
-    margin-top: 0.5em;
-    position:absolute;
-    left: 0;
+    top: 50%;
+    position: absolute;
 }
 
 #error {
     z-index: 10;
 }
 
-.sprite {
-  background-image:  url(ja.png?v=3);
-  background-repeat: no-repeat;
-  text-indent:       -9999px;
-  overflow:          hidden;
-  display:           block;
-}
-
-
-#close {background-position: -301px -33px;width: 32px;height: 32px;}
-#close:hover, #close.active {background-position: -334px -33px;width: 32px;height: 32px;}
-
-#first_scene {background-position: 0 0;width: 100px;height: 32px;}
-#first_scene:hover, #first_scene.active  {background-position: -200px 0;width: 100px;height: 32px;}
-#first_scene_disable {background-position: -100px 0;width: 100px;height: 32px;}
-
-#prev_scene {background-position: 0 -33px;width: 100px;height: 32px;}
-#prev_scene:hover, #prev_scene.active {background-position: -200px -33px;width: 100px;height: 32px;}
-#prev_scene_disable {background-position: -100px -33px;width: 100px;height: 32px;}
-
-#vote {background-position: 0 -121px;width: 141px;height: 54px;cursor: pointer;}
-#vote_disable {background-position: -142px -121px;width: 141px;height: 54px;}
-#vote:hover, #vote.active  {background-position: -284px -121px;width: 141px;height: 54px;cursor: pointer;}
-
-#bookmark  {background-position: 0 -66px;width: 141px;height: 54px;cursor: pointer;}
-#bookmark_disable {background-position: -142px -66px;width: 141px;height: 54px;}
-#bookmark:hover, #bookmark.active {background-position: -284px -66px;width: 141px;height: 54px;cursor: pointer;}
-
-#next {background-position: 0 -176px;width: 300px;height: 62px;cursor: pointer;}
-#next_disable {background-position: 0 -302px;width: 300px;height: 62px;}
-#next:hover, #next.active{background-position: 0 -239px;width: 300px;height: 62px;cursor: pointer;}
-
-#start  {background-position: -301px -176px;width: 62px;height: 62px;cursor: pointer;}
-#start:hover, #start.active {background-position: -301px -239px;width: 62px;height: 62px;cursor: pointer;}

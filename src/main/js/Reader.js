@@ -5,13 +5,21 @@
  *
  * @constructor
  */
-function $Reader(_member, _superuser) {
+function $Reader(_member, _superuser, _t) {
   var member = _member;
   var su = _superuser;
   var FPS = 33;
   var API_ROOT = '/api';
   var width = 0;
   var height = 0;
+
+  var MODE_ORIGINAL = 'original';
+  var MODE_READING  = 'reading';
+  var current_mode  = MODE_READING;
+
+  var VIEW_SCENE   = 0;
+  var VIEW_PAGE    = 1;
+  var current_view = VIEW_SCENE;
 
   var storyId;
   var storyMetaFile;
@@ -25,7 +33,8 @@ function $Reader(_member, _superuser) {
 
   var su_key = "";
   var su_expire = 0;
-  var t = 0;
+  var t = _t;
+  var dpi = 240;
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -36,11 +45,18 @@ function $Reader(_member, _superuser) {
 
   var getUrlVars = function(){
     var vars = [], hash;
-    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    var param = window.location.href.slice(window.location.href.indexOf('?') + 1);
+    if(!param){
+      return vars;
+    }
+    var hashes = param.split('&');
     for(var i = 0; i < hashes.length; i++) {
+      if(hashes[i].indexOf('=') < 0){
+        continue;
+      }
       hash = hashes[i].split('=');
       vars.push(hash[0]);
-      vars[hash[0]] = hash[1];
+      vars[hash[0]] = hash[1].split('#')[0];
     }
     return vars;
   };
@@ -51,8 +67,13 @@ function $Reader(_member, _superuser) {
     su_expire = get_vars["expire"];
   }
 
-  if(get_vars["t"]){
-    t = get_vars["t"];
+  function in_array( what, where ){
+    for(var i=0;i<where.length;i++){
+      if(what === where[i]){
+        return true;
+      }
+    }
+    return false;
   }
 
   var act_start = App.isSmartPhone?"touchstart":"mousedown";
@@ -84,6 +105,20 @@ function $Reader(_member, _superuser) {
     canvas.height = height;
     canvas.style.height = width + "px";
   }
+
+  var resolveDpi = function(w){
+    if(w < 320){
+      return 240;
+    }else if(w < 480){
+      return 320;
+    }else if(w < 640){
+      return 480;
+    }else{
+      return 640;
+    }
+  };
+  dpi = resolveDpi(canvas.width);
+
   var SceneAnimator = new $SceneAnimator(width, height, FPS);
 
   /**
@@ -91,7 +126,7 @@ function $Reader(_member, _superuser) {
    * @return void
    */
   var paint = function() {
-    var i = sceneImages[currentSceneIndex];
+    var i = sceneImages[current_mode][currentSceneIndex];
     if (i === undefined || !i.hasLoaded()) {
       return;
     }
@@ -203,7 +238,6 @@ function $Reader(_member, _superuser) {
     ajax_post('/api/read/'+storyId, 'json', fnSuccess, fnError);
   };
 
-
   var updateSceneCount = function(){
     $("#progress_total").text(scenes.length);
     $("#progress_current").text(currentSceneIndex+1);
@@ -243,7 +277,7 @@ function $Reader(_member, _superuser) {
    * @private
    * @return Image ただし非同期なので読み込み完了していることは保証されない
    */
-  var apiSceneImage = function(sceneId) {
+  var apiSceneImage = function(sceneId, mode, dpi) {
     var i = new Image();
     i.hasLoaded = function(){
       //IE9でImage.completeが動作しない場合があるので、
@@ -251,11 +285,14 @@ function $Reader(_member, _superuser) {
        console.log(this);
       return this.width > 0;
     };
+    i.onerror = function(){
+       console.log("error!"+sceneId);
+    };
     var param = "";
     if(t > 0){
       param = "?t="+t;
     }
-    i.src = API_ROOT + '/sceneImage/' + sceneId + param;
+    i.src = API_ROOT + '/sceneImage/' + sceneId + '/' + mode + '/' + dpi + param;
     return i;
   };
 
@@ -264,15 +301,20 @@ function $Reader(_member, _superuser) {
    * またこの内部でプリロード、破棄処理も行う。 現在は一括ロード。
    */
   var fetchSceneImage = function(sceneIndex) {
-    console.log(sceneIndex);
     var under = sceneIndex - 4;
     var prefetch = sceneIndex + 12;
     for ( var n = 0; n < scenes.length; n++) {
-      if (n < under && sceneImages[n] !== undefined) {
-        sceneImages[n] = undefined;
-      } else if (under <= n && n <= prefetch && sceneImages[n] === undefined) {
+      if (n < under && sceneImages[current_mode][n] !== undefined) {
+        sceneImages[current_mode][n] = undefined;
+      } else if (under <= n && n <= prefetch && sceneImages[current_mode][n] === undefined) {
         console.log(scenes[n]);
-        sceneImages[n] = apiSceneImage(scenes[n]['scene_id']);
+        var ndpi;
+        if(in_array(dpi, scenes[n]['support_size'])){
+          ndpi = dpi;
+        }else{
+          ndpi = scenes[n]['support_size'][0];
+        }
+        sceneImages[current_mode][n] = apiSceneImage(scenes[n]['scene_id'], current_mode, ndpi);
       }
     }
   };
@@ -297,7 +339,7 @@ function $Reader(_member, _superuser) {
     var format = _('hover_status');
     var title = App.sprintf(format, args);
 
-    var i = sceneImages[currentSceneIndex];
+    var i = sceneImages[current_mode][currentSceneIndex];
     function onloaded() {
       var scene = scenes[currentSceneIndex];
       SceneAnimator.initializeWhenLoaded(i, scene["scroll_course"], scene["scroll_speed"]);
@@ -502,32 +544,44 @@ function $Reader(_member, _superuser) {
       $("#vote_disable").show();
       $("#bookmark").hide();
       $("#bookmark_disable").show();
-    }else{
+    }else if(!su) {
       $("#vote").hide();
       $("#bookmark").hide();
       $("#vote_disable").show();
       $("#bookmark_disable").show();
+    }else{
+      $("#vote").hide();
+      $("#bookmark").hide();
+      $("#vote_disable").hide();
+      $("#bookmark_disable").hide();
     }
-    $("#next").hide();
-    $("#next_disable").show();
-    setTimeout(
-      function(){
-        $("#next").bind(act_start,
-          function(e) {
-            activate_button($("#next"), 0);
-          });
-        $("#next").bind(act_button,
-          function(e) {
-            setTimeout(function(){
-              goToNextStory(next_story_id, comic_id, "");
-            },0);
-            hideAll();
-            prevent_default(e);
-        });
+
+    if(su){
+        $("#next").hide();
         $("#next_disable").hide();
-        $("#next").show();
-      }
-      ,1000);
+    }else{
+        $("#next").hide();
+        $("#next_disable").show();
+        setTimeout(
+          function(){
+            $("#next").bind(act_start,
+              function(e) {
+                activate_button($("#next"), 0);
+              });
+            $("#next").bind(act_button,
+              function(e) {
+                setTimeout(function(){
+                  goToNextStory(next_story_id, comic_id, "");
+                },0);
+                hideAll();
+                prevent_default(e);
+            });
+            $("#next_disable").hide();
+            $("#next").show();
+          }
+          ,1000);
+    }
+
     $("#preview").hide();
     $("#loading").hide();
     $("#reader").show();
@@ -644,14 +698,20 @@ function $Reader(_member, _superuser) {
   var openStory = function(_storyId) {
     storyId = _storyId;
     if (sceneImages !== undefined) {
-      for ( var n = 0; n < sceneImages.length; n++) {
-        var i = sceneImages[n];
+      for ( var n = 0; n < sceneImages[MODE_READING].length; n++) {
+        var i = sceneImages[MODE_READING][n];
+        if (i !== undefined) {
+          i.onload = null;
+        }
+        var i = sceneImages[MODE_ORIGINAL][n];
         if (i !== undefined) {
           i.onload = null;
         }
       }
     }
     sceneImages = [];
+    sceneImages[MODE_ORIGINAL] = [];
+    sceneImages[MODE_READING] = [];
     scenes = null;
     currentSceneIndex = 0;
     storyMetaFile = null;
@@ -659,6 +719,7 @@ function $Reader(_member, _superuser) {
     apiStoryMetaFile(storyId, function(json) {
       storyMetaFile = json;
       scenes = storyMetaFile["scenes"];
+      console.log(scenes);
       pages = storyMetaFile["pages"];
       updateSceneCount();
       if (scenes.length === 0) {
@@ -667,7 +728,9 @@ function $Reader(_member, _superuser) {
         showReader();
         jumpToScene(0);
       }
-      apiRead(storyId, function(json){console.log(json);});
+      if(!su){
+        apiRead(storyId, function(json){console.log(json);});
+      }
     }, function() {
       showError();
     });
@@ -682,6 +745,8 @@ function $Reader(_member, _superuser) {
     $("#thumbnail").attr("src", "/icon/story_image/medium/" + _storyId);
     $("#thumbnail").hide();
     $("#thumbnail").bind("load", function(e){
+      $("#thumbnail").width(canvas.width);
+      $("#thumbnail").height(canvas.width * ($("#thumbnail").height()/$("#thumbnail").width()));
       App.centering($("#thumbnail"));
       $("#thumbnail").show();
     });
@@ -694,6 +759,32 @@ function $Reader(_member, _superuser) {
       prevent_default(event);
     });
   };
+
+  //子フレーム用のキー入力受付
+  $(window).keydown(function(e){
+      //console.log(e.keyCode);
+      if(e.which === 32      //space
+        || e.which === 13  //enter
+        || e.which === 39  //right
+        || e.whicch === 40 //down
+        ){
+        $("#canvas").trigger('mousedown');
+        console.log("go2");
+      }else if(e.which === 8//BS
+          || e.which === 37//left
+          || e.which === 38//up
+        ){
+        console.log("prev2");
+      }else if(e.which === 80){//p
+        console.log("page2");
+      }else if(e.which === 83){//s
+        console.log("scene2");
+      }else if(e.which === 82){//r
+        console.log("reading2");
+      }else if(e.which === 79){//o
+        console.log("original2");
+      }
+    });
 
   this.openStory = openStory;
   this.goNext = goNext;
