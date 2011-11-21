@@ -121,12 +121,35 @@ function $Reader(_member, _superuser, _t) {
 
   var SceneAnimator = new $SceneAnimator(width, height, FPS);
 
+  var updateIndex = function(nindex){
+    if(current_view === VIEW_PAGE){
+      currentPageIndex = nindex;
+      var sceneIndex = 0;
+      for(var i; i<scenes.length; i++){
+        if(currentPageIndex === scenes['i']['page_number']){
+          break;
+        }
+        sceneIndex++;
+      }
+      currentSceneIndex = sceneIndex;
+    }else{
+      currentSceneIndex = nindex;
+      currentPageIndex = scenes[currentSceneIndex]['page_number'];
+    }
+  };
+
   /**
    * 画面描画
    * @return void
    */
   var paint = function() {
-    var i = sceneImages[current_mode][currentSceneIndex];
+    var i;
+    if(current_view === VIEW_PAGE){
+        i = pageImages[current_mode][currentPageIndex];
+    }else{
+        i = sceneImages[current_mode][currentSceneIndex];
+    }
+
     if (i === undefined || !i.hasLoaded()) {
       return;
     }
@@ -238,13 +261,19 @@ function $Reader(_member, _superuser, _t) {
     ajax_post('/api/read/'+storyId, 'json', fnSuccess, fnError);
   };
 
-  var updateSceneCount = function(){
-    $("#progress_total").text(scenes.length);
-    $("#progress_current").text(currentSceneIndex+1);
+  var updateProgress = function(){
+    if(current_view === VIEW_PAGE){
+        $("#progress_total").text(pages.length);
+        $("#progress_current").text(currentPageIndex+1);
+    }else{
+        $("#progress_total").text(scenes.length);
+        $("#progress_current").text(currentSceneIndex+1);
+    }
   };
 
   /**
    * 表示モードを通信エラーに切り替える
+   * TODO 新エラー
    */
   var showError = function() {
     $("#preview").show();
@@ -287,12 +316,39 @@ function $Reader(_member, _superuser, _t) {
     };
     i.onerror = function(){
        console.log("error!"+sceneId);
+       //TODO エラー処理
     };
     var param = "";
     if(t > 0){
       param = "?t="+t;
     }
     i.src = API_ROOT + '/sceneImage/' + sceneId + '/' + mode + '/' + dpi + param;
+    return i;
+  };
+
+  /**
+   * [サーバーAPIとの通信メソッド] サーバーからページ画像を取得する
+   *
+   * @private
+   * @return Image ただし非同期なので読み込み完了していることは保証されない
+   */
+  var apiPageImage = function(pageId, mode, dpi) {
+    var i = new Image();
+    i.hasLoaded = function(){
+      //IE9でImage.completeが動作しない場合があるので、
+      //Image.widthを見てロードが完了したか判断する
+       console.log(this);
+      return this.width > 0;
+    };
+    i.onerror = function(){
+       console.log("error!"+pageId);
+       //TODO エラー処理
+    };
+    var param = "";
+    if(t > 0){
+      param = "?t="+t;
+    }
+    i.src = API_ROOT + '/pageImage/' + pageId + '/' + mode + '/' + dpi + param;
     return i;
   };
 
@@ -319,30 +375,53 @@ function $Reader(_member, _superuser, _t) {
     }
   };
 
+  var fetchPageImage = function (pageIndex){
+    var under = pageIndex - 1;
+    var prefetch = pageIndex + 4;
+    for ( var n = 0; n < pages.length; n++) {
+      if (n < under && pageImages[current_mode][n] !== undefined) {
+        pageImages[current_mode][n] = undefined;
+      } else if (under <= n && n <= prefetch && pageImages[current_mode][n] === undefined) {
+        console.log(pages[n]);
+        var ndpi;
+        if(in_array(dpi, pages[n]['support_size'])){
+          ndpi = dpi;
+        }else{
+          ndpi = pages[n]['support_size'][0];
+        }
+        pageImages[current_mode][n] = apiPageImage(pages[n]['page_id'], current_mode, ndpi);
+      }
+    }
+  };
+
   /**
-   * コマ毎の初期化
+   * コマ毎の初期化 jumpToScene
    * @return void
    */
-  var jumpToScene = function(newSceneIndex) {
-    hideMenu(2000);
-    fetchSceneImage(newSceneIndex);
-    currentSceneIndex = newSceneIndex;
-    updateSceneCount();
+  var jumpTo = function(newIndex) {
+    hideMenu(500);
+    if(current_view === VIEW_PAGE){
+        fetchPageImage(newIndex);
+    }else{
+        fetchSceneImage(newIndex);
+    }
+    updateIndex(newIndex);
+    updateProgress();
 
-    var args = {
-      "comic_title"      : storyMetaFile.comic_title,
-      "story_number"     : storyMetaFile.story_number,
-      "story_title"      : storyMetaFile.story_title,
-      "scene_number"     : newSceneIndex + 1,
-      "number_of_scenes" : scenes.length
-    };
-    var format = _('hover_status');
-    var title = App.sprintf(format, args);
+    var i;
+    if(current_view === VIEW_PAGE){
+      i = pageImages[current_mode][newIndex];
+    }else{
+      i = sceneImages[current_mode][newIndex];
+    }
 
-    var i = sceneImages[current_mode][currentSceneIndex];
     function onloaded() {
-      var scene = scenes[currentSceneIndex];
-      SceneAnimator.initializeWhenLoaded(i, scene["scroll_course"], scene["scroll_speed"]);
+      if(current_view === VIEW_SCENE){
+        var scene = scenes[currentSceneIndex];
+        SceneAnimator.initializeWhenLoaded(i, scene["scroll_course"], scene["scroll_speed"]);
+      }else{
+        SceneAnimator.initializeWhenLoaded(i, 0, 240);//FIXME
+      }
       $("#loading").hide();
       isLoading = false;
       paint();
@@ -352,7 +431,7 @@ function $Reader(_member, _superuser, _t) {
       onloaded();
     } else {
       isLoading = true;
-      showMenu(2000,500);
+      showMenu(500,500);
       $("#loading").show();
       SceneAnimator.initializeWhenUnloaded();
       i.onload = onloaded;
@@ -362,10 +441,16 @@ function $Reader(_member, _superuser, _t) {
   /**
    * 前のコマに戻る
    */
-  var goPrevScene = function() {
-    var prev = currentSceneIndex - 1;
+  var jumpPrev = function() {
+    var prev;
+    if(current_view === VIEW_PAGE){
+      prev = currentPageIndex - 1;
+    }else{
+      prev = currentSceneIndex - 1;
+    }
+
     if (0 <= prev) {
-      jumpToScene(prev);
+      jumpTo(prev);
     }
   };
 
@@ -383,6 +468,14 @@ function $Reader(_member, _superuser, _t) {
     }
   };
 
+  var disable_button = function(item){
+    item.addClass("disable");
+  };
+
+  var enable_button = function(item){
+    item.removeClass("disable");
+  };
+
   /**
    * スクロールをひとつ前に戻す
    *
@@ -393,7 +486,7 @@ function $Reader(_member, _superuser, _t) {
     activate_button($("#prev_scene"), 500);
     hideFinished();
     if (0 < currentSceneIndex) {
-      goPrevScene();
+      jumpPrev();
     }
     prevent_default(e);
   };
@@ -401,35 +494,29 @@ function $Reader(_member, _superuser, _t) {
   var show_first_click = function(e){
     activate_button($("#first_scene"), 500);
     hideFinished();
-    jumpToScene(0);
+    jumpTo(0);
     prevent_default(e);
   };
 
-  var menu_click = function(e){
-    showMenu(2000, 500);
-    prevent_default(e);
-  };
-  var menu_mouse_over = function(e){showMenu(0);};
   var menuIsVisible = function(){
-    return $("#menu").css("opacity") > 0.0;
+    return $("#menu").css("top") === "0px";
   };
 
   var hideMenu = function(fadeout){
     if(!menuIsVisible()){
-      //console.log("hideMenu:ignored");
       return;
     }
-    //console.log("hideMenu:" + fadeout);
-    $("#menu").unbind("mouseout", hideMenu);
-    $("#menu").fadeTo(fadeout, "0.0", function(){
-      $("#menu").css({cursor:"pointer"});
-      $("#prev_scene").unbind(act_button, goPrev);
-      $("#prev_scene").css({cursor:"default"});
-      $("#first_scene").unbind(act_button, show_first_click);
-      $("#first_scene").css({cursor:"default"});
-      $("#menu").bind(act_start, menu_click);
-      $("#menu").mouseover(menu_mouse_over);
-    });
+    $("#menu").animate(
+        {top: "-132px"},
+        fadeout,'swing',
+        function(){
+          $("#menu_switch").bind(act_start, menu_click);
+        });
+  };
+
+  var menu_hide_click = function(e){
+      hideMenu(500);
+      prevent_default(e);
   };
 
   /**
@@ -437,57 +524,38 @@ function $Reader(_member, _superuser, _t) {
    */
   var showMenu = function (lifetime, fadeout){
     if(menuIsVisible()){
-      //console.log("showMenu:ignored");
       return;
     }
-    //console.log("showMenu:" + lifetime);
-    $("#menu").unbind(act_start, menu_click);
-    $("#menu").unbind("mouseover", menu_mouse_over);
-    $("#menu").show();
-    $("#menu").css({cursor:"default", opacity:"1.0"});
+    $("#menu_switch").unbind(act_start, menu_click);
+    $("#menu").animate(
+        {top: "0"},
+        fadeout,'swing',
+        function(){
+          $("#menu_switch").unbind(act_start, menu_click);
+        });
 
     if(currentSceneIndex === 0){
-      $("#prev_scene").hide();
-      $("#first_scene").hide();
-      $("#prev_scene_disable").show();
-      $("#first_scene_disable").show();
+      disable_button($("#prev_scene"));
+      disable_button($("#first_scene"));
+      $("#prev_scene").unbind(act_button, goPrev);
+      $("#first_scene").unbind(act_button, show_first_click);
     }else{
-      $("#prev_scene").show();
-      $("#first_scene").show();
-      $("#prev_scene_disable").hide();
-      $("#first_scene_disable").hide();
+      enable_button($("#prev_scene"));
+      enable_button($("#first_scene"));
       $("#prev_scene").bind(act_button, goPrev);
-      $("#prev_scene").css({cursor:"pointer"});
       $("#first_scene").bind(act_button, show_first_click);
-      $("#first_scene").css({cursor:"pointer"});
-    }
-
-    if(0 < lifetime){
-      //console.log("menu will hide:" + lifetime);
-      setTimeout(function(){hideMenu(fadeout);}, lifetime);
-    }else{
-      //console.log("menu will not hide");
-      $("#menu").mouseout(function(e){
-        var rect = e.currentTarget.getClientRects()[0];
-        if(e.clientX >= rect.left  &&
-           e.clientX <= rect.right &&
-           e.clientY >= rect.top   &&
-           e.clientY <= rect.bottom ){
-          return;
-        }
-        //console.log("mouseout!");
-        hideMenu(500);
-      });
     }
   };
 
+  var menu_click = function(e){
+      showMenu(500, 500);
+      prevent_default(e);
+  };
+
   var hideAll = function(){
-    $("#menu").hide();
+    hideMenu(500);
     $("#next").hide();
     $("#vote").hide();
-    $("#next_disable").hide();
-    $("#vote_disable").hide();
-    $("#bookmark_disable").hide();
     $("#bookmark").hide();
     $("#loading").show();
     $("#canvas").css({cursor:"wait"});
@@ -534,34 +602,24 @@ function $Reader(_member, _superuser, _t) {
              },0);
              prevent_default(e);
            });
-           $("#vote_disable").hide();
-           $("#vote").show();
-           $("#bookmark_disable").hide();
-           $("#bookmark").show();
+           enable_button($("#vote"));
+           enable_button($("#bookmark"));
          }
-      ,1000);
-      $("#vote").hide();
-      $("#vote_disable").show();
-      $("#bookmark").hide();
-      $("#bookmark_disable").show();
+      ,500);
+      disable_button($("#vote"));
+      disable_button($("#bookmark"));
     }else if(!su) {
-      $("#vote").hide();
-      $("#bookmark").hide();
-      $("#vote_disable").show();
-      $("#bookmark_disable").show();
+      disable_button($("#vote"));
+      disable_button($("#bookmark"));
     }else{
       $("#vote").hide();
       $("#bookmark").hide();
-      $("#vote_disable").hide();
-      $("#bookmark_disable").hide();
     }
 
     if(su){
         $("#next").hide();
-        $("#next_disable").hide();
     }else{
-        $("#next").hide();
-        $("#next_disable").show();
+        disable_button($("#next"));
         setTimeout(
           function(){
             $("#next").bind(act_start,
@@ -576,10 +634,9 @@ function $Reader(_member, _superuser, _t) {
                 hideAll();
                 prevent_default(e);
             });
-            $("#next_disable").hide();
-            $("#next").show();
+            enable_button($("#next"));
           }
-          ,1000);
+          ,500);
     }
 
     $("#preview").hide();
@@ -587,30 +644,27 @@ function $Reader(_member, _superuser, _t) {
     $("#reader").show();
     $("#error").hide();
     $("#finish").show();
-
-    var $window = $(window);
-    var windowHeight = $window.height();
-    var windowWidth  = $window.width();
-    var width = $("#finish_actions").width();
-    var height = $("#finish_actions").height();
-    var csstop = windowHeight/2;
-    var cssleft = windowWidth/2 - width/2;
-    $("#finish_actions").css({top:csstop, left:cssleft});
     $("#finish_actions").show();
   };
 
   /**
    * 次のシーンへ進める
    */
-  var goNextScene = function() {
+  var jumpNext = function() {
     if(isLoading){
       return;
     }
-    var next = currentSceneIndex + 1;
-    if (next < scenes.length) {
-      jumpToScene(currentSceneIndex + 1);
-    } else {
+    var next;
+    if(current_view === VIEW_PAGE){
+      next = currentPageIndex + 1;
+    }else{
+      next = currentSceneIndex + 1;
+    }
+    if (current_view === VIEW_PAGE && next >= pages.length ||
+        next >= scenes.length) {
       showFinished();
+    } else {
+      jumpTo(next);
     }
   };
 
@@ -647,7 +701,7 @@ function $Reader(_member, _superuser, _t) {
       paint();
 
     } else if (SceneAnimator.isAtScrollEnd()) {
-      goNextScene();
+      jumpNext();
 
     } else {
       throw "Illega state";
@@ -659,9 +713,9 @@ function $Reader(_member, _superuser, _t) {
    */
   var showLoading = function() {
     isLoading = true;
-    showMenu(2000,500);
-    $("#canvas").css({cursor:"wait"});
-    $("#loading").show();
+    showMenu(500,0);
+    $("#canvas").css({cursor:"default"});
+    $("#dialog_loading").show();
     $("#reader").hide();
     $("#finish").hide();
     $("#error").hide();
@@ -672,7 +726,7 @@ function $Reader(_member, _superuser, _t) {
    */
   var showReader = function() {
     $("#canvas").css({cursor:"pointer"});
-    $("#loading").hide();
+    $("#dialog_loading").hide();
     $("#reader").show();
     $("#finish").hide();
     $("#error").hide();
@@ -692,41 +746,66 @@ function $Reader(_member, _superuser, _t) {
     isLoading = false;
   };
 
+  var clearSceneImages = function(){
+    if(sceneImages === undefined){
+      return;
+    }
+    for ( var n = 0; n < sceneImages[MODE_READING].length; n++) {
+      var ir = sceneImages[MODE_READING][n];
+      if (ir !== undefined) {
+        ir.onload = null;
+      }
+      var io = sceneImages[MODE_ORIGINAL][n];
+      if (io !== undefined) {
+        io.onload = null;
+      }
+    }
+  };
+
+  var clearPageImages = function(){
+    if(pageImages === undefined){
+      return;
+    }
+    for ( var n = 0; n < pageImages[MODE_READING].length; n++) {
+      var ir = pageImages[MODE_READING][n];
+      if (ir !== undefined) {
+        ir.onload = null;
+      }
+      var io = pageImages[MODE_ORIGINAL][n];
+      if (io !== undefined) {
+        io.onload = null;
+      }
+    }
+  };
   /**
    * 指定したマンガの話をリーダーで開く。
    */
   var openStory = function(_storyId) {
     storyId = _storyId;
-    if (sceneImages !== undefined) {
-      for ( var n = 0; n < sceneImages[MODE_READING].length; n++) {
-        var i = sceneImages[MODE_READING][n];
-        if (i !== undefined) {
-          i.onload = null;
-        }
-        var i = sceneImages[MODE_ORIGINAL][n];
-        if (i !== undefined) {
-          i.onload = null;
-        }
-      }
-    }
+    clearSceneImages();
+    clearPageImages();
     sceneImages = [];
     sceneImages[MODE_ORIGINAL] = [];
     sceneImages[MODE_READING] = [];
+    pageImages = [];
+    pageImages[MODE_ORIGINAL] = [];
+    pageImages[MODE_READING] = [];
+
     scenes = null;
     currentSceneIndex = 0;
+    currentPageIndex = 0;
     storyMetaFile = null;
     showLoading();
     apiStoryMetaFile(storyId, function(json) {
       storyMetaFile = json;
       scenes = storyMetaFile["scenes"];
-      console.log(scenes);
       pages = storyMetaFile["pages"];
-      updateSceneCount();
+      updateProgress();
       if (scenes.length === 0) {
         showFinished();
       } else {
         showReader();
-        jumpToScene(0);
+        jumpTo(0);
       }
       if(!su){
         apiRead(storyId, function(json){console.log(json);});
@@ -737,11 +816,62 @@ function $Reader(_member, _superuser, _t) {
     _gaq.push(['_trackPageview', '/event/viewer/open/'+storyId]);
   };
 
+  var change_mode_original = function(){
+    if(storyMetaFile['enable_original_mode']){
+        current_mode  = MODE_ORIGINAL;
+        if(current_view === VIEW_PAGE){
+          jumpTo(currentPageIndex);
+        }else{
+          jumpTo(currentSceneIndex);
+        }
+        $("#toggle_reading").hide();
+        $("#toggle_original").show();
+    }
+  };
+
+  var change_mode_reading = function(){
+    current_mode  = MODE_READING;
+    if(current_view === VIEW_PAGE){
+        jumpTo(currentPageIndex);
+      }else{
+        jumpTo(currentSceneIndex);
+      }
+    $("#toggle_original").hide();
+    $("#toggle_reading").show();
+  };
+
+  var change_view_page = function(){
+    if(storyMetaFile['enable_original_mode']){
+      current_view = VIEW_PAGE;
+      jumpTo(currentPageIndex);
+      $("#toggle_scene_view").hide();
+      $("#toggle_page_view").show();
+    }
+  };
+
+  var change_view_scene = function(){
+      current_view = VIEW_SCENE;
+      jumpTo(currentSceneIndex);
+      $("#toggle_page_view").hide();
+      $("#toggle_scene_view").show();
+  };
+
+  var prepareMenu = function(){
+      $("#menu").css("top", -1 * 132 + "px");//FIXME menuの高さが合わないのでハードコーディングした。なおしたい。
+      $("#menu").show();
+      $("#menu_tab").bind(act_button, menu_hide_click);
+      $("#toggle_reading").bind(act_button, change_mode_original);
+      $("#toggle_original").bind(act_button, change_mode_reading);
+      $("#toggle_scene_view").bind(act_button, change_view_page);
+      $("#toggle_page_view").bind(act_button, change_view_scene);
+  };
+
   /**
    * プレビュー画面を表示する
    * @returns void
    */
   this.showPreview = function(_storyId) {
+    prepareMenu();
     $("#thumbnail").attr("src", "/icon/story_image/medium/" + _storyId);
     $("#thumbnail").hide();
     $("#thumbnail").bind("load", function(e){
@@ -769,20 +899,19 @@ function $Reader(_member, _superuser, _t) {
         || e.whicch === 40 //down
         ){
         $("#canvas").trigger('mousedown');
-        console.log("go2");
       }else if(e.which === 8//BS
           || e.which === 37//left
           || e.which === 38//up
         ){
-        console.log("prev2");
+        ("#prev_scene").trigger('mousedown');
       }else if(e.which === 80){//p
-        console.log("page2");
+        change_view_page();
       }else if(e.which === 83){//s
-        console.log("scene2");
+        change_view_scene();
       }else if(e.which === 82){//r
-        console.log("reading2");
+        change_mode_reading();
       }else if(e.which === 79){//o
-        console.log("original2");
+        change_mode_original();
       }
     });
 

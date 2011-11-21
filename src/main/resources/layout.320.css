@@ -1,89 +1,43 @@
 @charset "utf-8";
 
-/*
-This css was written by CSSSprite Extension (copyright (c) 2010 Risa Yuguchi <risa.yuguchi@gmail.com>).
- Eveyone can delete this comments.
- Thank you for using this extension.
-*/
+.sprite {background-image: url(ja.320.png?v=1); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
 
-.csssprite {background-image: url(/csssprite.png);background-repeat: no-repeat;text-indent:-9999px;overflow: hidden;display:block;}
+#next                     {background-position: 0 -213px;width: 300px;height: 89px;cursor: pointer;}
+#next:hover, #next.active {background-position: 0 -303px;width: 300px;height: 89px;cursor: pointer;}
+#next.disable             {background-position: 0 -393px;width: 300px;height: 89px;cursor: default;}
 
-/* each setting */
 
-/* for #button_like_push */
-#button_like_push {background-position: -146px -92px;width: 145px;height: 59px;}
+#bookmark                         {background-position: 0 -152px;width: 145px;height: 60px; cursor: pointer;}
+#bookmark:hover, #bookmark.active {background-position: -146px -152px;width: 145px;height: 60px; cursor: pointer;}
+#bookmark.disable                 {background-position: -292px -152px;width: 145px;height: 60px; cursor: default;}
 
-/* for #button_like_disable */
-#button_like_disable {background-position: -292px -92px;width: 145px;height: 59px;}
+#vote                      {background-position: 0 -92px;width: 145px;height: 59px; cursor: pointer;}
+#vote:hover, #vote.active  {background-position: -146px -92px;width: 145px;height: 59px; cursor: pointer;}
+#vote.disable              {background-position: -292px -92px;width: 145px;height: 59px; cursor: default;}
 
-/* for #button_like_normal */
-#button_like_normal {background-position: 0 -92px;width: 145px;height: 59px;}
 
-/* for #button_back_koma_push */
-#button_back_koma_push {background-position: -114px 0;width: 113px;height: 45px;}
+#prev_scene                           {background-position: 0 0;width: 113px;height: 45px; cursor: pointer;}
+#prev_scene:hover, #prev_scene.active {background-position: -114px 0;width: 113px;height: 45px; cursor: pointer;}
+#prev_scene.disable                   {background-position: -228px 0;width: 113px;height: 45px; cursor: default;}
 
-/* for #button_back-46pxdisable */
-#button_back-46pxdisable {background-position: -228px -46px;width: 113px;height: 45px;}
+#first_scene                            {background-position: 0 -46px;width: 113px;height: 45px; cursor: pointer;}
+#first_scene:hover, #first_scene.active {background-position: -114px 0;width: 113px;height: 45px; cursor: pointer;}
+#first_scene.disable                    {background-position: -228px -46px;width: 113px;height: 45px; cursor: default;}
 
-/* for #button_back-46pxnormal */
-#button_back-46pxnormal {background-position: 0 -46px;width: 113px;height: 45px;}
+#toggle_reading    {background-position: -301px -322px;width: 148px;height: 31px; cursor:pointer;}
+#toggle_original   {background-position: -301px -354px;width: 148px;height: 31px; cursor:pointer;}
+#toggle_page_view  {background-position: -301px -290px;width: 148px;height: 31px; cursor:pointer;}
+#toggle_scene_view {background-position: -301px -258px;width: 148px;height: 31px; cursor:pointer;}
 
-/* for #button_back_koma_normal */
-#button_back_koma_normal {background-position: 0 0;width: 113px;height: 45px;}
+#menu_tab                         {background-position: -390px -22px;width: 46px;height: 23px; cursor:pointer;}
+#menu_tab:hover, #menu_tab.active {background-position: -343px -22px;width: 46px;height: 23px; cursor:pointer;}
 
-/* for #button_back-46pxpush */
-#button_back-46pxpush {background-position: -114px -46px;width: 113px;height: 45px;}
+#close                      {background-position: -375px -46px;width: 31px;height: 30px; cursor:pointer;}
+#close:hover, #close.active {background-position: -343px -46px;width: 31px;height: 30px; cursor:pointer;}
 
-/* for #button_back_koma_disable */
-#button_back_koma_disable {background-position: -228px 0;width: 113px;height: 45px;}
+#dialog_error   {background-position: -301px -386px;width: 213px;height: 60px;}
+#dialog_loading {background-position: -301px -213px;width: 112px;height: 44px;}
+#logo_reader    {background-position: -342px 0;width: 90px;height: 21px;}
 
-/* for #logo_monochrome */
-#logo_monochrome {background-position: -342px 0;width: 90px;height: 21px;}
-
-/* for #button_bookmark_disable */
-#button_bookmark_disable {background-position: -292px -152px;width: 145px;height: 60px;}
-
-/* for #button_bookmark_normal */
-#button_bookmark_normal {background-position: 0 -152px;width: 145px;height: 60px;}
-
-/* for #button_bookmark_push */
-#button_bookmark_push {background-position: -146px -152px;width: 145px;height: 60px;}
-
-/* for #indicator_error */
-#indicator_error {background-position: -301px -386px;width: 213px;height: 60px;}
-
-/* for #indicator_load */
-#indicator_load {background-position: -301px -213px;width: 112px;height: 44px;}
-
-/* for #smartphone_mode_toggle_standard */
-#smartphone_mode_toggle_standard {background-position: -301px -321px;width: 148px;height: 32px;}
-
-/* for #smartphone_mode_toggle_coma */
-#smartphone_mode_toggle_coma {background-position: -301px -258px;width: 148px;height: 31px;}
-
-/* for #smartphone_mode_toggle_original */
-#smartphone_mode_toggle_original {background-position: -301px -353px;width: 148px;height: 32px;}
-
-/* for #smartphone_mode_toggle_page */
-#smartphone_mode_toggle_page {background-position: -301px -290px;width: 148px;height: 31px;}
-
-/* for #smartphone_menuclose_push */
-#smartphone_menuclose_push {background-position: -343px -22px;width: 46px;height: 23px;}
-
-/* for #smartphone_menuclose_normal */
-#smartphone_menuclose_normal {background-position: -390px -22px;width: 46px;height: 23px;}
-
-/* for #button_off_fullscreen_push */
-#button_off_fullscreen_push {background-position: -343px -46px;width: 31px;height: 30px;}
-
-/* for #button_off_fullscreen_normal */
-#button_off_fullscreen_normal {background-position: -375px -46px;width: 31px;height: 30px;}
-
-/* for #button_next_disable */
-#button_next_disable {background-position: 0 -393px;width: 300px;height: 89px;}
-
-/* for #button_next_push */
-#button_next_push {background-position: 0 -303px;width: 300px;height: 89px;}
-
-/* for #button_next_normal */
-#button_next_normal {background-position: 0 -213px;width: 300px;height: 89px;}
+#start                       {background-position: 0 -483px;width: 213px; height: 60px; cursor: pointer;}
+#start:hover, #start.active  {background-position: -214px -483px;width: 213px; height: 60px; cursor: pointer;}

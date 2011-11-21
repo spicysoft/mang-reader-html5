@@ -7,6 +7,11 @@ var App;
 var Reader;
 var _;
 
+String.prototype.toInt = function(){
+    var i = parseInt(this, 10);
+    return isNaN(i) ? 0 : i;
+};
+
 /**
  * App Class definition.
  *
@@ -56,7 +61,6 @@ function $App() {
     } else {
       this.isSmartPhone = false;
     }
-
   };
 
   /**
@@ -69,10 +73,6 @@ function $App() {
       var windowHeight = $window.height();
       var windowWidth  = $window.width();
 
-      String.prototype.toInt = function(){
-        var i = parseInt(this, 10);
-        return isNaN(i) ? 0 : i;
-      };
       var $self = $(this);
       var width = $self.width();
       var height = $self.height();
@@ -85,7 +85,6 @@ function $App() {
       var positionType = $self.parent().css("position");
       var halfWidth =  width /2;
       var halfHeight = height/2 + mediaPadding +mediaBorder;
-
       var cssProp = {
         position: 'absolute'
       };

@@ -20,14 +20,17 @@
     <div id="mangh5r">
       <div id="preview" class="stage">
         <img id="thumbnail" class="ui" title="クリックするとマンガ閲覧をスタートします"/>
-        <div id="preview_ui" class="vhcenter"><span id="start" class="sprite2 preview_btn" title="マンガを読む"></span></div>
+        <div id="preview_ui" class="vhcenter">
+          <span id="start_ui">
+            <span id="start" class="sprite" title="マンガを読む"></span>
+          </span>
+        </div>
       </div>
-      <div id="dialog_loading"  style="display:none;"></div>
       <div id="reader" class="stage">
         <canvas id="canvas"></canvas>
         <div id="info" class="msg"></div>
       </div>
-      <div id="menu" style="">
+      <div id="menu" style="display:none;">
         <div id="menu_upper">
           <span id="toggle_reading"    class="sprite"  title="読書モード" ></span>
           <span id="toggle_original"   class="sprite"  title="原画モード"  style="display:none;"></span>
@@ -45,21 +48,25 @@
           </span>
         </div>
       </div>
+      <div id="menu_switch" ></div>
       <div id="finish" class="stage">
         <div class="mask"></div>
-        <div id="finish_ui" class="vhcenter">
-            <div id="finish_actions">
-              <div id="finish_social_actions">
-                <span id="vote"      class="sprite disable" title="イイネを押して次へ"></span>
-                <span id="bookmark"  class="sprite disable" title="ブックマークを押して次へ"></span>
-              </div>
-              <span id="next"  class="sprite disable" title="次の話へ"></span>
+        <div id="finish_ui" >
+          <div id="finish_actions">
+            <div id="finish_social_actions">
+              <span id="vote"      class="sprite disable" title="イイネを押して次へ"></span>
+              <span id="bookmark"  class="sprite disable" title="ブックマークを押して次へ"></span>
             </div>
+            <span id="next"  class="sprite disable" title="次の話へ"></span>
+          </div>
         </div>
+      </div>
+      <div id="dialog">
+        <div id="dialog_loading"  class="sprite" style="display:none;"></div>
       </div>
       <div id="error" class="stage">
         <div class="mask"></div>
-        <div id="dialog_error">
+        <div id="dialog_error" class="sprite">
           <span class="msg">このマンガは既に削除されたか<br />公開停止になっています。</span>
         </div>
       </div>

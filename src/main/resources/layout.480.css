@@ -1,7 +1,6 @@
 @charset "utf-8";
 
 .sprite {background-image: url(ja.480.png?v=1); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
-.sprite2 {background-image: url(ja.png?v=1); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
 
 #next                     {background-position: 0 -321px;width: 450px;height: 134px;cursor: pointer;}
 #next:hover, #next.active {background-position: 0 -456px;width: 450px;height: 134px;cursor: pointer;}
@@ -9,34 +8,36 @@
 
 #bookmark                         {background-position: 0 -230px;width: 218px;height: 90px;cursor: pointer;}
 #bookmark:hover, #bookmark.active {background-position: -219px -230px;width: 218px;height: 90px;cursor: pointer;}
-#bookmark.disable                 {background-position: -438px -230px;width: 218px;height: 90px;}
+#bookmark.disable                 {background-position: -438px -230px;width: 218px;height: 90px;cursor: default;}
 
-#vote                      {background-position: 0 -139px;width: 218px;height: 90px;cursor: pointer;}
-#vote:hover, #vote.active  {background-position: -219px -139px;width: 218px;height: 90px;cursor: pointer;}
-#vote.disable              {background-position: -438px -139px;width: 218px;height: 90px;cursor: pointer;}
+#vote                      {background-position:      0 -139px; width: 218px;height: 90px;cursor: pointer;}
+#vote:hover, #vote.active  {background-position: -219px -139px; width: 218px;height: 90px;cursor: pointer;}
+#vote.disable              {background-position: -438px -139px; width: 218px;height: 90px;cursor: default;}
 
-#prev_scene.disable                   {background-position: -342px 0;width: 170px;height: 68px;}
-#prev_scene:hover, #prev_scene.active {background-position: -171px 0;width: 170px;height: 68px;cursor: pointer;}
 #prev_scene                           {background-position: 0 0;width: 170px;height: 68px;cursor: pointer;}
+#prev_scene:hover, #prev_scene.active {background-position: -171px 0;width: 170px;height: 68px;cursor: pointer;}
+#prev_scene.disable                   {background-position: -342px 0;width: 170px;height: 68px;cursor: default;}
 
-#first_scene.disable                    {background-position: -342px -69px;width: 170px;height: 68px;}
 #first_scene                            {background-position: 0 -69px;width: 170px;height: 68px;cursor: pointer;}
 #first_scene:hover, #first_scene.active {background-position: -171px -69px;width: 170px;height: 68px;cursor: pointer;}
+#first_scene.disable                    {background-position: -342px -69px;width: 170px;height: 68px;cursor: default;}
 
 #toggle_reading    {background-position: -451px -488px;width: 222px;height: 48px; cursor:pointer;}
 #toggle_original   {background-position: -451px -536px;width: 222px;height: 48px; cursor:pointer;}
 #toggle_page_view  {background-position: -451px -439px;width: 222px;height: 48px; cursor:pointer;}
 #toggle_scene_view {background-position: -451px -390px;width: 222px;height: 48px; cursor:pointer;}
 
-#menu_tab:hover, #menu_tab.active {background-position: -513px -38px;width: 69px;height: 35px;}
-#menu_tab {background-position: -583px -38px;width: 69px;height: 35px;}
+#menu_tab {background-position: -583px -38px;width: 69px;height: 35px; cursor:pointer;}
+#menu_tab:hover, #menu_tab.active {background-position: -513px -38px;width: 69px;height: 35px; cursor:pointer;}
 
-
-#close                      {background-position: -560px -74px;width: 46px;height: 46px; cursor:pointer;}
-#close:hover, #close.active {background-position: -513px -74px;width: 46px;height: 46px;}
+#close                      {background-position: -560px -74px;width: 46px;height: 46px; cursor: pointer;}
+#close:hover, #close.active {background-position: -513px -74px;width: 46px;height: 46px; cursor: pointer;}
 
 #dialog_error   {background-position: -451px -591px;width: 320px;height: 90px;}
 #dialog_loading {background-position: -451px -321px;width: 170px;height: 68px;}
 #logo_reader    {background-position: -513px -1px;width: 153px;height: 36px;}
 
-#start  {background-position: -301px -176px;width: 62px;height: 62px;cursor: pointer;} /* FIXME*/
+#start                       {background-position: 0 -726px;      width: 320px; height: 90px;cursor: pointer;}
+#start:hover, #start.active  {background-position: -321px -726px; width: 320px; height: 90px;cursor: pointer;}
+
+
