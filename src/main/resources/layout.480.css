@@ -1,5 +1,13 @@
 @charset "utf-8";
 
+#toggle_reading, #toggle_original {
+  margin: 4px 8px 4px 8px;
+}
+
+#toggle_scene_view, #toggle_page_view {
+  margin: 4px 8px 4px 8px;
+}
+
 .sprite {background-image: url(ja.480.png?v=1); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
 
 #next                     {background-position: 0 -321px;width: 450px;height: 134px;cursor: pointer;}
@@ -18,14 +26,20 @@
 #prev_scene:hover, #prev_scene.active {background-position: -171px 0;width: 170px;height: 68px;cursor: pointer;}
 #prev_scene.disable                   {background-position: -342px 0;width: 170px;height: 68px;cursor: default;}
 
+#prev_page                          {background-position: 0px -866px;     width: 171px;height: 69px;cursor: pointer;}
+#prev_page:hover, #prev_page.active {background-position:  -172px -866px; width: 171px;height: 69px;cursor: pointer;}
+#prev_page.disable                  {background-position: -343px -866px;  width: 171px;height: 69px;cursor: default;}
+
 #first_scene                            {background-position: 0 -69px;width: 170px;height: 68px;cursor: pointer;}
 #first_scene:hover, #first_scene.active {background-position: -171px -69px;width: 170px;height: 68px;cursor: pointer;}
 #first_scene.disable                    {background-position: -342px -69px;width: 170px;height: 68px;cursor: default;}
 
 #toggle_reading    {background-position: -451px -488px;width: 222px;height: 48px; cursor:pointer;}
+#toggle_reading.disable  {background-position:0px -817px; width: 222px;height: 48px; cursor:default;}
 #toggle_original   {background-position: -451px -536px;width: 222px;height: 48px; cursor:pointer;}
 #toggle_page_view  {background-position: -451px -439px;width: 222px;height: 48px; cursor:pointer;}
 #toggle_scene_view {background-position: -451px -390px;width: 222px;height: 48px; cursor:pointer;}
+#toggle_scene_view.disable {background-position: -223px -817px; width: 222px;height: 48px; cursor:default;}
 
 #menu_tab {background-position: -583px -38px;width: 69px;height: 35px; cursor:pointer;}
 #menu_tab:hover, #menu_tab.active {background-position: -513px -38px;width: 69px;height: 35px; cursor:pointer;}

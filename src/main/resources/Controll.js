@@ -11,11 +11,7 @@ function $Controll() {
       || e.which == 39  //right
       || e.whicch == 40 //down
       ){
-      if(document.getElementById('reader_reader').contentWindow.$("#preview").css("display") == 'none'){
-          document.getElementById('reader_reader').contentWindow.$("#canvas").trigger('mousedown');
-      }else{
-          document.getElementById('reader_reader').contentWindow.$("#preview_ui").click();
-      }
+      this.next();
     }else if(e.which == 8//BS
         || e.which == 37//left
         || e.which == 38//up
@@ -31,5 +27,19 @@ function $Controll() {
       console.log("original");
     }
   });
+  var elem = function(hash){
+    return document.getElementById('reader_reader').contentWindow.$(hash);
+  }
+
+  this.next = function(){
+    if(elem("#preview").css("display") == 'none'){
+        elem("#canvas").trigger('mousedown');
+    }else{
+        elem("#prev_scene").click();
+    }
+  };
+  this.prev = function(){
+      elem("#preview_ui").click();
+  }
 };
-var $Controll = new $Controll();
+var Controll = new $Controll();

@@ -1,0 +1,67 @@
+@charset "utf-8";
+
+#reader_reader{
+  margin:0;
+}
+#menu_bar_reader{
+  width: 480px;
+  heiht: 28px;
+  overflow: hidden;
+}
+.menu {position:relative;display:block;margin:0;padding:0;float:left;}
+.sprite {background-image: url(ja.pc.png);background-repeat: no-repeat;text-indent:-9999px;overflow: hidden;display:block;}
+
+#menu_bar_fullscreen {background-position: 0 -174px;     width: 545px; height: 28px;}
+#menu_bar_ex         {background-position: -330px -29px; width: 131px; height: 28px;}
+#menu_bar            {background-position: -360px 0;     width: 101px; height: 28px;}
+
+#menu_scene_view         {background-position: 0      -58px; width: 101px;height: 28px; pointer:cursor;}
+#menu_scene_view:hover   {background-position: -102px -58px; width: 101px;height: 28px; pointer:cursor;}
+#menu_scene_view:active  {background-position: -204px -58px; width: 101px;height: 28px; pointer:cursor;}
+#menu_scene_view.disable {background-position: -306px -58px; width: 101px;height: 28px; pointer:default;}
+
+#menu_page_view         {background-position:      0 -116px; width: 101px;height: 28px; pointer:cursor;}
+#menu_page_view:hover   {background-position: -102px -116px; width: 101px;height: 28px; pointer:cursor;}
+#menu_page_view:active  {background-position: -204px -116px; width: 101px;height: 28px; pointer:cursor;}
+#menu_page_view.disable {background-position: -306px -116px; width: 101px;height: 28px; pointer:default;}
+
+#menu_mode_original         {background-position:      0 -145px; width: 101px;height: 28px; pointer:cursor;}
+#menu_mode_original:hover   {background-position: -102px -145px; width: 101px;height: 28px; pointer:cursor;}
+#menu_mode_original:active  {background-position: -204px -145px; width: 101px;height: 28px; pointer:cursor;}
+#menu_mode_original.disable {background-position: -306px -145px; width: 101px;height: 28px; pointer:default;}
+
+#menu_mode_reading         {background-position: 0 -87px;width: 101px;height: 28px;      pointer:cursor;}
+#menu_mode_reading:hover   {background-position: -102px -87px;width: 101px;height: 28px; pointer:cursor;}
+#menu_mode_reading:active  {background-position: -204px -87px;width: 101px;height: 28px; pointer:cursor}
+#menu_mode_reading_disable {background-position: -306px -87px;width: 101px;height: 28px; pointer:default;}
+
+#menu_next        {background-position:     0 -29px;  width: 59px;height: 28px; pointer:cursor;}
+#menu_next:hover  {background-position:  -60px -29px; width: 59px;height: 28px; pointer:cursor;}
+#menu_next:active {background-position: -120px -29px; width: 59px;height: 28px; pointer:cursor;}
+
+#menu_prev         {background-position: -120px 0;width: 59px;height: 28px; pointer:cursor;}
+#menu_prev:hover   {background-position: -180px 0;width: 59px;height: 28px; pointer:cursor;}
+#menu_prev:active  {background-position: -240px 0;width: 59px;height: 28px; pointer:cursor;}
+#menu_prev.disable {background-position: -300px 0;width: 59px;height: 28px; pointer:default;}
+
+#menu_first         {background-position: 0 0;width: 29px;height: 28px; pointer:cursor;}
+#menu_first:hover   {background-position: -30px 0;width: 29px;height: 28px; pointer:cursor;}
+#menu_first:active  {background-position: -60px 0;width: 29px;height: 28px; pointer:cursor;}
+#menu_first.disable {background-position: -90px 0;width: 29px;height: 28px; pointer:default;}
+
+#menu_fullscreen        {background-position: -240px -29px;width: 29px;height: 28px; pointer:cursor;}
+#menu_fullscreen:hover  {background-position: -270px -29px;width: 29px;height: 28px; pointer:cursor;}
+#menu_fullscreen:active {background-position: -300px -29px;width: 29px;height: 28px; pointer:cursor;}
+
+#fullscreen_prev.hover   {background-position: -171px -204px;width: 170px;height: 68px;}
+#fullscreen_prev         {background-position:    0 -204px;width: 170px;height: 68px;}
+#fullscreen_prev.disable {background-position: -342px -204px;width: 170px;height: 68px;}
+
+#fullscreen_next         {background-position: 0 -273px;width: 170px;height: 68px;}
+#fullscreen_next:hover   {background-position: -171px -273px;width: 170px;height: 68px;}
+#fullscreen_next.disable {background-position: -342px -273px;width: 170px;height: 68px;}
+
+#popup_reading {background-position: -767px 0;width: 218px;height: 249px;}
+#popup_original {background-position: -548px 0;width: 218px;height: 249px;}
+#popup_scene {background-position: -549px -251px;width: 195px;height: 159px;}
+#popup_page {background-position: -756px -250px;width: 195px;height: 159px;}

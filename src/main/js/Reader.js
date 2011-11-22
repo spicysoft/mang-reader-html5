@@ -311,7 +311,6 @@ function $Reader(_member, _superuser, _t) {
     i.hasLoaded = function(){
       //IE9でImage.completeが動作しない場合があるので、
       //Image.widthを見てロードが完了したか判断する
-       console.log(this);
       return this.width > 0;
     };
     i.onerror = function(){
@@ -337,7 +336,6 @@ function $Reader(_member, _superuser, _t) {
     i.hasLoaded = function(){
       //IE9でImage.completeが動作しない場合があるので、
       //Image.widthを見てロードが完了したか判断する
-       console.log(this);
       return this.width > 0;
     };
     i.onerror = function(){
@@ -363,7 +361,6 @@ function $Reader(_member, _superuser, _t) {
       if (n < under && sceneImages[current_mode][n] !== undefined) {
         sceneImages[current_mode][n] = undefined;
       } else if (under <= n && n <= prefetch && sceneImages[current_mode][n] === undefined) {
-        console.log(scenes[n]);
         var ndpi;
         if(in_array(dpi, scenes[n]['support_size'])){
           ndpi = dpi;
@@ -382,7 +379,6 @@ function $Reader(_member, _superuser, _t) {
       if (n < under && pageImages[current_mode][n] !== undefined) {
         pageImages[current_mode][n] = undefined;
       } else if (under <= n && n <= prefetch && pageImages[current_mode][n] === undefined) {
-        console.log(pages[n]);
         var ndpi;
         if(in_array(dpi, pages[n]['support_size'])){
           ndpi = dpi;
@@ -661,7 +657,7 @@ function $Reader(_member, _superuser, _t) {
       next = currentSceneIndex + 1;
     }
     if (current_view === VIEW_PAGE && next >= pages.length ||
-        next >= scenes.length) {
+        current_view === VIEW_SCENE && next >= scenes.length) {
       showFinished();
     } else {
       jumpTo(next);
@@ -801,6 +797,18 @@ function $Reader(_member, _superuser, _t) {
       scenes = storyMetaFile["scenes"];
       pages = storyMetaFile["pages"];
       updateProgress();
+
+      if(storyMetaFile['enable_original_mode']){
+        enable_button($("#toggle_reading"));
+        $("#toggle_reading").bind(act_button, change_mode_original);
+        $("#toggle_original").bind(act_button, change_mode_reading);
+      }
+      if(storyMetaFile['enable_page_mode']){
+        enable_button($("#toggle_scene_view"));
+        $("#toggle_scene_view").bind(act_button, change_view_page);
+        $("#toggle_page_view").bind(act_button, change_view_scene);
+      }
+
       if (scenes.length === 0) {
         showFinished();
       } else {
@@ -841,7 +849,7 @@ function $Reader(_member, _superuser, _t) {
   };
 
   var change_view_page = function(){
-    if(storyMetaFile['enable_original_mode']){
+    if(storyMetaFile['enable_page_mode']){
       current_view = VIEW_PAGE;
       jumpTo(currentPageIndex);
       $("#toggle_scene_view").hide();
@@ -860,10 +868,8 @@ function $Reader(_member, _superuser, _t) {
       $("#menu").css("top", -1 * 132 + "px");//FIXME menuの高さが合わないのでハードコーディングした。なおしたい。
       $("#menu").show();
       $("#menu_tab").bind(act_button, menu_hide_click);
-      $("#toggle_reading").bind(act_button, change_mode_original);
-      $("#toggle_original").bind(act_button, change_mode_reading);
-      $("#toggle_scene_view").bind(act_button, change_view_page);
-      $("#toggle_page_view").bind(act_button, change_view_scene);
+      disable_button($("#toggle_reading"));
+      disable_button($("#toggle_scene_view"));
   };
 
   /**
@@ -871,7 +877,6 @@ function $Reader(_member, _superuser, _t) {
    * @returns void
    */
   this.showPreview = function(_storyId) {
-    prepareMenu();
     $("#thumbnail").attr("src", "/icon/story_image/medium/" + _storyId);
     $("#thumbnail").hide();
     $("#thumbnail").bind("load", function(e){
@@ -917,5 +922,7 @@ function $Reader(_member, _superuser, _t) {
 
   this.openStory = openStory;
   this.goNext = goNext;
+
+  prepareMenu();
 }
 

@@ -184,7 +184,6 @@ body {
     position: relative;
     top:      0px;
     float:    left;
-    margin:   4px 8px 4px 8px;
 }
 
 #toggle_scene_view, #toggle_page_view {
@@ -192,7 +191,6 @@ body {
     position: relative;
     top:      0px;
     float:    right;
-    margin: 4px 8px 4px 8px;
 }
 
 
@@ -234,6 +232,7 @@ body {
     position:absolute;
     width:100%;
     bottom: 10%;
+    left: 0px;
 }
 
 #next {
@@ -273,6 +272,7 @@ body {
     font-size:   120%;
     font-weight: bold;
     top: 50%;
+    left:0px;
     position: absolute;
 }
 
