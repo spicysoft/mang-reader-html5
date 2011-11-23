@@ -5,9 +5,10 @@
  *
  * @constructor
  */
-function $Reader(_member, _superuser, _t) {
+function $Reader(_member, _superuser, _t, _nomenu) {
   var member = _member;
   var su = _superuser;
+  var nomenu = _nomenu;
   var FPS = 33;
   var API_ROOT = '/api';
   var width = 0;
@@ -65,15 +66,6 @@ function $Reader(_member, _superuser, _t) {
   if(su){
     su_key = get_vars["k"];
     su_expire = get_vars["expire"];
-  }
-
-  function in_array( what, where ){
-    for(var i=0;i<where.length;i++){
-      if(what === where[i]){
-        return true;
-      }
-    }
-    return false;
   }
 
   var act_start = App.isSmartPhone?"touchstart":"mousedown";
@@ -263,11 +255,11 @@ function $Reader(_member, _superuser, _t) {
 
   var updateProgress = function(){
     if(current_view === VIEW_PAGE){
-        $("#progress_total").text(pages.length);
-        $("#progress_current").text(currentPageIndex+1);
+      $("#progress_total").text(pages.length);
+      $("#progress_current").text(currentPageIndex+1);
     }else{
-        $("#progress_total").text(scenes.length);
-        $("#progress_current").text(currentSceneIndex+1);
+      $("#progress_total").text(scenes.length);
+      $("#progress_current").text(currentSceneIndex+1);
     }
   };
 
@@ -479,15 +471,29 @@ function $Reader(_member, _superuser, _t) {
    * @return void
    */
   var goPrev= function(e) {
-    activate_button($("#prev_scene"), 500);
-    hideFinished();
-    if (0 < currentSceneIndex) {
-      jumpPrev();
+    console.log("goPrev");
+    if(current_view === VIEW_PAGE && 0 === currentPageIndex ||
+      current_view === VIEW_SCENE && 0 === currentSceneIndex){
+      prevent_default(e);
+      return;
     }
+    if(current_view === VIEW_PAGE){
+      activate_button($("#prev_page"), 500);
+    }else{
+      activate_button($("#prev_scene"), 500);
+    }
+
+    hideFinished();
+    jumpPrev();
     prevent_default(e);
   };
 
   var show_first_click = function(e){
+    if(current_view === VIEW_PAGE && 0 === currentPageIndex ||
+        current_view === VIEW_SCENE && 0 === currentSceneIndex){
+        prevent_default(e);
+        return;
+    }
     activate_button($("#first_scene"), 500);
     hideFinished();
     jumpTo(0);
@@ -519,7 +525,7 @@ function $Reader(_member, _superuser, _t) {
    * メニューを表示する
    */
   var showMenu = function (lifetime, fadeout){
-    if(menuIsVisible()){
+    if(menuIsVisible() || nomenu){
       return;
     }
     $("#menu_switch").unbind(act_start, menu_click);
@@ -530,16 +536,19 @@ function $Reader(_member, _superuser, _t) {
           $("#menu_switch").unbind(act_start, menu_click);
         });
 
-    if(currentSceneIndex === 0){
+    if(current_view === VIEW_SCENE && currentSceneIndex === 0){
       disable_button($("#prev_scene"));
       disable_button($("#first_scene"));
-      $("#prev_scene").unbind(act_button, goPrev);
-      $("#first_scene").unbind(act_button, show_first_click);
     }else{
       enable_button($("#prev_scene"));
       enable_button($("#first_scene"));
-      $("#prev_scene").bind(act_button, goPrev);
-      $("#first_scene").bind(act_button, show_first_click);
+    }
+    if(current_view === VIEW_PAGE && currentPageIndex === 0){
+      disable_button($("#prev_page"));
+      disable_button($("#first_scene"));
+    }else{
+      enable_button($("#prev_page"));
+      enable_button($("#first_scene"));
     }
   };
 
@@ -808,6 +817,9 @@ function $Reader(_member, _superuser, _t) {
         $("#toggle_scene_view").bind(act_button, change_view_page);
         $("#toggle_page_view").bind(act_button, change_view_scene);
       }
+      $("#prev_scene").bind(act_button, goPrev);
+      $("#prev_page").bind(act_button, goPrev);
+      $("#first_scene").bind(act_button, show_first_click);
 
       if (scenes.length === 0) {
         showFinished();
@@ -841,19 +853,22 @@ function $Reader(_member, _superuser, _t) {
     current_mode  = MODE_READING;
     if(current_view === VIEW_PAGE){
         jumpTo(currentPageIndex);
-      }else{
+    }else{
         jumpTo(currentSceneIndex);
-      }
+    }
     $("#toggle_original").hide();
     $("#toggle_reading").show();
   };
 
   var change_view_page = function(){
+    console.log("change_view_page");
     if(storyMetaFile['enable_page_mode']){
       current_view = VIEW_PAGE;
       jumpTo(currentPageIndex);
       $("#toggle_scene_view").hide();
       $("#toggle_page_view").show();
+      $("#prev_scene").hide();
+      $("#prev_page").show();
     }
   };
 
@@ -862,6 +877,8 @@ function $Reader(_member, _superuser, _t) {
       jumpTo(currentSceneIndex);
       $("#toggle_page_view").hide();
       $("#toggle_scene_view").show();
+      $("#prev_page").hide();
+      $("#prev_show").show();
   };
 
   var prepareMenu = function(){
@@ -904,19 +921,13 @@ function $Reader(_member, _superuser, _t) {
         || e.whicch === 40 //down
         ){
         $("#canvas").trigger('mousedown');
+        e.preventDefault();
       }else if(e.which === 8//BS
           || e.which === 37//left
           || e.which === 38//up
         ){
-        ("#prev_scene").trigger('mousedown');
-      }else if(e.which === 80){//p
-        change_view_page();
-      }else if(e.which === 83){//s
-        change_view_scene();
-      }else if(e.which === 82){//r
-        change_mode_reading();
-      }else if(e.which === 79){//o
-        change_mode_original();
+        ("#prev_scene").trigger('mouseup');
+        e.preventDefault();
       }
     });
 

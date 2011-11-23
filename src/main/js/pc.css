@@ -193,8 +193,15 @@ body {
     float:    right;
 }
 
-
 #prev_scene {
+    z-index:  12;
+    position: relative;
+    top:      0px;
+    float:    left;
+    margin:   4px 8px 4px 8px;
+}
+
+#prev_page {
     z-index:  12;
     position: relative;
     top:      0px;

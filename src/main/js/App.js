@@ -12,6 +12,15 @@ String.prototype.toInt = function(){
     return isNaN(i) ? 0 : i;
 };
 
+function in_array( what, where ){
+  for(var i=0;i<where.length;i++){
+    if(what === where[i]){
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * App Class definition.
  *
@@ -204,16 +213,16 @@ $(function() {
     var raw  = getParametersFromAnchor();
     var real = {};
     real.storyId = Math.floor(raw[0]);
-    real.member  = 2 <= raw.length && raw[1] === 'member';
-    real.auto    = 3 <= raw.length && raw[2] === 'auto';
-    real.superuser = 3 <= raw.length && raw[2] === 'superuser' ||
-                                                       4 <= raw.length && raw[3] === 'superuser';
-    if(3 <= raw.length && isNumeric(raw[2])){
-        real.time = raw[2];
-    }else if (4 <= raw.length && isNumeric(raw[3])){
-      real.time = raw[3];
-    }else{
-      real.time = 0;
+    real.member  = in_array('member', raw);
+    real.auto    = in_array('auto', raw);
+    real.superuser = in_array('superuser', raw);
+    real.nomenu = in_array('nomenu', raw);
+    real.time = 0;
+    for(var i=0;i<raw.length;i++){
+      if(isNumeric(raw[i])){
+        real.time = raw[i];
+        break;
+      }
     }
 
     console.log(raw);
@@ -223,7 +232,7 @@ $(function() {
 
   App = new $App();
   var params = getRealParameters();
-  Reader = new $Reader(params.member, params.superuser, params.time);
+  Reader = new $Reader(params.member, params.superuser, params.time, params.nomenu);
   if(!params.auto){
     Reader.showPreview(params.storyId);
   }else{
