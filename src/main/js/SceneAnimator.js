@@ -303,9 +303,11 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
    * スクロールを完了させる
    */
   this.skipScroll = function() {
-    while (action < actionCount && isScrolling()) {
+    var stop = action+1;
+    while (action < stop && isScrolling()) {
       step();
     }
+    scrolling = false;
   };
 
   /**
@@ -315,8 +317,10 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     reverse = true;
     scrolling = true;
     action--;
-    while (0 < action) {
+    var stop = action-1;
+    while (stop < action) {
       step();
     }
+    scrolling = false;
   };
 }

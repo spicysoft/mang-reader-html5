@@ -262,13 +262,13 @@ body {
     z-index:  14;
     position: relative;
     float:    right;
-    margin:   auto;
+    margin:   8px;
 }
 #bookmark {
     z-index:  14;
     position: relative;
     float:    left;
-    margin:   auto;
+    margin:   8px;
 }
 
 #progress {

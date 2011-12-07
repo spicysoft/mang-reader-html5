@@ -218,7 +218,7 @@ $(function() {
     real.superuser = in_array('superuser', raw);
     real.nomenu = in_array('nomenu', raw);
     real.time = 0;
-    for(var i=0;i<raw.length;i++){
+    for(var i=1;i<raw.length;i++){
       if(isNumeric(raw[i])){
         real.time = raw[i];
         break;

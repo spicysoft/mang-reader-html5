@@ -180,12 +180,9 @@ var popUpChangeView = function(){
   $("#popup_original").hide();
 };
 
-var isFullScreen = function(){
-  return $("#fullscreen_next").size > 0;
-}
-
 var startReader = function(storyId){
     var current_view = "";
+    var current_mode = "";
     $('iframe:first').load(function(e){
       setInterval(function(){
         if(Controll.supportOriginalMode()){
@@ -230,20 +227,15 @@ var startReader = function(storyId){
             $("#fullscreen_next").show();
             $("#fullscreen_prev").show();
           }
+          toggleView();
+          current_view = Controll.view();
+        }
+        if(current_mode !=  Controll.mode()){
+          toggleMode();
+          current_mode = Controll.mode();
         }
       }, 100);
     });
-
-    if(isFullScreen()){
-        var pp_r_left = $("#menu_mode_reading").offset().left;
-        var pp_r_top = $("#menu_mode_reading").offset().top-249;
-        var pp_s_left = $("#menu_scene_view").offset().left-90;
-        var pp_s_top = $("#menu_scene_view").offset().top-159;
-        $("#popup_reading").css({top:pp_r_top, left:pp_r_left});
-        $("#popup_original").css({top:pp_r_top, left:pp_r_left});
-        $("#popup_scene").css({top:pp_s_top, left:pp_s_left});
-        $("#popup_page").css({top:pp_s_top, left:pp_s_left});
-    }
 
     $("#menu_first").click(Controll.first);
     $("#menu_prev").click(Controll.prev);
@@ -252,6 +244,7 @@ var startReader = function(storyId){
     $("#menu_mode_original").click(popUpChangeMode);
     $("#menu_scene_view").click(popUpChangeView);
     $("#menu_page_view").click(popUpChangeView);
+
     $("#menu_fullscreen").click(function(){
       location.href = '/viewer/html5/'+storyId;
     });

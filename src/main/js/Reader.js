@@ -1,4 +1,4 @@
-/*global $, _, _gaq, window, strings, App, $SceneAnimator */
+/*global $, JQuery, _, _gaq, window, strings, App, $SceneAnimator */
 
 /**
  * マンガを読み込み中のUI処理を行う MVCのコンポーネントに相当する処理を行う。
@@ -37,6 +37,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var t = _t;
   var dpi = 240;
   var cdn = false;
+
+  console.log("cookie enabled!");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -118,8 +120,11 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     if(current_view === VIEW_PAGE){
       currentPageIndex = nindex;
       var sceneIndex = 0;
-      for(var i; i<scenes.length; i++){
+      console.log("updateIndex->currentPageIndex:"+currentPageIndex + " length:" + scenes.length);
+      for(var i=0; i<scenes.length; i++){
+          console.log("pi:" + scenes[i]['page_number']);
         if(currentPageIndex === (scenes[i]['page_number']-1)){
+          console.log("break:"+sceneIndex);
           break;
         }
         sceneIndex++;
@@ -276,7 +281,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
    */
   var showError = function() {
     $("#preview").show();
-    $("#loading").hide();
+    $("#dialog_loading").hide();
     $("#reader").hide();
     $("#finish").hide();
     $("#error").show();
@@ -425,8 +430,12 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       }else{
         SceneAnimator.initializeWhenLoaded(i, 0, 240);//FIXME
       }
-      $("#loading").hide();
+      $("#canvas").css({cursor:"default"});
+      $("#dialog_loading").hide();
       isLoading = false;
+      setTimeout(function(){
+          hideMenu(500);
+      },500);
       paint();
     }
 
@@ -435,7 +444,9 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     } else {
       isLoading = true;
       showMenu(500,500);
-      $("#loading").show();
+      console.log("loading..");
+      $("#dialog_loading").show();
+      $("#canvas").css({cursor:"wait"});
       SceneAnimator.initializeWhenUnloaded();
       i.onload = onloaded;
     }
@@ -577,7 +588,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     $("#next").hide();
     $("#vote").hide();
     $("#bookmark").hide();
-    $("#loading").show();
+    $("#dialog_loading").show();
     $("#canvas").css({cursor:"wait"});
   };
 
@@ -660,7 +671,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }
 
     $("#preview").hide();
-    $("#loading").hide();
+    $("#dialog_loading").hide();
     $("#reader").show();
     $("#error").hide();
     $("#finish").show();
@@ -722,9 +733,9 @@ function $Reader(_member, _superuser, _t, _nomenu) {
 
     } else if (SceneAnimator.isAtScrollEnd()) {
       jumpNext();
-
     } else {
-      throw "Illega state";
+        SceneAnimator.startScroll();
+        animation();
     }
   };
 
@@ -797,6 +808,77 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       }
     }
   };
+
+
+  var saveConfig = function(){
+    $.cookie('mang.reader.config.view',current_view,{ expires: 14 });
+    $.cookie('mang.reader.config.mode',current_mode,{ expires: 14 });
+  }
+
+  var change_mode_original = function(){
+    if(storyMetaFile['enable_original_mode']){
+        current_mode  = MODE_ORIGINAL;
+        if(current_view === VIEW_PAGE){
+          jumpTo(currentPageIndex);
+        }else{
+          jumpTo(currentSceneIndex);
+        }
+        $("#toggle_reading").hide();
+        $("#toggle_original").show();
+        saveConfig();
+    }
+  };
+
+  var change_mode_reading = function(){
+    current_mode  = MODE_READING;
+    if(current_view === VIEW_PAGE){
+        jumpTo(currentPageIndex);
+    }else{
+        jumpTo(currentSceneIndex);
+    }
+    $("#toggle_original").hide();
+    $("#toggle_reading").show();
+    saveConfig();
+  };
+
+  var change_view_page = function(){
+    console.log("change_view_page");
+    if(storyMetaFile['enable_page_mode']){
+      current_view = VIEW_PAGE;
+      jumpTo(currentPageIndex);
+      $("#toggle_scene_view").hide();
+      $("#toggle_page_view").show();
+      $("#prev_scene").hide();
+      $("#prev_page").show();
+      saveConfig();
+    }
+  };
+
+  var change_view_scene = function(){
+      current_view = VIEW_SCENE;
+      jumpTo(currentSceneIndex);
+      $("#toggle_page_view").hide();
+      $("#toggle_scene_view").show();
+      $("#prev_page").hide();
+      $("#prev_scene").show();
+      saveConfig();
+  };
+
+  var loadConfig = function(){
+    if(storyMetaFile['enable_original_mode']){
+      var v = $.cookie('mang.reader.config.mode');
+      if(v && v === MODE_ORIGINAL){
+        change_mode_original();
+      }
+    }
+    if(storyMetaFile['enable_page_mode']){
+      var m = $.cookie('mang.reader.config.view');
+      if(m && m === VIEW_PAGE){
+        change_view_page();
+      }
+    }
+  };
+
   /**
    * 指定したマンガの話をリーダーで開く。
    */
@@ -821,7 +903,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       scenes = storyMetaFile["scenes"];
       pages = storyMetaFile["pages"];
 
-      if(storyMetaFile["csn"]){
+      if(storyMetaFile["cdn"]){
         cdn = true;
       }
       updateProgress();
@@ -836,6 +918,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         $("#toggle_scene_view").bind(act_button, change_view_page);
         $("#toggle_page_view").bind(act_button, change_view_scene);
       }
+      loadConfig();
+      saveConfig();
       $("#prev_scene").bind(act_button, goPrev);
       $("#prev_page").bind(act_button, goPrev);
       $("#first_scene").bind(act_button, show_first_click);
@@ -855,58 +939,13 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     _gaq.push(['_trackPageview', '/event/viewer/open/'+storyId]);
   };
 
-  var change_mode_original = function(){
-    if(storyMetaFile['enable_original_mode']){
-        current_mode  = MODE_ORIGINAL;
-        if(current_view === VIEW_PAGE){
-          jumpTo(currentPageIndex);
-        }else{
-          jumpTo(currentSceneIndex);
-        }
-        $("#toggle_reading").hide();
-        $("#toggle_original").show();
-    }
-  };
-
-  var change_mode_reading = function(){
-    current_mode  = MODE_READING;
-    if(current_view === VIEW_PAGE){
-        jumpTo(currentPageIndex);
-    }else{
-        jumpTo(currentSceneIndex);
-    }
-    $("#toggle_original").hide();
-    $("#toggle_reading").show();
-  };
-
-  var change_view_page = function(){
-    console.log("change_view_page");
-    if(storyMetaFile['enable_page_mode']){
-      current_view = VIEW_PAGE;
-      jumpTo(currentPageIndex);
-      $("#toggle_scene_view").hide();
-      $("#toggle_page_view").show();
-      $("#prev_scene").hide();
-      $("#prev_page").show();
-    }
-  };
-
-  var change_view_scene = function(){
-      current_view = VIEW_SCENE;
-      jumpTo(currentSceneIndex);
-      $("#toggle_page_view").hide();
-      $("#toggle_scene_view").show();
-      $("#prev_page").hide();
-      $("#prev_scene").show();
-  };
-
   var prepareMenu = function(){
-      $("#menu").css("top", -1 * 132 + "px");//FIXME menuの高さが合わないのでハードコーディングした。なおしたい。
-      $("#menu").show();
-      $("#menu_tab").bind(act_button, menu_hide_click);
-      disable_button($("#toggle_reading"));
-      disable_button($("#toggle_scene_view"));
-  };
+    $("#menu").css("top", -1 * 132 + "px");//FIXME menuの高さが合わないのでハードコーディングした。なおしたい。
+    $("#menu").show();
+    $("#menu_tab").bind(act_button, menu_hide_click);
+    disable_button($("#toggle_reading"));
+    disable_button($("#toggle_scene_view"));
+   };
 
   /**
    * プレビュー画面を表示する

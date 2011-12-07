@@ -10,6 +10,14 @@
 
 .sprite {background-image: url(ja.320.png?v=1); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
 
+#vote {
+    margin-left: 10px;
+    margin-right: auto;
+}
+#bookmark {
+    margin-right: 10px;
+    margin-left: auto;
+}
 #next                     {background-position: 0 -213px;width: 300px;height: 89px;cursor: pointer;}
 #next:hover, #next.active {background-position: 0 -303px;width: 300px;height: 89px;cursor: pointer;}
 #next.disable             {background-position: 0 -393px;width: 300px;height: 89px;cursor: default;}
@@ -36,7 +44,7 @@
 #first_scene.disable                    {background-position: -228px -46px;width: 113px;height: 45px; cursor: default;}
 
 #toggle_reading         {background-position: -301px -322px; width: 148px;height: 31px; cursor:pointer;}
-#toggle_reading.disable {background-position: 0px -554px; width: 148px;height: 31px; cursor:default;}
+#toggle_reading.disable {background-position: 0px -544px; width: 148px;height: 31px; cursor:default;}
 #toggle_original   {background-position: -301px -354px; width: 148px;height: 31px; cursor:pointer;}
 #toggle_page_view  {background-position: -301px -290px; width: 148px;height: 31px; cursor:pointer;}
 #toggle_scene_view {background-position: -301px -258px; width: 148px;height: 31px; cursor:pointer;}
@@ -49,7 +57,7 @@
 #close:hover, #close.active {background-position: -343px -46px;width: 31px;height: 30px; cursor:pointer;}
 
 #dialog_error   {background-position: -301px -386px;width: 213px;height: 60px;}
-#dialog_loading {background-position: -301px -213px;width: 112px;height: 44px;}
+#dialog_loading {background-position: -301px -213px;width: 112px;height: 44px; cursor:wait;}
 #logo_reader    {background-position: -342px 0;width: 90px;height: 21px;}
 
 #start                       {background-position: 0 -483px;width: 213px; height: 60px; cursor: pointer;}
