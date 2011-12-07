@@ -19,8 +19,7 @@
   width:100%;
   z-index:10;
   text-indent:0;
-  font-size: 100%;
-  font-weight: bold;
+  font-size: 90;
   line-height:28px;
 }
 
@@ -83,3 +82,15 @@
 #popup_original {z-index:20;position:absolute;top:230px;left:230px;}
 #popup_scene {z-index:20;position:absolute;top:320px;left:260px;}
 #popup_page {z-index:20;position:absolute;top:320px;left:260px;}
+
+#fullscreen_page_prev         {background-position:    0   -342px; width: 170px;height: 68px; cursor:pointer}
+#fullscreen_page_prev:hover   {background-position: -171px -342px; width: 170px;height: 68px; cursor:pointer}
+#fullscreen_page_prev.disable {background-position: -342px -342px; width: 170px;height: 68px; cursor:default}
+
+#fullscreen_page_next         {background-position:      0 -411px; width: 170px;height: 68px; cursor:pointer}
+#fullscreen_page_next:hover   {background-position: -171px -411px; width: 170px;height: 68px; cursor:pointer}
+#fullscreen_page_next.disable {background-position: -342px -411px; width: 170px;height: 68px; cursor:default}
+
+#close_fullscreen        {background-position: -408px -58px;width: 30px;height: 28px; cursor:pointer;}
+#close_fullscreen:hover  {background-position: -439px -58px;width: 30px;height: 28px; cursor:pointer;}
+#close_fullscreen:active {background-position: -470px -58px;width: 30px;height: 28px; cursor:pointer;}

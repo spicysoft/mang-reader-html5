@@ -9,9 +9,9 @@
       fileref.setAttribute("rel", "stylesheet");
       fileref.setAttribute("type", "text/css");
       if($(window).width() <= 320){
-          fileref.setAttribute("href", "layout.320.css" );
+          fileref.setAttribute("href", "layout.320.css?v=1" );
       }else{
-          fileref.setAttribute("href", "layout.480.css" );
+          fileref.setAttribute("href", "layout.480.css?v=1" );
       }
       document.getElementsByTagName('head').item(0).appendChild(fileref);
     </script>

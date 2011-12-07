@@ -36,6 +36,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var su_expire = 0;
   var t = _t;
   var dpi = 240;
+  var cdn = false;
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -118,7 +119,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       currentPageIndex = nindex;
       var sceneIndex = 0;
       for(var i; i<scenes.length; i++){
-        if(currentPageIndex === scenes['i']['page_number']){
+        if(currentPageIndex === (scenes[i]['page_number']-1)){
           break;
         }
         sceneIndex++;
@@ -126,7 +127,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       currentSceneIndex = sceneIndex;
     }else{
       currentSceneIndex = nindex;
-      currentPageIndex = scenes[currentSceneIndex]['page_number'];
+      currentPageIndex = scenes[currentSceneIndex]['page_number']-1;
     }
   };
 
@@ -170,6 +171,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         var rate =  Math.sqrt(320/screen.width);
         context.scale(rate, rate);
       }
+
       context.drawImage(i, dx, dy);
       if(App.ANDROID21){
         context.restore();
@@ -227,7 +229,12 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         param = "?t="+t;
       }
     }
-    ajax_get(API_ROOT + '/storyMetaFile/' + storyId+param, 'json', fnSuccess, fnError, cache);
+
+    var host = "";
+    if(cdn){
+      host = "http://cdn."+location.host;
+    }
+    ajax_get(host + API_ROOT + '/storyMetaFile/' + storyId+param, 'json', fnSuccess, fnError, cache);
   };
 
   /**
@@ -313,7 +320,11 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     if(t > 0){
       param = "?t="+t;
     }
-    i.src = API_ROOT + '/sceneImage/' + sceneId + '/' + mode + '/' + dpi + param;
+    var host = "";
+    if(cdn){
+      host = "http://cdn."+location.host;
+    }
+    i.src = host+API_ROOT + '/sceneImage/' + sceneId + '/' + mode + '/' + dpi + param;
     return i;
   };
 
@@ -338,7 +349,11 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     if(t > 0){
       param = "?t="+t;
     }
-    i.src = API_ROOT + '/pageImage/' + pageId + '/' + mode + '/' + dpi + param;
+    var host = "";
+    if(cdn){
+      host = "http://cdn."+location.host;
+    }
+    i.src = host+API_ROOT + '/pageImage/' + pageId + '/' + mode + '/' + dpi + param;
     return i;
   };
 
@@ -805,6 +820,10 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       storyMetaFile = json;
       scenes = storyMetaFile["scenes"];
       pages = storyMetaFile["pages"];
+
+      if(storyMetaFile["csn"]){
+        cdn = true;
+      }
       updateProgress();
 
       if(storyMetaFile['enable_original_mode']){
@@ -878,7 +897,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       $("#toggle_page_view").hide();
       $("#toggle_scene_view").show();
       $("#prev_page").hide();
-      $("#prev_show").show();
+      $("#prev_scene").show();
   };
 
   var prepareMenu = function(){

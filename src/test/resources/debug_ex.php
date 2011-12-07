@@ -11,17 +11,6 @@
     $("#progress_current").text(Controll.current());
     $("#progress_total").text(Controll.total());
   }, 100);
-  var popUpChangeMode = function(){
-    //
-  };
-  var popUpChangeView = function(){
-    //
-  };
-  var showFullScreen = function(){
-    $("#fullscreen").width($(window).width());
-    $("#fullscreen").height($(window).height());
-    $("#fullscreen").show();
-  }
 </script>
 <style type="text/css">
 .sprite2 {background-image: url(ja.480.png?v=1); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
