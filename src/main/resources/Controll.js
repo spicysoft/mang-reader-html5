@@ -25,7 +25,6 @@ function $Controll() {
       Controll.prev();
       e.preventDefault();
     }
-    console.log(e.which);
   });
   var elem = function(hash){
     return document.getElementById('reader_reader').contentWindow.$(hash);

@@ -17,6 +17,11 @@
     margin-right: 15px;
     margin-left: auto;
 }
+#dialog_error{
+    position:absolute;
+    top:195px;
+    left:80px;
+}
 
 #next                     {background-position: 0 -321px;width: 450px;height: 134px;cursor: pointer;}
 #next:hover, #next.active {background-position: 0 -456px;width: 450px;height: 134px;cursor: pointer;}

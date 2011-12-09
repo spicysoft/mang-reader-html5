@@ -39,14 +39,13 @@ body {
 }
 
 .msg {
-   position: fixed;
-   top: 0;
-   left: 0;
-   z-index: 10;
-   background-color: black;
+   z-index: 20;
    padding: 4px 12px 4px 12px;
    color: white;
    font-size: 140%;
+   text-indent: 0px;
+   margin:8px 12px 8px 12px;
+   position: absolute;
 }
 
 .vhcenter {
@@ -285,5 +284,26 @@ body {
 
 #error {
     z-index: 10;
+}
+
+#dialog_error{
+    z-index: 10;
+}
+
+#story_title_insert{
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color: black;
+  z-index: 20;
+}
+
+#story_title_items{
+  font-size: 400%;
+  position: absolute;
+  top: 35%;
+  width: 100%;
+  text-align: center;
 }
 
