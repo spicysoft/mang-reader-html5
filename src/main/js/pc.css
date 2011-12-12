@@ -6,7 +6,7 @@ body {
   width:            100%;
   margin:           0;
   overflow:         hidden;
-  position:         fixed;
+  position:         absolute;
   -webkit-tap-highlight-color:rgba(0,0,0,0);
   -webkit-touch-callout:none;
   -webkit-user-select:none;
@@ -46,6 +46,8 @@ body {
    text-indent: 0px;
    margin:8px 12px 8px 12px;
    position: absolute;
+   top:0;
+   left:0;
 }
 
 .vhcenter {
@@ -227,7 +229,9 @@ body {
     position:absolute;
     width:100%;
     height:100%;
-    text-aligh:center
+    text-align:center;
+    top:0;
+    left:0;
 }
 #menu_tab {
     z-index:12;
@@ -256,17 +260,18 @@ body {
 #finish_social_actions {
     margin:auto;
     width:100%;
+    height:100%;
 }
 #vote {
     z-index:  14;
     position: relative;
-    float:    right;
+    float:    left;
     margin:   8px;
 }
 #bookmark {
     z-index:  14;
     position: relative;
-    float:    left;
+    float:    right;
     margin:   8px;
 }
 

@@ -8,24 +8,28 @@ function $Controll() {
   //・上、左、BS            ... 戻る
   //・Esc                   ... 全画面解除
 
-  //親フレーム用のキー入力受付
-  //小フレーム用はReader.js内にあります
-  $(window).keydown(function(e){
-    if(e.which == 32      //space
-      || e.which == 13  //enter
-      || e.which == 39  //right
-      || e.whicch == 40 //down
-      ){
-      Controll.next();
-      e.preventDefault();
-    }else if(e.which == 8//BS
-        || e.which == 37//left
-        || e.which == 38//up
-      ){
-      Controll.prev();
-      e.preventDefault();
-    }
+  $(document).ready(function(){
+    console.log("bind keydown");
+    //親フレーム用のキー入力受付
+    //小フレーム用はReader.js内にあります
+    $(document).keydown(function(e){
+      if(e.keyCode == 32      //space
+        || e.keyCode == 13  //enter
+        || e.keyCode == 39  //right
+        || e.keyCode == 40 //down
+        ){
+        Controll.next();
+        return false;
+      }else if(e.keyCode == 8//BS
+          || e.keyCode == 37//left
+          || e.keyCode == 38//up
+        ){
+        Controll.prev();
+        return false;
+      }
+    });
   });
+
   var elem = function(hash){
     return document.getElementById('reader_reader').contentWindow.$(hash);
   }
@@ -103,6 +107,7 @@ function $Controll() {
     return !elem("#toggle_scene_view").hasClass("disable");
   }
 };
+
 var Controll = new $Controll();
 
 var isVisible = function(elem){
@@ -220,17 +225,26 @@ var startReader = function(storyId){
             $("#fullscreen_prev").hide();
             $("#fullscreen_page_next").show();
             $("#fullscreen_page_prev").show();
+            $("#menu_scene_view").hide();
+            $("#menu_page_view").show();
           }else{
             $("#fullscreen_page_next").hide();
             $("#fullscreen_page_prev").hide();
             $("#fullscreen_next").show();
             $("#fullscreen_prev").show();
+            $("#menu_page_view").hide();
+            $("#menu_scene_view").show();
           }
-          toggleView();
           current_view = Controll.view();
         }
         if(current_mode !=  Controll.mode()){
-          toggleMode();
+          if(Controll.mode() == "reading"){
+            $("#menu_mode_original").hide();
+            $("#menu_mode_reading").show();
+          }else{
+            $("#menu_mode_reading").hide();
+            $("#menu_mode_original").show();
+          }
           current_mode = Controll.mode();
         }
       }, 100);

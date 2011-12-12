@@ -35,6 +35,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var storyTitleInsert = false;
   var hasComicTitleShown = false;
   var hasStoryTitleShown = false;
+  var hasAllTitleShown = false;
 
   var su_key = "";
   var su_expire = 0;
@@ -120,7 +121,12 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       return 640;
     }
   };
-  dpi = resolveDpi(canvas.width);
+
+  if (App.IE && App.IE_VER < 8) {
+    dpi = resolveDpi($("#canvas").width);
+  }else{
+    dpi = resolveDpi(canvas.width);
+  }
 
   var SceneAnimator = new $SceneAnimator(width, height, FPS);
 
@@ -155,11 +161,19 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       }
       var w=i.width*2;
       var h=i.height*2;
-
-      var context = canvas.getContext("2d");
       var dx= (width - w) / 2 ;
-      var dy=  (height - h) / 2 ;
-      context.drawImage(i, dx, dy, w, h);
+      var dy= (height - h) / 2 ;
+
+      if (App.IE) {
+        i.width = w;
+        i.height = h;
+          i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
+          $("#canvas").empty().append(i);
+      } else {
+          var context = canvas.getContext("2d");
+          context.drawImage(i, dx, dy, w, h);
+      }
+
       return;
     }else if(storyTitleInsert && !hasStoryTitleShown){
       $("#story_title_insert").show();
@@ -544,7 +558,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     } else {
       isLoading = true;
       showMenu(500,500);
-      console.log("loading..");
       $("#dialog_loading").show();
       $("#canvas").css({cursor:"wait"});
       SceneAnimator.initializeWhenUnloaded();
@@ -788,6 +801,15 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     if(isLoading){
       return;
     }
+    if(comicTitleInsert && !hasComicTitleShown ||
+        storyTitleInsert && !hasComicTitleShown){
+        jumpTo(0);
+      return;
+    }else if((comicTitleInsert || storyTitleInsert) && !hasAllTitleShown){
+      hasAllTitleShown = true;
+      jumpTo(0);
+      return;
+    }
     var next;
     if(current_view === VIEW_PAGE){
       next = currentPageIndex + 1;
@@ -865,6 +887,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     $("#finish").hide();
     $("#dialog_error").hide();
     var canvas_click = function(event) {
+      console.log(event.type);
       goNext();
       prevent_default(event);
     };
@@ -1023,6 +1046,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       }
 
       comicTitleInsert = storyMetaFile['comic_title_insert']==='1';
+      comicTitleInsert = true;
       if(comicTitleInsert){
         comicTitleImage = apiComicTitleImage(storyMetaFile['comic_id']);
       }
@@ -1091,21 +1115,20 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   //子フレーム用のキー入力受付
-  $(window).keydown(function(e){
-      //console.log(e.keyCode);
-      if(e.which === 32      //space
-        || e.which === 13  //enter
-        || e.which === 39  //right
-        || e.whicch === 40 //down
+  $(document).keydown(function(e){
+      if(e.keyCode === 32      //space
+        || e.keyCode === 13  //enter
+        || e.keyCode === 39  //right
+        || e.keyCode === 40 //down
         ){
         $("#canvas").trigger('mousedown');
-        e.preventDefault();
-      }else if(e.which === 8//BS
-          || e.which === 37//left
-          || e.which === 38//up
+        return false;
+      }else if(e.keyCode === 8//BS
+          || e.keyCode === 37//left
+          || e.keyCode === 38//up
         ){
         ("#prev_scene").trigger('mouseup');
-        e.preventDefault();
+        return false;
       }
     });
 
