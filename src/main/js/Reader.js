@@ -11,6 +11,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var API_ROOT = '/api';
   var width = 0;
   var height = 0;
+  var canvas;
 
   var MODE_ORIGINAL = 'original';
   var MODE_READING  = 'reading';
@@ -43,7 +44,16 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var dpi = 240;
   var cdn = false;
 
-  console.log("v3.0.1");
+  var error = 0;
+  var started = false;
+  var prev_image;
+
+  var pageX = 0;
+  var reverse = false;
+  var pageScroll = false;
+  var pageIndexUpdated = false;
+
+  console.log("v3.0.4");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -53,7 +63,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   }
 
   if(!t){
-    t = parseInt((new Date)/1000);
+    t = parseInt((new Date())/1000, 10);
   }
 
   var getUrlVars = function(){
@@ -91,23 +101,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }
   };
 
-  var canvas;
-  if (App.IE && App.IE_VER < 8) {
-    width = $(window).width();
-    height = $(window).height();
-    $("#mangh5r").width(width);
-    $("#mangh5r").height(height);
-    $("#canvas").width(width);
-    $("#canvas").height(height);
-  } else {
-    var reader = $("#mangh5r");
-    width = reader.width();
-    height = reader.height();
-    canvas = $("#canvas")[0];
-    canvas.width = width;
-    canvas.style.width = width + "px";
-    canvas.height = height;
-    canvas.style.height = width + "px";
+  if(nomenu){
+    $("#menu_switch").hide();
   }
 
   var resolveDpi = function(w){
@@ -122,12 +117,32 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }
   };
 
-  if (App.IE && App.IE_VER < 8) {
-    dpi = resolveDpi($("#canvas").width);
-  }else{
-    dpi = resolveDpi(canvas.width);
-  }
+  var setWidthAndHeight = function(){
+    if (App.IE && App.IE_VER < 8) {
+      width = $(window).width();
+      height = $(window).height();
+      $("#mangh5r").width(width);
+      $("#mangh5r").height(height);
+      $("#canvas").width(width);
+      $("#canvas").height(height);
+     } else {
+      var reader = $("#mangh5r");
+      width = reader.width();
+      height = reader.height();
+      canvas = $("#canvas")[0];
+      canvas.width = width;
+      canvas.style.width = width + "px";
+      canvas.height = height;
+      canvas.style.height = height + "px";
+    }
+    if (App.IE && App.IE_VER < 8) {
+      dpi = resolveDpi(Math.max($("#canvas").width, $("#canvas").height));
+    }else{
+      dpi = resolveDpi(Math.max(canvas.width, canvas.height));
+    }
+  };
 
+  setWidthAndHeight();
   var SceneAnimator = new $SceneAnimator(width, height, FPS);
 
   var updateIndex = function(nindex){
@@ -141,11 +156,133 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         sceneIndex++;
       }
       currentSceneIndex = sceneIndex;
+      pageIndexUpdated = true;
     }else{
       currentSceneIndex = nindex;
       currentPageIndex = scenes[currentSceneIndex]['page_number']-1;
     }
   };
+
+  var paintComicTitle = function(i){
+      var w=i.width*2;
+      var h=i.height*2;
+      var dx= (width - w) / 2 ;
+      var dy= (height - h) / 2 ;
+
+      if (App.IE) {
+        i.width = w;
+        i.height = h;
+        i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
+        $("#canvas").empty().append(i);
+      } else {
+        var context = canvas.getContext("2d");
+        context.drawImage(i, dx, dy, w, h);
+      }
+  };
+
+  var paintPageImage = function(i0, i1){
+    var d=0;
+    if(reverse){
+      d = pageX;
+    }else{
+      d = -1 * pageX;
+    }
+    var x0 = d;
+    var x1;
+    if(reverse){
+      x1=d-width;
+    }else{
+      x1=d+width;
+    }
+
+    var w0=i0.width;
+    var h0=i0.height;
+    var dx0=(width - w0) / 2 + x0;
+    var dy0=(height - h0) / 2;
+
+    var w1 = 0;
+    var h1 = 0;
+    var dx1 = 0;
+    var dy1 = 0;
+    if(i1){
+      w1=i1.width;
+      h1=i1.height;
+      dx1=(width - w1) / 2 + x1;
+      dy1=(height - h1) / 2;
+    }
+
+    if (App.IE) {
+      var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
+      i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
+      var elm = $("#canvas").empty().append(i0);
+      if(!i1){
+        i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
+        elm = elm.append(i1);
+      }
+      elm.append(mask);
+    } else {
+      var context = canvas.getContext("2d");
+      context.fillStyle = canvas.style.background;
+      context.fillRect(0, 0, width, height);
+
+      //Android2.1以下のCanvas drawImageバグ対応
+      //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
+      //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
+      if(App.ANDROID21){
+        context.save();
+        var rate =  Math.sqrt(320/screen.width);
+        context.scale(rate, rate);
+      }
+
+      context.drawImage(i0, dx0, dy0);
+      if(i1){
+        context.drawImage(i1, dx1, dy1);
+      }
+      if(App.ANDROID21){
+        context.restore();
+      }
+    }
+  };
+
+  var paintImage = function(i){
+      var x;
+      var y;
+      if(current_view === VIEW_PAGE){
+       x=0;
+       y=0;
+      }else{
+       x=SceneAnimator.x();
+       y=SceneAnimator.y();
+      }
+
+      var w=i.width;
+      var h=i.height;
+      var dx=(width - w) / 2 + x;
+      var dy=(height - h) / 2 + y;
+
+      if (App.IE) {
+        i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
+        var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
+        $("#canvas").empty().append(i).append(mask);
+      } else {
+        var context = canvas.getContext("2d");
+        context.fillStyle = canvas.style.background;
+        context.fillRect(0, 0, width, height);
+
+        //Android2.1以下のCanvas drawImageバグ対応
+        //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
+        //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
+        if(App.ANDROID21){
+          context.save();
+          var rate =  Math.sqrt(320/screen.width);
+          context.scale(rate, rate);
+        }
+        context.drawImage(i, dx, dy);
+        if(App.ANDROID21){
+          context.restore();
+        }
+      }
+    };
 
   /**
    * 画面描画
@@ -155,25 +292,11 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     var i;
     if(comicTitleInsert && !hasComicTitleShown){
       i = comicTitleImage;
-      hasComicTitleShown = true;
       if (i === undefined || !i.hasLoaded()) {
           return;
       }
-      var w=i.width*2;
-      var h=i.height*2;
-      var dx= (width - w) / 2 ;
-      var dy= (height - h) / 2 ;
-
-      if (App.IE) {
-        i.width = w;
-        i.height = h;
-          i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
-          $("#canvas").empty().append(i);
-      } else {
-          var context = canvas.getContext("2d");
-          context.drawImage(i, dx, dy, w, h);
-      }
-
+      paintComicTitle(i);
+      hasComicTitleShown = true;
       return;
     }else if(storyTitleInsert && !hasStoryTitleShown){
       $("#story_title_insert").show();
@@ -190,37 +313,28 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         return;
       }
     }
-
-    var x=SceneAnimator.x();
-    var y=SceneAnimator.y();
-    var w=i.width;
-    var h=i.height;
-    var dx=(width - w) / 2 + x;
-    var dy=(height - h) / 2 + y;
-
-    if (App.IE) {
-      i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
-      $("#canvas").empty().append(i);
-    } else {
-      var context = canvas.getContext("2d");
-      context.fillStyle = canvas.style.background;
-      context.fillRect(0, 0, width, height);
-
-      //Android2.1以下のCanvas drawImageバグ対応
-      //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
-      //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
-      if(App.ANDROID21){
-        context.save();
-        var rate =  Math.sqrt(320/screen.width);
-        context.scale(rate, rate);
+    if(current_view === VIEW_PAGE){
+      if(prev_image === undefined ||
+          reverse && currentPageIndex === 0 ||
+          !reverse && currentPageIndex === pages.length-1){
+        paintImage(i);
+        prev_image = i;
+      }else if(pageScroll){
+        console.log("scrolling:"+currentPageIndex);
+        if(reverse){
+          paintPageImage(i, pageImages[current_mode][currentPageIndex-1]);
+        }else{
+          paintPageImage(i, pageImages[current_mode][currentPageIndex+1]);
+        }
+      }else{
+        console.log("stop:"+currentPageIndex);
+        paintImage(i);
       }
-
-      context.drawImage(i, dx, dy);
-      if(App.ANDROID21){
-        context.restore();
-      }
+    }else{
+      paintImage(i);
     }
   };
+
 
   /**
    * 表示モードを通信エラーに切り替える
@@ -343,20 +457,52 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var goToNextStory = function(next_story_id, comic_id, param){
+    console.log("goToNextStory");
     var after_param = '';
     if(param !== ""){
       after_param = "?after="+param;
     }
+    var url = '';
     if(next_story_id === false){
-      parent.document.location.href = '/comic/view/'+comic_id+'/story/_undelivered'+after_param;
+       url = '/comic/view/'+comic_id+'/story/_undelivered'+after_param;
     }else{
       if (member) {
-        parent.document.location.href = '/comic/view/'+comic_id+'/story/'+next_story_id+after_param;
+        url = '/comic/view/'+comic_id+'/story/'+next_story_id+after_param;
       } else {
-        parent.document.location.href = '/comic/landing/nomember?next=/comic/view/'+
+        url = '/comic/landing/nomember?next=/comic/view/'+
           comic_id+'/story/'+next_story_id;
       }
     }
+    (parent["goNextUrl"])(url);
+  };
+
+  var apiImage = function(id, mode, dpi, urlmaker, refetch){
+    var i = new Image();
+    i.hasLoaded = function(){
+      //IE9でImage.completeが動作しない場合があるので、
+      //Image.widthを見てロードが完了したか判断する
+      return this.width > 0;
+    };
+    i.onerror = function(){
+       //再読み込みする
+       console.log("error! id:"+id);
+       if(error > 10){
+         showError();
+         return;
+       }
+       error++;
+       refetch(id, mode, dpi);
+    };
+    var param = "";
+    if(t > 0){
+      param = "?t="+t;
+    }
+    var host = "";
+    if(cdn && t > 0){
+      host = "http://cdn."+location.host;
+    }
+    i.src = urlmaker(host, id, mode,  dpi,  param);
+    return i;
   };
 
 
@@ -367,78 +513,61 @@ function $Reader(_member, _superuser, _t, _nomenu) {
    * @return Image ただし非同期なので読み込み完了していることは保証されない
    */
   var apiSceneImage = function(sceneId, mode, dpi) {
-    var i = new Image();
-    i.hasLoaded = function(){
-      //IE9でImage.completeが動作しない場合があるので、
-      //Image.widthを見てロードが完了したか判断する
-      return this.width > 0;
-    };
-    i.onerror = function(){
-       console.log("error!"+sceneId);
-       showError();
-    };
-    var param = "";
-    if(t > 0){
-      param = "?t="+t;
-    }
-    var host = "";
-    if(cdn && t > 0){
-      host = "http://cdn."+location.host;
-    }
-    i.src = host+API_ROOT + '/sceneImage/' + sceneId + '/' + mode + '/' + dpi + param;
-    return i;
+    return apiImage(sceneId, mode, dpi,
+        function(host, sceneId, mode, dpi, param){
+          return host+API_ROOT + '/sceneImage/' + sceneId + '/' + mode + '/' + dpi + param;
+        },
+        function(sceneId, mode, dpi){
+          console.log("refetch scene:" + sceneId);
+          for(var i=0;i<scenes.length;i++){
+            if(scenes[i]['scene_id']===sceneId){
+              var ni = apiSceneImage(sceneId, mode, dpi);
+              if(i.onloaded !== undefined){
+                ni.onload = i.onloaded;
+              }
+              sceneImages[mode][i] = ni;
+              break;
+            }
+          }
+        }
+    );
   };
 
-  /**
-   * [サーバーAPIとの通信メソッド] サーバーからページ画像を取得する
-   *
-   * @private
-   * @return Image ただし非同期なので読み込み完了していることは保証されない
-   */
   var apiPageImage = function(pageId, mode, dpi) {
-    var i = new Image();
-    i.hasLoaded = function(){
-      //IE9でImage.completeが動作しない場合があるので、
-      //Image.widthを見てロードが完了したか判断する
-      return this.width > 0;
-    };
-    i.onerror = function(){
-       console.log("error!"+pageId);
-       showError();
-    };
-    var param = "";
-    if(t > 0){
-      param = "?t="+t;
-    }
-    var host = "";
-    if(cdn && t > 0){
-      host = "http://cdn."+location.host;
-    }
-    i.src = host+API_ROOT + '/pageImage/' + pageId + '/' + mode + '/' + dpi + param;
-    return i;
+      return apiImage(pageId, mode, dpi,
+          function(host, pageId, mode, dpi, param){
+            return host+API_ROOT + '/pageImage/' + pageId + '/' + mode + '/' + dpi + param;
+          },
+          function(pageId, mode, dpi){
+            console.log("refetch page:" + pageId);
+            for(var i=0;i<pages.length;i++){
+              if(pages[i]['pageId']===pageId){
+                var ni = apiPageImage(pageId, mode, dpi);
+                if(i.onloaded !== undefined){
+                  ni.onload = i.onloaded;
+                }
+                pageImages[mode][i] = ni;
+                break;
+              }
+            }
+          }
+      );
   };
 
   var apiComicTitleImage = function(comicId) {
-      var i = new Image();
-      i.hasLoaded = function(){
-        //IE9でImage.completeが動作しない場合があるので、
-        //Image.widthを見てロードが完了したか判断する
-        return this.width > 0;
-      };
-      i.onerror = function(){
-         console.log("error!"+pageId);
-         showError();
-      };
-      var param = "";
-      if(t > 0){
-        param = "?t="+t;
-      }
-      var host = "";
-      if(cdn && t > 0){
-        host = "http://cdn."+location.host;
-      }
-      i.src = host + '/icon/large/' + comicId + param;
-      return i;
+      return apiImage(comicId, 0, 0,
+          function(host, comicId, mode, dpi, param){
+            return host + '/icon/large/' + comicId + param;
+          },
+          function(comicId, mode, dpi){
+            console.log("refetch comicTitle:" + comicId);
+            var ni = apiComicTitleImage(comicId);
+            if(comicTitleImage.onloaded !== undefined){
+              ni.onload = comicTitleImage.onloaded;
+            }
+            comicTitleImage = ni;
+          }
+      );
   };
 
   /**
@@ -541,10 +670,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       if(current_view === VIEW_SCENE){
         var scene = scenes[currentSceneIndex];
         SceneAnimator.initializeWhenLoaded(i, scene["scroll_course"], scene["scroll_speed"]);
-      }else{
-        SceneAnimator.initializeWhenLoaded(i, 0, 240);//FIXME
       }
-      $("#canvas").css({cursor:"default"});
+      $("#canvas").css({cursor:"pointer"});
       $("#dialog_loading").hide();
       isLoading = false;
       setTimeout(function(){
@@ -560,7 +687,9 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       showMenu(500,500);
       $("#dialog_loading").show();
       $("#canvas").css({cursor:"wait"});
-      SceneAnimator.initializeWhenUnloaded();
+      if(current_view === VIEW_SCENE){
+        SceneAnimator.initializeWhenUnloaded();
+      }
       i.onload = onloaded;
     }
   };
@@ -575,7 +704,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }else{
       prev = currentSceneIndex - 1;
     }
-
     if (0 <= prev) {
       jumpTo(prev);
     }
@@ -595,6 +723,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }
   };
 
+  //todo jquery pluginにする
   var disable_button = function(item){
     item.addClass("disable");
   };
@@ -610,7 +739,10 @@ function $Reader(_member, _superuser, _t, _nomenu) {
    * @return void
    */
   var goPrev= function(e) {
-    console.log("goPrev");
+    SceneAnimator.reverse = true;
+    SceneAnimator.dirFwd = false;
+    reverse = true;
+
     if(current_view === VIEW_PAGE && 0 === currentPageIndex ||
       current_view === VIEW_SCENE && 0 === currentSceneIndex){
       prevent_default(e);
@@ -621,10 +753,40 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }else{
       activate_button($("#prev_scene"), 500);
     }
-
     hideFinished();
-    jumpPrev();
-    prevent_default(e);
+
+    if(current_view === VIEW_PAGE){
+      if (pageX >= width) {
+        console.log("*** alert prev ***");
+        jumpPrev();
+        pageX = 0;
+      }else if (!pageScroll) {
+          console.log("*** scroll start ***");
+        pageScroll = true;
+        animation();
+      } else {
+        paint();
+      }
+    }else{
+      if (SceneAnimator.isAtScrollStart()) {
+        console.log("*** scroll start ***");
+        jumpPrev();;
+      } else if (SceneAnimator.isScrolling()) {
+        console.log("*** scroll cancel ***");
+        jumpPrev();
+      } else if (SceneAnimator.isAtScrollBackEnd()){
+        console.log("*** scroll end ***");
+        jumpPrev();
+      } else {
+          console.log("*** scroll restart ***");
+        SceneAnimator.restartBackScroll();
+        animation();
+      }
+    }
+    if(e){
+      e.preventDefault();
+    }
+
   };
 
   var show_first_click = function(e){
@@ -643,21 +805,26 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     return $("#menu").css("top") === "0px";
   };
 
+  var menu_click = function(e){
+    showMenu(500, 500);
+    e.preventDefault();
+  };
+
   var hideMenu = function(fadeout){
     if(!menuIsVisible()){
       return;
     }
     $("#menu").animate(
-        {top: "-132px"},
-        fadeout,'swing',
-        function(){
-          $("#menu_switch").bind(act_start, menu_click);
-        });
+      {top: "-132px"},
+      fadeout,'swing',
+      function(){
+        $("#menu_switch").bind('click', menu_click);
+      });
   };
 
   var menu_hide_click = function(e){
-      hideMenu(500);
-      prevent_default(e);
+    hideMenu(500);
+    e.preventDefault();
   };
 
   /**
@@ -667,7 +834,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     if(menuIsVisible() || nomenu){
       return;
     }
-    $("#menu_switch").unbind(act_start, menu_click);
+    $("#menu_switch").unbind('click', menu_click);
     $("#menu").animate(
         {top: "0"},
         fadeout,'swing',
@@ -692,11 +859,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         enable_button($("#first_scene"));
       }
     }
-  };
-
-  var menu_click = function(e){
-      showMenu(500, 500);
-      prevent_default(e);
   };
 
   var hideAll = function(){
@@ -755,19 +917,16 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       ,500);
       disable_button($("#vote"));
       disable_button($("#bookmark"));
-    }else if(!su) {
+    }else{
       disable_button($("#vote"));
       disable_button($("#bookmark"));
-    }else{
-      $("#vote").hide();
-      $("#bookmark").hide();
     }
 
     if(su){
-        $("#next").hide();
+      disable_button($("#next"));
     }else{
-        disable_button($("#next"));
-        setTimeout(
+      disable_button($("#next"));
+      setTimeout(
           function(){
             $("#next").bind(act_start,
               function(e) {
@@ -775,6 +934,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
               });
             $("#next").bind(act_button,
               function(e) {
+                console.log("clicked: next");
                 setTimeout(function(){
                   goToNextStory(next_story_id, comic_id, "");
                 },0);
@@ -802,8 +962,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       return;
     }
     if(comicTitleInsert && !hasComicTitleShown ||
-        storyTitleInsert && !hasComicTitleShown){
-        jumpTo(0);
+        storyTitleInsert && !hasStoryTitleShown){
+      jumpTo(0);
       return;
     }else if((comicTitleInsert || storyTitleInsert) && !hasAllTitleShown){
       hasAllTitleShown = true;
@@ -829,12 +989,34 @@ function $Reader(_member, _superuser, _t, _nomenu) {
    * @private
    */
   var animation = function() {
-    if (SceneAnimator.isScrolling()) {
-      SceneAnimator.step();
+    if(current_view === VIEW_PAGE){
       paint();
-    }
-    if (SceneAnimator.isScrolling()) {
+      if(pageX >= width){
+        pageScroll = false;
+        prev_image = undefined;
+        if(reverse){
+          goPrev();
+        }else{
+          goNext();
+        }
+        pageX = 0;
+        return;
+      }
+      if(pageX <= 0){
+          pageX = 1;
+      }else{
+          pageX = pageX + pageX;
+      }
+
       setTimeout(animation, 1000 / FPS);
+    }else{
+      if (SceneAnimator.isScrolling()) {
+        SceneAnimator.step();
+        paint();
+      }
+      if (SceneAnimator.isScrolling()) {
+        setTimeout(animation, 1000 / FPS);
+      }
     }
   };
 
@@ -847,20 +1029,30 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var goNext = function() {
     SceneAnimator.reverse = false;
     SceneAnimator.dirFwd = true;
-
-    if (SceneAnimator.isAtScrollStart()) {
-      SceneAnimator.startScroll();
-      animation();
-
-    } else if (SceneAnimator.isScrolling()) {
-      SceneAnimator.skipScroll();
-      paint();
-
-    } else if (SceneAnimator.isAtScrollEnd()) {
-      jumpNext();
-    } else {
+    reverse = false;
+    if(current_view === VIEW_PAGE){
+      if (pageX >= width) {
+        console.log("*** alert next ***");
+        jumpNext();
+      }else if (!pageScroll) {
+        pageScroll = true;
+        animation();
+      } else {
+        paint();
+      }
+    }else{
+      if (SceneAnimator.isAtScrollStart()) {
         SceneAnimator.startScroll();
         animation();
+      } else if (SceneAnimator.isScrolling()) {
+        SceneAnimator.skipScroll();
+        paint();
+      } else if (SceneAnimator.isAtScrollEnd()) {
+        jumpNext();
+      } else {
+        SceneAnimator.restartScroll();
+        animation();
+      }
     }
   };
 
@@ -887,7 +1079,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     $("#finish").hide();
     $("#dialog_error").hide();
     var canvas_click = function(event) {
-      console.log(event.type);
       goNext();
       prevent_default(event);
     };
@@ -904,35 +1095,39 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var clearSceneImages = function(){
-    if(sceneImages === undefined){
-      return;
-    }
-    for ( var n = 0; n < sceneImages[MODE_READING].length; n++) {
-      var ir = sceneImages[MODE_READING][n];
-      if (ir !== undefined) {
-        ir.onload = null;
+    if(sceneImages !== undefined){
+      for ( var n = 0; n < sceneImages[MODE_READING].length; n++) {
+        var ir = sceneImages[MODE_READING][n];
+        if (ir !== undefined) {
+          ir.onload = null;
+        }
+        var io = sceneImages[MODE_ORIGINAL][n];
+        if (io !== undefined) {
+          io.onload = null;
+        }
       }
-      var io = sceneImages[MODE_ORIGINAL][n];
-      if (io !== undefined) {
-        io.onload = null;
-      }
     }
+    sceneImages = [];
+    sceneImages[MODE_ORIGINAL] = [];
+    sceneImages[MODE_READING] = [];
   };
 
   var clearPageImages = function(){
-    if(pageImages === undefined){
-      return;
-    }
-    for ( var n = 0; n < pageImages[MODE_READING].length; n++) {
-      var ir = pageImages[MODE_READING][n];
-      if (ir !== undefined) {
-        ir.onload = null;
+    if(pageImages !== undefined){
+      for ( var n = 0; n < pageImages[MODE_READING].length; n++) {
+        var ir = pageImages[MODE_READING][n];
+        if (ir !== undefined) {
+          ir.onload = null;
+        }
+        var io = pageImages[MODE_ORIGINAL][n];
+        if (io !== undefined) {
+          io.onload = null;
+        }
       }
-      var io = pageImages[MODE_ORIGINAL][n];
-      if (io !== undefined) {
-        io.onload = null;
-      }
     }
+    pageImages = [];
+    pageImages[MODE_ORIGINAL] = [];
+    pageImages[MODE_READING] = [];
   };
 
 
@@ -968,7 +1163,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var change_view_page = function(){
-    console.log("change_view_page");
     if(storyMetaFile['enable_page_mode']){
       current_view = VIEW_PAGE;
       jumpTo(currentPageIndex);
@@ -996,12 +1190,14 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       if(v && v === MODE_ORIGINAL){
         change_mode_original();
       }
+      console.log("cur mode:"+current_mode);
     }
     if(storyMetaFile['enable_page_mode']){
       var m = $.cookie('mang.reader.config.view');
-      if(m && m === VIEW_PAGE){
+      if(m && parseInt(m,10) === VIEW_PAGE){
         change_view_page();
       }
+      console.log("cur view:"+current_view);
     }
   };
 
@@ -1009,15 +1205,10 @@ function $Reader(_member, _superuser, _t, _nomenu) {
    * 指定したマンガの話をリーダーで開く。
    */
   var openStory = function(_storyId) {
+    started = true;
     storyId = _storyId;
     clearSceneImages();
     clearPageImages();
-    sceneImages = [];
-    sceneImages[MODE_ORIGINAL] = [];
-    sceneImages[MODE_READING] = [];
-    pageImages = [];
-    pageImages[MODE_ORIGINAL] = [];
-    pageImages[MODE_READING] = [];
 
     scenes = null;
     currentSceneIndex = 0;
@@ -1046,8 +1237,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       }
 
       comicTitleInsert = storyMetaFile['comic_title_insert']==='1';
-      comicTitleInsert = true;
-      if(comicTitleInsert){
+      if(comicTitleInsert)	{
         comicTitleImage = apiComicTitleImage(storyMetaFile['comic_id']);
       }
       storyTitleInsert = storyMetaFile['story_title_insert']==='1';
@@ -1059,6 +1249,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
 
       loadConfig();
       saveConfig();
+
       $("#prev_scene").bind(act_button, goPrev);
       $("#prev_page").bind(act_button, goPrev);
       $("#first_scene").bind(act_button, show_first_click);
@@ -1078,10 +1269,29 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     _gaq.push(['_trackPageview', '/event/viewer/open/'+storyId]);
   };
 
+  var resize = function() {
+    setWidthAndHeight();
+    SceneAnimator = new $SceneAnimator(width, height, FPS);
+    if(started){
+      clearSceneImages();
+      clearPageImages();
+      var cur;
+      if(current_view === VIEW_PAGE){
+        cur = currentPageIndex;
+      }else{
+        cur = currentSceneIndex;
+      }
+      jumpTo(cur);
+    }else{
+      console.log("start!");
+      $("#thumbnail").click();
+    }
+  };
+
   var prepareMenu = function(){
     $("#menu").css("top", -1 * 132 + "px");//FIXME menuの高さが合わないのでハードコーディングした。なおしたい。
     $("#menu").show();
-    $("#menu_tab").bind(act_button, menu_hide_click);
+    $("#menu_tab").bind('click', menu_hide_click);
     disable_button($("#toggle_reading"));
     disable_button($("#toggle_scene_view"));
    };
@@ -1116,25 +1326,21 @@ function $Reader(_member, _superuser, _t, _nomenu) {
 
   //子フレーム用のキー入力受付
   $(document).keydown(function(e){
-      if(e.keyCode === 32      //space
-        || e.keyCode === 13  //enter
-        || e.keyCode === 39  //right
-        || e.keyCode === 40 //down
-        ){
-        $("#canvas").trigger('mousedown');
-        return false;
-      }else if(e.keyCode === 8//BS
-          || e.keyCode === 37//left
-          || e.keyCode === 38//up
-        ){
-        ("#prev_scene").trigger('mouseup');
-        return false;
-      }
-    });
-
+    if(e.keyCode === 32  || //space
+       e.keyCode === 13 || //enter
+       e.keyCode === 39 || //right
+       e.keyCode === 40 ){ //down
+      $("#canvas").trigger('mousedown');
+      return false;
+    }else if(e.keyCode === 8 ||//BS
+             e.keyCode === 37     ||//left
+             e.keyCode === 38){      //up
+      ("#prev_scene").trigger('mouseup');
+      return false;
+    }
+  });
   this.openStory = openStory;
   this.goNext = goNext;
-
+  this.resize = resize;
   prepareMenu();
 }
-

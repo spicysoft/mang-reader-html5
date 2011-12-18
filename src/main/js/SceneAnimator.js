@@ -34,10 +34,8 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
    *  [0]なし、[1]↓、[2]↑、[3]←、[4]→、[5]Ｎ、[6]逆Ｚ、[7]逆Ｎ、[8]Ｚ
    */
   var X_VECTOR = [
-    [0,0,0],[0,0,0],
-    [0,0,0],[SCROLL_PIXELS,0,0],
-    [-SCROLL_PIXELS,0,0],[0,SCROLL_PIXELS,0],
-    [SCROLL_PIXELS,-SCROLL_PIXELS,SCROLL_PIXELS],
+    [0],[0],[0],[SCROLL_PIXELS],[-SCROLL_PIXELS],
+    [0,SCROLL_PIXELS,0],[SCROLL_PIXELS,-SCROLL_PIXELS,SCROLL_PIXELS],
     [0,-SCROLL_PIXELS,0],[-SCROLL_PIXELS,SCROLL_PIXELS,-SCROLL_PIXELS]
   ];
 
@@ -47,9 +45,8 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
    *  [0]なし、[1]↓、[2]↑、[3]←、[4]→、[5]Ｎ、[6]逆Ｚ、[7]逆Ｎ、[8]Ｚ
    */
   var Y_VECTOR = [
-    [0,0,0],
-    [-SCROLL_PIXELS,0,0],[SCROLL_PIXELS,0,0],
-    [0,0,0],[0,0,0],[-SCROLL_PIXELS,SCROLL_PIXELS,-SCROLL_PIXELS],
+    [0],[-SCROLL_PIXELS],[SCROLL_PIXELS],[0],[0],
+    [-SCROLL_PIXELS,SCROLL_PIXELS,-SCROLL_PIXELS],
     [0,-SCROLL_PIXELS,0],[-SCROLL_PIXELS,SCROLL_PIXELS,-SCROLL_PIXELS],
     [0,-SCROLL_PIXELS,0]
   ];
@@ -99,14 +96,15 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
   /**
    * スクロール初期化
    */
-  var initializeWhenUnloaded = this.initializeWhenUnloaded = function() {
+  var initializeWhenUnloaded = function() {
     action     = 0;
     actionCount= 0;
     scrolling  = false;
     scrollable = false;
-    reverse = false;
-    dirFwd = true;
+    reverse    = false;
+    dirFwd     = true;
   };
+  this.initializeWhenUnloaded = initializeWhenUnloaded;
 
   this.x = function() {
     return scrolledPixelsX / ADJUST_SCALE;
@@ -120,24 +118,33 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
    * スクロール不要のシーンもしくは スクロールが完了してるかどうか？
    */
   this.isAtScrollEnd = function() {
-    return actionCount === 0 || (scrolling === false && action === actionCount);
+    return scrolling === false && action >= actionCount;
   };
 
+  this.isAtScrollBackEnd = function() {
+    return scrolling === false  && action < 0 || actionCount === 0;
+  };
   /**
    * シーンのスクロールアニメーションの先頭フレームにいるか？先頭フレームである場合true
    */
   this.isAtScrollStart = function() {
-    if(reverse){
-      return actionCount != 0 && scrolling == false && action >= actionCount;
-    }else{
-      return actionCount != 0 && scrolling == false && action <= 0;
-    }
+    return actionCount !== 0 && scrolling === false && action <= 0;
+  };
+
+  this.isAtScrollBackStart = function() {
+    return actionCount !== 0 && scrolling === false && action >= actionCount;
   };
 
   this.startBackScroll = function(){
     scrolling = true;
+    reverse = true;
     action = actionCount-1;
-  }
+  };
+
+  this.restartBackScroll = function(){
+    scrolling = true;
+    reverse = true;
+  };
 
   /**
    * スクロール中かどうか？スクロール中の場合はtrue
@@ -150,6 +157,13 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
    * スクロールを開始する
    */
   this.startScroll = function() {
+    reverse = false;
+    scrolling = true;
+    action = 0;
+  };
+
+  this.restartScroll = function() {
+    reverse = false;
     scrolling = true;
   };
 
@@ -251,9 +265,9 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
       return;
     }
     if (!reverse && actionCount <= action || reverse && action < 0) {
+      scrolling = false;
       return;
     }
-
     caliculate();
 
     var moved= false;
@@ -285,16 +299,11 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     }
 
     if (!moved) {
+      scrolling = false;
       if (!reverse) {
         action++;
       }else{
         action--;
-      }
-
-      if(!reverse && action >= actionCount){
-        scrolling = false;
-      }else if (reverse && action < 0){
-        scrolling = false;
       }
     }
   };
@@ -307,7 +316,6 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     while (action < stop && isScrolling()) {
       step();
     }
-    scrolling = false;
   };
 
   /**
@@ -316,9 +324,8 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
   this.skipBack = function() {
     reverse = true;
     scrolling = true;
-    action--;
     var stop = action-1;
-    while (stop < action) {
+    while (stop < action && isScrolling()) {
       step();
     }
     scrolling = false;

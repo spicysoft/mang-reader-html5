@@ -9,7 +9,6 @@ function $Controll() {
   //・Esc                   ... 全画面解除
 
   $(document).ready(function(){
-    console.log("bind keydown");
     //親フレーム用のキー入力受付
     //小フレーム用はReader.js内にあります
     $(document).keydown(function(e){
@@ -46,6 +45,16 @@ function $Controll() {
     return elem("#prev_scene").css("display") != 'none';
   }
   this.started = started;
+
+  this.showMenu = function(){
+    elem("#menu_tab").trigger('click');
+  };
+
+  this.showMenu = function(){
+    elem("#menu_switch").trigger('click');
+  };
+
+  this.hideMenu = function(){};
 
   this.prev = function(){
     if(!started()){
@@ -99,6 +108,10 @@ function $Controll() {
     }
   }
 
+  this.menuIsVisible = function(){
+    return elem("#menu").offset().top == 0;
+  }
+
   this.supportOriginalMode = function(){
     return !elem("#toggle_reading").hasClass("disable");
   }
@@ -106,6 +119,31 @@ function $Controll() {
   this.supportPageView = function(){
     return !elem("#toggle_scene_view").hasClass("disable");
   }
+
+  this.onShowMenu = function(callback){
+    $('iframe:first').load(function(e){
+      var stat = Controll.menuIsVisible();
+      setInterval(function(){
+        if(stat != Controll.menuIsVisible()){
+          console.log("changed menu stat !!!");
+          callback();
+          stat = Controll.menuIsVisible();
+        }
+      }, 100);
+    });
+  }
+
+  this.onStarted = function(callback){
+      $('iframe:first').load(function(e){
+        var stat = Controll.menuIsVisible();
+        var timer = setInterval(function(){
+          if(elem("#preview").css("display") == 'none'){
+            callback();
+            clearInterval(timer);
+          }
+        }, 100);
+      });
+   }
 };
 
 var Controll = new $Controll();
@@ -140,13 +178,19 @@ var toggleMode = function(){
     Controll.original();
     $("#menu_mode_reading").hide();
     $("#menu_mode_original").show();
+    $("#popup_reading").hide();
+    $("#popup_original").show();
   }else{
     Controll.reading();
     $("#menu_mode_original").hide();
     $("#menu_mode_reading").show();
+    $("#popup_original").hide();
+    $("#popup_reading").show();
   }
-  $("#popup_reading").hide();
-  $("#popup_original").hide();
+  setTimeout(function(){
+    $("#popup_reading").hide();
+    $("#popup_original").hide();
+  },500);
 }
 
 var toggleView = function(){
@@ -154,13 +198,19 @@ var toggleView = function(){
     Controll.page();
     $("#menu_scene_view").hide();
     $("#menu_page_view").show();
+    $("#popup_scene").hide();
+    $("#popup_page").show();
   }else{
     Controll.scene();
     $("#menu_page_view").hide();
     $("#menu_scene_view").show();
+    $("#popup_page").hide();
+    $("#popup_scene").show();
   }
-  $("#popup_scene").hide();
-  $("#popup_page").hide();
+  setTimeout(function(){
+    $("#popup_scene").hide();
+    $("#popup_page").hide();
+  },500);
 }
 
 var popUpChangeView = function(){
@@ -218,7 +268,9 @@ var startReader = function(storyId){
           $("#fullscreen_page_next").removeClass("disable");
         }
         $("#progress_current").text(cur);
+        $("#progress_current_full").text(cur);
         $("#progress_total").text(total);
+        $("#progress_total_full").text(total);
         if(current_view !=  Controll.view()){
           if(Controll.view() === 'page'){
             $("#fullscreen_next").hide();
@@ -258,9 +310,6 @@ var startReader = function(storyId){
     $("#menu_scene_view").click(popUpChangeView);
     $("#menu_page_view").click(popUpChangeView);
 
-    $("#menu_fullscreen").click(function(){
-      location.href = '/viewer/html5/'+storyId;
-    });
     $("#popup_reading").click(toggleMode);
     $("#popup_original").click(toggleMode);
     $("#popup_scene").click(toggleView);

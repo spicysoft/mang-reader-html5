@@ -233,9 +233,15 @@ $(function() {
   App = new $App();
   var params = getRealParameters();
   Reader = new $Reader(params.member, params.superuser, params.time, params.nomenu);
+
+  $(window).resize(function(){
+    Reader.resize();
+  });
   if(!params.auto){
     Reader.showPreview(params.storyId);
   }else{
     Reader.openStory(params.storyId);
   }
+
+
 });
