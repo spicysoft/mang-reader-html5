@@ -4,7 +4,7 @@
 <div>Development</div>
 <h2>member 480</h2>
 <script type="text/javascript" >
-  var storyId = 2111;
+  var storyId = 1972;
 </script>
 <script src="/local-test/mr/target/dist-debug/jquery-1.5.min.js" type="text/javascript" ></script>
 <script src="/local-test/mr/target/dist-debug/Controll.js" type="text/javascript" ></script>

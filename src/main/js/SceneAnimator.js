@@ -61,9 +61,9 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
   /** スクロール */
   var action;
   /** スクロールスピード */
-  var speed;
+  var speed = 240;
   /** スクロールコース */
-  var course;
+  var course= 0;
   /** 描画エリアの横幅 */
   var imageWidth;
   /** 描画エリアの縦幅 */
@@ -98,6 +98,7 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
    */
   var initializeWhenUnloaded = function() {
     action     = 0;
+    course     = 0;
     actionCount= 0;
     scrolling  = false;
     scrollable = false;

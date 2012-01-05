@@ -42,7 +42,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var su_expire = 0;
   var t = _t;
   var dpi = 240;
-  var cdn = false;
+  var cdn_host;
 
   var error = 0;
   var started = false;
@@ -52,6 +52,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var reverse = false;
   var pageScroll = false;
   var pageIndexUpdated = false;
+  var limitX = 0;
 
   console.log("v3.0.4");
 
@@ -320,7 +321,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         paintImage(i);
         prev_image = i;
       }else if(pageScroll){
-        console.log("scrolling:"+currentPageIndex);
         if(reverse){
           paintPageImage(i, pageImages[current_mode][currentPageIndex-1]);
         }else{
@@ -416,11 +416,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       }
     }
 
-    var host = "";
-    if(cdn){
-      host = "http://cdn."+location.host;
-    }
-    ajax_get(host + API_ROOT + '/storyMetaFile/' + storyId+param, 'json', fnSuccess, fnError, cache);
+    ajax_get(API_ROOT + '/storyMetaFile/' + storyId+param, 'json', fnSuccess, fnError, cache);
   };
 
   /**
@@ -457,7 +453,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var goToNextStory = function(next_story_id, comic_id, param){
-    console.log("goToNextStory");
     var after_param = '';
     if(param !== ""){
       after_param = "?after="+param;
@@ -469,7 +464,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       if (member) {
         url = '/comic/view/'+comic_id+'/story/'+next_story_id+after_param;
       } else {
-        url = '/comic/landing/nomember?next=/comic/view/'+
+        url = '/story/landing/nomember?next=/comic/view/'+
           comic_id+'/story/'+next_story_id;
       }
     }
@@ -498,8 +493,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       param = "?t="+t;
     }
     var host = "";
-    if(cdn && t > 0){
-      host = "http://cdn."+location.host;
+    if(t > 0){
+      host = cdn_host;
     }
     i.src = urlmaker(host, id, mode,  dpi,  param);
     return i;
@@ -712,6 +707,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var hideFinished = function(){
     $("#finish").hide();
     $("#finish_actions").hide();
+    $("#canvas").unbind(act_start,canvas_click);
+    $("#canvas").bind(act_start,canvas_click);
   };
 
   var activate_button = function(item, time){
@@ -761,7 +758,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         jumpPrev();
         pageX = 0;
       }else if (!pageScroll) {
-          console.log("*** scroll start ***");
         pageScroll = true;
         animation();
       } else {
@@ -769,16 +765,12 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       }
     }else{
       if (SceneAnimator.isAtScrollStart()) {
-        console.log("*** scroll start ***");
         jumpPrev();;
       } else if (SceneAnimator.isScrolling()) {
-        console.log("*** scroll cancel ***");
         jumpPrev();
       } else if (SceneAnimator.isAtScrollBackEnd()){
-        console.log("*** scroll end ***");
         jumpPrev();
       } else {
-          console.log("*** scroll restart ***");
         SceneAnimator.restartBackScroll();
         animation();
       }
@@ -877,6 +869,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     $("#next").unbind(act_button);
     $("#vote").unbind(act_button);
     $("#bookmark").unbind(act_button);
+    $("#canvas").unbind(act_start,canvas_click);
 
     if (member) {
       setTimeout(
@@ -986,6 +979,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
 
   /**
    * アニメーションの各フレーム処理の実行
+   * ページモードの際はイージングする（速->遅）
    * @private
    */
   var animation = function() {
@@ -1003,9 +997,15 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         return;
       }
       if(pageX <= 0){
-          pageX = 1;
+        limitX = width/2.4;
+        pageX  = limitX;
       }else{
-          pageX = pageX + pageX;
+        if(limitX < 1){
+            pageX = pageX + 1;
+        }else{
+            limitX = (width-pageX)/3.5;
+            pageX = pageX + limitX;
+        }
       }
 
       setTimeout(animation, 1000 / FPS);
@@ -1041,6 +1041,10 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         paint();
       }
     }else{
+      if(!hasAllTitleShown){
+          jumpNext();
+          return;
+      }
       if (SceneAnimator.isAtScrollStart()) {
         SceneAnimator.startScroll();
         animation();
@@ -1069,6 +1073,11 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     $("#dialog_error").hide();
   };
 
+  var canvas_click = function(event) {
+      goNext();
+      prevent_default(event);
+  };
+
   /**
    * 表示モードを「マンガ閲覧中」に切り替える
    */
@@ -1078,10 +1087,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     $("#reader").show();
     $("#finish").hide();
     $("#dialog_error").hide();
-    var canvas_click = function(event) {
-      goNext();
-      prevent_default(event);
-    };
+
     $("#canvas").unbind(act_start,canvas_click);
     $("#canvas").bind(act_start,canvas_click);
 
@@ -1190,14 +1196,12 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       if(v && v === MODE_ORIGINAL){
         change_mode_original();
       }
-      console.log("cur mode:"+current_mode);
     }
     if(storyMetaFile['enable_page_mode']){
       var m = $.cookie('mang.reader.config.view');
       if(m && parseInt(m,10) === VIEW_PAGE){
         change_view_page();
       }
-      console.log("cur view:"+current_view);
     }
   };
 
@@ -1216,13 +1220,12 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     storyMetaFile = null;
     showLoading();
     apiStoryMetaFile(storyId, function(json) {
+      console.log("apiStoryMetaFile");
       storyMetaFile = json;
       scenes = storyMetaFile["scenes"];
       pages = storyMetaFile["pages"];
 
-      if(storyMetaFile["cdn"]){
-        cdn = true;
-      }
+      cdn_host = storyMetaFile["cdn_host"];
       updateProgress();
 
       if(storyMetaFile['enable_original_mode']){
@@ -1326,16 +1329,18 @@ function $Reader(_member, _superuser, _t, _nomenu) {
 
   //子フレーム用のキー入力受付
   $(document).keydown(function(e){
-    if(e.keyCode === 32  || //space
+    if(e.keyCode === 32 || //space
        e.keyCode === 13 || //enter
        e.keyCode === 39 || //right
        e.keyCode === 40 ){ //down
-      $("#canvas").trigger('mousedown');
+      console.log("gonext !!!");
+      goNext();
       return false;
-    }else if(e.keyCode === 8 ||//BS
-             e.keyCode === 37     ||//left
-             e.keyCode === 38){      //up
-      ("#prev_scene").trigger('mouseup');
+    }else if(e.keyCode === 8    ||//BS
+             e.keyCode === 37   ||//left
+             e.keyCode === 38){   //up
+      console.log("goprev !!!");
+      goPrev();
       return false;
     }
   });

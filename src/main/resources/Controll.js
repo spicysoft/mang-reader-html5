@@ -46,7 +46,7 @@ function $Controll() {
   }
   this.started = started;
 
-  this.showMenu = function(){
+  this.hideMenu = function(){
     elem("#menu_tab").trigger('click');
   };
 
@@ -54,10 +54,8 @@ function $Controll() {
     elem("#menu_switch").trigger('click');
   };
 
-  this.hideMenu = function(){};
-
   this.prev = function(){
-    if(!started()){
+    if(view() === 'page'){
       elem("#prev_page").trigger('mouseup');
     }else{
       elem("#prev_scene").trigger('mouseup');
@@ -118,19 +116,6 @@ function $Controll() {
 
   this.supportPageView = function(){
     return !elem("#toggle_scene_view").hasClass("disable");
-  }
-
-  this.onShowMenu = function(callback){
-    $('iframe:first').load(function(e){
-      var stat = Controll.menuIsVisible();
-      setInterval(function(){
-        if(stat != Controll.menuIsVisible()){
-          console.log("changed menu stat !!!");
-          callback();
-          stat = Controll.menuIsVisible();
-        }
-      }, 100);
-    });
   }
 
   this.onStarted = function(callback){
