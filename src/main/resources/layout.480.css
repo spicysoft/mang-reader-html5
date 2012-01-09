@@ -9,6 +9,7 @@
 }
 
 .sprite {background-image: url(ja.480.png?v=1); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
+.sprite2 {background-image: url(ja.480.png?v=1); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
 #vote {
     margin-left: 15px;
     margin-right: auto;
@@ -62,7 +63,7 @@
 
 #dialog_error   {background-position: -451px -591px;width: 320px;height: 90px;}
 #dialog_loading {background-position: -451px -321px;width: 170px;height: 68px; cursor:wait;}
-#logo_reader    {background-position: -513px -1px;width: 153px;height: 36px;}
+#logo_reader    {background-position: -513px -1px;width: 153px;height: 36px;position:absolute; right:16px; top:16px;}
 
 #start                       {background-position: 0 -726px;      width: 320px; height: 90px;cursor: pointer;}
 #start:hover, #start.active  {background-position: -321px -726px; width: 320px; height: 90px;cursor: pointer;}

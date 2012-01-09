@@ -207,8 +207,8 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     initializeWhenUnloaded();
     speed        = _speed;
     course       = _course;
-    imageWidth   = _image.width;
-    imageHeight  = _image.height;
+    imageWidth   = _image.width * _image.scale;
+    imageHeight  = _image.height * _image.scale;
     actionCount  = X_VECTOR[course].length;
     limitRight   = (imageWidth - readerWidth) * ADJUST_SCALE / 2;
     limitLeft    = - limitRight;

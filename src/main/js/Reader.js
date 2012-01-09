@@ -36,7 +36,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var storyTitleInsert = false;
   var hasComicTitleShown = false;
   var hasStoryTitleShown = false;
-  var hasAllTitleShown = false;
+  var hasAllTitleShown = true;
 
   var su_key = "";
   var su_expire = 0;
@@ -54,7 +54,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var pageIndexUpdated = false;
   var limitX = 0;
 
-  console.log("v3.0.4");
+  console.log("v3.0.6");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -249,20 +249,20 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       var x;
       var y;
       if(current_view === VIEW_PAGE){
-       x=0;
-       y=0;
+        x=0;
+        y=0;
       }else{
-       x=SceneAnimator.x();
-       y=SceneAnimator.y();
+        x=SceneAnimator.x();
+        y=SceneAnimator.y();
       }
 
-      var w=i.width;
-      var h=i.height;
+      var w=i.scaledWidth();
+      var h=i.scaledHeight();
       var dx=(width - w) / 2 + x;
       var dy=(height - h) / 2 + y;
 
       if (App.IE) {
-        i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
+        i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:" + i.scale +";";
         var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
         $("#canvas").empty().append(i).append(mask);
       } else {
@@ -278,7 +278,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
           var rate =  Math.sqrt(320/screen.width);
           context.scale(rate, rate);
         }
-        context.drawImage(i, dx, dy);
+        context.drawImage(i, dx, dy, i.scaledWidth(), i.scaledHeight());
         if(App.ANDROID21){
           context.restore();
         }
@@ -377,6 +377,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
           showError("#errmsg_expired");
         }else if(error === "Forbidden"){
           showError("#errmsg_forbidden");
+        }else if(error === "Closed Story"){
+          showError("#errmsg_default");
         }else{
           showError("#errmsg_servererr");
         }
@@ -488,6 +490,12 @@ function $Reader(_member, _superuser, _t, _nomenu) {
        error++;
        refetch(id, mode, dpi);
     };
+    i.scaledWidth = function(){
+      return this.width * this.scale;
+    };
+    i.scaledHeight = function(){
+      return this.height * this.scale;
+    };
     var param = "";
     if(t > 0){
       param = "?t="+t;
@@ -541,6 +549,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
                 if(i.onloaded !== undefined){
                   ni.onload = i.onloaded;
                 }
+                ni.scale = 1;
                 pageImages[mode][i] = ni;
                 break;
               }
@@ -583,6 +592,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
           ndpi = scenes[n]['support_size'][0];
         }
         sceneImages[current_mode][n] = apiSceneImage(scenes[n]['scene_id'], current_mode, ndpi);
+        sceneImages[current_mode][n].scale = dpi/ndpi;
       }
     }
   };
@@ -601,6 +611,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
           ndpi = pages[n]['support_size'][0];
         }
         pageImages[current_mode][n] = apiPageImage(pages[n]['page_id'], current_mode, ndpi);
+        pageImages[current_mode][n].scale = 1;
       }
     }
   };
@@ -1249,7 +1260,9 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         $("#story_number_num").text(storyMetaFile['story_number']);
         $("#story_title_insert").bind(act_start, goNext);
       }
-
+      if(comicTitleInsert || storyTitleInsert){
+          hasAllTitleShown = false;
+      }
       loadConfig();
       saveConfig();
 

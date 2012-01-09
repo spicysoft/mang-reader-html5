@@ -55,7 +55,7 @@ function $Controll() {
   };
 
   this.prev = function(){
-    if(view() === 'page'){
+    if(Controll.view() === 'page'){
       elem("#prev_page").trigger('mouseup');
     }else{
       elem("#prev_scene").trigger('mouseup');
@@ -65,6 +65,10 @@ function $Controll() {
   this.first = function(){
      elem("#first_scene").trigger('mouseup');
   }
+
+  this.start = function(){
+       elem("#start").click();
+    }
 
   this.page = function(){
     elem("#toggle_scene_view").trigger('mouseup');
