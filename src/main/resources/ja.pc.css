@@ -157,7 +157,7 @@
 
 #menu_bar_reader {
     position:absolute;
-    bottom:28px;
+    bottom:-28px;
     width:100%;
     padding:0;
     margin:0;

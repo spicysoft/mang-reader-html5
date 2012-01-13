@@ -262,7 +262,12 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       var dy=(height - h) / 2 + y;
 
       if (App.IE) {
-        i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:" + i.scale +";";
+      if(App.IE_VER == 8.0){
+            $("#canvas").css({zoom:i.scale });
+            i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
+      }else{
+            i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:"+i.scale+";";
+      }
         var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
         $("#canvas").empty().append(i).append(mask);
       } else {
@@ -647,6 +652,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
    */
   var jumpTo = function(newIndex) {
     hideMenu(500);
+    hideFinished();
     if(current_view === VIEW_PAGE){
         fetchPageImage(newIndex);
     }else{
@@ -1322,7 +1328,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       param = "?t="+t;
     }
 
-    $("#thumbnail").attr("src", "/icon/story_image/medium/" + _storyId + "?t="+t);
+    $("#thumbnail").attr("src", "/icon/story_image/"+canvas.width+"/" + _storyId + "?t="+t);
     $("#thumbnail").hide();
     $("#thumbnail").bind("load", function(e){
       $("#thumbnail").width(canvas.width);
