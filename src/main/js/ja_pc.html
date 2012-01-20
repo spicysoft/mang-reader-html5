@@ -9,9 +9,9 @@
       fileref.setAttribute("rel", "stylesheet");
       fileref.setAttribute("type", "text/css");
       if($(window).width() <= 320){
-          fileref.setAttribute("href", "layout.320.css?v=3" );
+          fileref.setAttribute("href", "layout.320.css?v=6" );
       }else{
-          fileref.setAttribute("href", "layout.480.css?v=3" );
+          fileref.setAttribute("href", "layout.480.css?v=6" );
       }
       document.getElementsByTagName('head').item(0).appendChild(fileref);
     </script>
@@ -54,8 +54,8 @@
         <div id="finish_ui" >
           <div id="finish_actions">
             <div id="finish_social_actions">
-              <span id="vote"      class="sprite disable" title="イイネを押して次へ"></span>
               <span id="bookmark"  class="sprite disable" title="ブックマークを押して次へ"></span>
+              <span id="vote"      class="sprite disable" title="イイネを押して次へ"></span>
             </div>
             <span id="next"  class="sprite disable" title="次の話へ"></span>
           </div>

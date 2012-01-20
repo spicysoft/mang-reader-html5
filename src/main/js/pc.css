@@ -265,13 +265,13 @@ body {
 #vote {
     z-index:  14;
     position: relative;
-    float:    left;
+    float:    right;
     margin:   8px;
 }
 #bookmark {
     z-index:  14;
     position: relative;
-    float:    right;
+    float:    left;
     margin:   8px;
 }
 

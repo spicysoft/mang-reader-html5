@@ -30,7 +30,11 @@ function $Controll() {
   });
 
   var elem = function(hash){
-    return document.getElementById('reader_reader').contentWindow.$(hash);
+    var $ = document.getElementById('reader_reader').contentWindow.$;
+    if($){
+        return $(hash);
+    }
+    return null;
   }
 
   this.next = function(){
@@ -120,6 +124,10 @@ function $Controll() {
 
   this.supportPageView = function(){
     return !elem("#toggle_scene_view").hasClass("disable");
+  }
+
+  this.ready = function(){
+    return elem("#reader") != null;
   }
 
   this.onStarted = function(callback){
@@ -228,6 +236,9 @@ var startReader = function(storyId){
     var current_mode = "";
     $('iframe:first').load(function(e){
       setInterval(function(){
+        if(!Controll.ready()){
+          return;
+        }
         if(Controll.supportOriginalMode()){
           $("#menu_mode_reading").removeClass("disable");
         }

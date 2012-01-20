@@ -8,15 +8,15 @@
   margin: 4px 8px 4px 8px;
 }
 
-.sprite {background-image: url(ja.480.png?v=1); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
-.sprite2 {background-image: url(ja.480.png?v=1); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
+.sprite {background-image: url(ja.480.png?v=4); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
+.sprite2 {background-image: url(ja.480.png?v=4); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
 #vote {
-    margin-left: 15px;
-    margin-right: auto;
-}
-#bookmark {
     margin-right: 15px;
     margin-left: auto;
+}
+#bookmark {
+    margin-left: 15px;
+    margin-right: auto;
 }
 #dialog_error{
     position:absolute;
@@ -49,11 +49,11 @@
 #first_scene.disable                    {background-position: -342px -69px;width: 170px;height: 68px;cursor: default;}
 
 #toggle_reading    {background-position: -451px -488px;width: 222px;height: 48px; cursor:pointer;}
-#toggle_reading.disable  {background-position:0px -817px; width: 222px;height: 48px; cursor:default;}
 #toggle_original   {background-position: -451px -536px;width: 222px;height: 48px; cursor:pointer;}
 #toggle_page_view  {background-position: -451px -439px;width: 222px;height: 48px; cursor:pointer;}
 #toggle_scene_view {background-position: -451px -390px;width: 222px;height: 48px; cursor:pointer;}
-#toggle_scene_view.disable {background-position: -223px -817px; width: 222px;height: 48px; cursor:default;}
+#toggle_scene_view.disable  {background-position:0px -817px; width: 222px;height: 48px; cursor:default;}
+#toggle_reading.disable {background-position: -223px -817px; width: 222px;height: 48px; cursor:default;}
 
 #menu_tab {background-position: -583px -38px;width: 69px;height: 35px; cursor:pointer;}
 #menu_tab:hover, #menu_tab.active {background-position: -513px -38px;width: 69px;height: 35px; cursor:pointer;}

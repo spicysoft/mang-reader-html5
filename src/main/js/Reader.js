@@ -54,7 +54,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var pageIndexUpdated = false;
   var limitX = 0;
 
-  console.log("v3.0.6");
+  console.log("v3.0.18");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -141,6 +141,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }else{
       dpi = resolveDpi(Math.max(canvas.width, canvas.height));
     }
+    console.log(width + "x" + height + " dpi:" + dpi);
   };
 
   setWidthAndHeight();
@@ -216,7 +217,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
       i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
       var elm = $("#canvas").empty().append(i0);
-      if(!i1){
+      if(i1){
         i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
         elm = elm.append(i1);
       }
@@ -262,12 +263,12 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       var dy=(height - h) / 2 + y;
 
       if (App.IE) {
-      if(App.IE_VER == 8.0){
-            $("#canvas").css({zoom:i.scale });
-            i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
-      }else{
-            i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:"+i.scale+";";
-      }
+        if(App.IE_VER == 8.0){
+              $("#canvas").css({zoom:i.scale });
+              i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
+        }else{
+              i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:"+i.scale+";";
+        }
         var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
         $("#canvas").empty().append(i).append(mask);
       } else {
@@ -419,7 +420,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       cache = false;
     }else{
       if(t > 0){
-        param = "?t="+t;
+        param = "/"+t;
       }
     }
 
@@ -478,7 +479,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     (parent["goNextUrl"])(url);
   };
 
-  var apiImage = function(id, mode, dpi, urlmaker, refetch){
+  var apiImage = function(id, mode, dpi, isRefetch, urlmaker, refetch){
     var i = new Image();
     i.hasLoaded = function(){
       //IE9でImage.completeが動作しない場合があるので、
@@ -493,7 +494,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
          return;
        }
        error++;
-       refetch(id, mode, dpi);
+       refetch(id, mode, dpi, i);
     };
     i.scaledWidth = function(){
       return this.width * this.scale;
@@ -503,7 +504,10 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     };
     var param = "";
     if(t > 0){
-      param = "?t="+t;
+      param = "/"+t;
+    }
+    if(isRefetch){
+      param += "?r="+error;
     }
     var host = "";
     if(t > 0){
@@ -520,20 +524,25 @@ function $Reader(_member, _superuser, _t, _nomenu) {
    * @private
    * @return Image ただし非同期なので読み込み完了していることは保証されない
    */
-  var apiSceneImage = function(sceneId, mode, dpi) {
-    return apiImage(sceneId, mode, dpi,
+  var apiSceneImage = function(sceneId, mode, dpi, refetch) {
+    return apiImage(sceneId, mode, dpi, refetch,
         function(host, sceneId, mode, dpi, param){
           return host+API_ROOT + '/sceneImage/' + sceneId + '/' + mode + '/' + dpi + param;
         },
-        function(sceneId, mode, dpi){
+        function(sceneId, mode, dpi, prev){
           console.log("refetch scene:" + sceneId);
           for(var i=0;i<scenes.length;i++){
             if(scenes[i]['scene_id']===sceneId){
-              var ni = apiSceneImage(sceneId, mode, dpi);
-              if(i.onloaded !== undefined){
-                ni.onload = i.onloaded;
+              sceneImages[mode][i] = undefined;
+              if(i==currentSceneIndex){
+                if(reverse){
+                    goNext();
+                    goPrev();
+                }else{
+                    goPrev();
+                    goNext();
+                }
               }
-              sceneImages[mode][i] = ni;
               break;
             }
           }
@@ -542,20 +551,24 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var apiPageImage = function(pageId, mode, dpi) {
-      return apiImage(pageId, mode, dpi,
+      return apiImage(pageId, mode, dpi, false,
           function(host, pageId, mode, dpi, param){
             return host+API_ROOT + '/pageImage/' + pageId + '/' + mode + '/' + dpi + param;
           },
-          function(pageId, mode, dpi){
+          function(pageId, mode, dpi, prev){
             console.log("refetch page:" + pageId);
             for(var i=0;i<pages.length;i++){
               if(pages[i]['pageId']===pageId){
-                var ni = apiPageImage(pageId, mode, dpi);
-                if(i.onloaded !== undefined){
-                  ni.onload = i.onloaded;
-                }
-                ni.scale = 1;
-                pageImages[mode][i] = ni;
+                pageImages[mode][i] = undefined;
+                if(i==currentPageIndex){
+                    if(reverse){
+                        goNext();
+                        goPrev();
+                    }else{
+                        goPrev();
+                        goNext();
+                    }
+                  }
                 break;
               }
             }
@@ -564,17 +577,12 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var apiComicTitleImage = function(comicId) {
-      return apiImage(comicId, 0, 0,
+      return apiImage(comicId, 0, 0, false,
           function(host, comicId, mode, dpi, param){
             return host + '/icon/large/' + comicId + param;
           },
           function(comicId, mode, dpi){
-            console.log("refetch comicTitle:" + comicId);
-            var ni = apiComicTitleImage(comicId);
-            if(comicTitleImage.onloaded !== undefined){
-              ni.onload = comicTitleImage.onloaded;
-            }
-            comicTitleImage = ni;
+            //
           }
       );
   };
@@ -584,8 +592,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
    * またこの内部でプリロード、破棄処理も行う。 現在は一括ロード。
    */
   var fetchSceneImage = function(sceneIndex) {
-    var under = sceneIndex - 4;
-    var prefetch = sceneIndex + 12;
+    var under = sceneIndex - 2;
+    var prefetch = sceneIndex + 6;
     for ( var n = 0; n < scenes.length; n++) {
       if (n < under && sceneImages[current_mode][n] !== undefined) {
         sceneImages[current_mode][n] = undefined;
@@ -596,7 +604,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         }else{
           ndpi = scenes[n]['support_size'][0];
         }
-        sceneImages[current_mode][n] = apiSceneImage(scenes[n]['scene_id'], current_mode, ndpi);
+        sceneImages[current_mode][n] = apiSceneImage(scenes[n]['scene_id'], current_mode, ndpi, false);
         sceneImages[current_mode][n].scale = dpi/ndpi;
       }
     }
@@ -679,6 +687,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }
 
     function onloaded() {
+      console.log("onloaded:" + newIndex);
       if(current_view === VIEW_SCENE){
         var scene = scenes[currentSceneIndex];
         SceneAnimator.initializeWhenLoaded(i, scene["scroll_course"], scene["scroll_speed"]);
@@ -1325,14 +1334,14 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   this.showPreview = function(_storyId) {
     var param = "";
     if(t > 0){
-      param = "?t="+t;
+      param = "/"+t;
     }
 
-    $("#thumbnail").attr("src", "/icon/story_image/"+canvas.width+"/" + _storyId + "?t="+t);
+    $("#thumbnail").attr("src", "/icon/story_image/"+dpi+"/" + _storyId + "/"+t);
     $("#thumbnail").hide();
     $("#thumbnail").bind("load", function(e){
-      $("#thumbnail").width(canvas.width);
-      $("#thumbnail").height(canvas.width * ($("#thumbnail").height()/$("#thumbnail").width()));
+      $("#thumbnail").width(dpi);
+      $("#thumbnail").height(dpi * ($("#thumbnail").height()/$("#thumbnail").width()));
       App.centering($("#thumbnail"));
       $("#thumbnail").show();
     });
