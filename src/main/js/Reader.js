@@ -534,14 +534,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
           for(var i=0;i<scenes.length;i++){
             if(scenes[i]['scene_id']===sceneId){
               sceneImages[mode][i] = undefined;
-              if(i==currentSceneIndex){
-                if(reverse){
-                    goNext();
-                    goPrev();
-                }else{
-                    goPrev();
-                    goNext();
-                }
+              if(i===currentSceneIndex){
+                  jumpTo(currentSceneIndex);
               }
               break;
             }
@@ -560,14 +554,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
             for(var i=0;i<pages.length;i++){
               if(pages[i]['pageId']===pageId){
                 pageImages[mode][i] = undefined;
-                if(i==currentPageIndex){
-                    if(reverse){
-                        goNext();
-                        goPrev();
-                    }else{
-                        goPrev();
-                        goNext();
-                    }
+                if(i===currentPageIndex){
+                    jumpTo(currentPageIndex);
                   }
                 break;
               }
@@ -593,7 +581,13 @@ function $Reader(_member, _superuser, _t, _nomenu) {
    */
   var fetchSceneImage = function(sceneIndex) {
     var under = sceneIndex - 2;
-    var prefetch = sceneIndex + 6;
+    var max;
+    if(current_mode  === MODE_READING){
+      max = 6;
+    }else{
+      max = 2;
+    }
+    var prefetch = sceneIndex + max;
     for ( var n = 0; n < scenes.length; n++) {
       if (n < under && sceneImages[current_mode][n] !== undefined) {
         sceneImages[current_mode][n] = undefined;
@@ -612,7 +606,14 @@ function $Reader(_member, _superuser, _t, _nomenu) {
 
   var fetchPageImage = function (pageIndex){
     var under = pageIndex - 1;
-    var prefetch = pageIndex + 4;
+    var max;
+    if(current_mode  === MODE_READING){
+      max = 3;
+    }else{
+      max = 1;
+    }
+    var prefetch = pageIndex + max;
+
     for ( var n = 0; n < pages.length; n++) {
       if (n < under && pageImages[current_mode][n] !== undefined) {
         pageImages[current_mode][n] = undefined;
@@ -708,6 +709,11 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       showMenu(500,500);
       $("#dialog_loading").show();
       $("#canvas").css({cursor:"wait"});
+      if(i===undefined){
+        console.log("empty image: " + newIndex);
+        jumpTo(newIndex);
+        return;
+      }
       if(current_view === VIEW_SCENE){
         SceneAnimator.initializeWhenUnloaded();
       }

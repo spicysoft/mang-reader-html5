@@ -209,7 +209,6 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     course       = _course;
     imageWidth   = _image.width * _image.scale;
     imageHeight  = _image.height * _image.scale;
-    actionCount  = X_VECTOR[course].length;
     limitRight   = (imageWidth - readerWidth) * ADJUST_SCALE / 2;
     limitLeft    = - limitRight;
 
@@ -246,6 +245,7 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
       }
     }
 
+    actionCount  = X_VECTOR[course].length;
     if (!scrollable) {
       actionCount = 0;
     }
