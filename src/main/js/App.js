@@ -49,7 +49,7 @@ function $App() {
     var ua = navigator.userAgent;
     if (navigator.appName === 'Microsoft Internet Explorer') {
       this.IE = true;
-
+      console.log(ua);
       var re  = ua.match(/MSIE ([0-9]{1,}[\.0-9]{0,})/);
       if (re !== null) {
         this.IE_VER = parseFloat( re[1] );

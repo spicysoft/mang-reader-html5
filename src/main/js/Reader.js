@@ -261,13 +261,15 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       var h=i.scaledHeight();
       var dx=(width - w) / 2 + x;
       var dy=(height - h) / 2 + y;
-
       if (App.IE) {
-        if(App.IE_VER == 8.0){
-              $("#canvas").css({zoom:i.scale });
-              i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
+        console.log(document.documentMode);
+        if(App.IE_VER == 8.0 || document.documentMode==8){
+          $("#canvas").css({zoom:i.scale});
+          i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
+        }else if(App.IE_VER == 7.0 || document.documentMode==7) {
+          i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:"+i.scale+";";
         }else{
-              i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:"+i.scale+";";
+          i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:"+i.scale+";";
         }
         var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
         $("#canvas").empty().append(i).append(mask);
@@ -300,7 +302,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     if(comicTitleInsert && !hasComicTitleShown){
       i = comicTitleImage;
       if (i === undefined || !i.hasLoaded()) {
-          return;
+        return;
       }
       paintComicTitle(i);
       hasComicTitleShown = true;
@@ -316,9 +318,9 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       }else{
         i = sceneImages[current_mode][currentSceneIndex];
       }
-      if (i === undefined || !i.hasLoaded()) {
-        return;
-      }
+    }
+    if (i === undefined || !i.hasLoaded()) {
+      return;
     }
     if(current_view === VIEW_PAGE){
       if(prev_image === undefined ||
@@ -337,6 +339,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         paintImage(i);
       }
     }else{
+      console.log("paint:"+currentSceneIndex+" "+i.complete + " " + i.scale + " " + i.width);
       paintImage(i);
     }
   };
@@ -386,7 +389,11 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         }else if(error === "Closed Story"){
           showError("#errmsg_default");
         }else{
-          showError("#errmsg_servererr");
+          if(error){
+            showError("#errmsg_servererr");
+          }else{
+            console.log("unhandled error:" + status);
+          }
         }
       }
     };
@@ -470,7 +477,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
        url = '/comic/view/'+comic_id+'/story/_undelivered'+after_param;
     }else{
       if (member) {
-        url = '/comic/view/'+comic_id+'/story/'+next_story_id+after_param;
+        url = '/story/'+next_story_id+after_param;
       } else {
         url = '/story/landing/nomember?next=/comic/view/'+
           comic_id+'/story/'+next_story_id;
@@ -481,10 +488,14 @@ function $Reader(_member, _superuser, _t, _nomenu) {
 
   var apiImage = function(id, mode, dpi, isRefetch, urlmaker, refetch){
     var i = new Image();
+    i.scale = 1;
     i.hasLoaded = function(){
       //IE9でImage.completeが動作しない場合があるので、
       //Image.widthを見てロードが完了したか判断する
-      return this.width > 0;
+      if(!App.IE && this.complete === false){
+        return false;
+      }
+      return this.width > 0 && this.height > 0;
     };
     i.onerror = function(){
        //再読み込みする
@@ -688,7 +699,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }
 
     function onloaded() {
-      console.log("onloaded:" + newIndex);
       if(current_view === VIEW_SCENE){
         var scene = scenes[currentSceneIndex];
         SceneAnimator.initializeWhenLoaded(i, scene["scroll_course"], scene["scroll_speed"]);
@@ -1344,6 +1354,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }
 
     $("#thumbnail").attr("src", "/icon/story_image/"+dpi+"/" + _storyId + "/"+t);
+
     $("#thumbnail").hide();
     $("#thumbnail").bind("load", function(e){
       $("#thumbnail").width(dpi);
