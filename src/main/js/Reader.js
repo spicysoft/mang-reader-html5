@@ -107,6 +107,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   }
 
   var resolveDpi = function(w){
+    console.log("resolve src:" + w);
     if(w < 320){
       return 240;
     }else if(w < 480){
@@ -119,9 +120,10 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var setWidthAndHeight = function(){
-    if (App.IE && App.IE_VER < 8) {
+    if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
       width = $(window).width();
       height = $(window).height();
+      console.log("w-h: "+width+"-"+height);
       $("#mangh5r").width(width);
       $("#mangh5r").height(height);
       $("#canvas").width(width);
@@ -136,8 +138,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       canvas.height = height;
       canvas.style.height = height + "px";
     }
-    if (App.IE && App.IE_VER < 8) {
-      dpi = resolveDpi(Math.max($("#canvas").width, $("#canvas").height));
+    if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
+      dpi = resolveDpi(Math.max(width, height));
     }else{
       dpi = resolveDpi(Math.max(canvas.width, canvas.height));
     }
