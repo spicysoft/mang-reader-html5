@@ -3,13 +3,14 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="edge" />
-    <include type="javascript" src_interns="src/main/js/strings.js,src/main/js/Reader.js,src/main/js/App.js,src/main/js/SceneAnimator.js,src/main/js/jquery.cookie.js" src_externs="lib/jquery-1.5.min.js:lib/closure-compiler/jquery-1.5.externs.js,src/main/js/ga.js:src/main/js/ga.js"/>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <include type="javascript" src_interns="src/main/js/strings.js,src/main/js/Reader.js,src/main/js/App.js,src/main/js/SceneAnimator.js,src/main/js/jquery.cookie.js" src_externs="src/main/js/ga.js:src/main/js/ga.js"/>
     <include type="css" src="src/main/js/pc.css"/>
     <script type="text/javascript" >
       var fileref=document.createElement("link");
       fileref.setAttribute("rel", "stylesheet");
       fileref.setAttribute("type", "text/css");
-      if($(window).width() <= 320){
+      if($(window).width() < 480){
           fileref.setAttribute("href", "layout.320.css?v=6" );
       }else{
           fileref.setAttribute("href", "layout.480.css?v=6" );

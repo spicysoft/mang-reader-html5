@@ -51,7 +51,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var pageX = 0;
   var reverse = false;
   var pageScroll = false;
-  var pageIndexUpdated = false;
   var limitX = 0;
 
   console.log("v3.0.18");
@@ -160,10 +159,13 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         sceneIndex++;
       }
       currentSceneIndex = sceneIndex;
-      pageIndexUpdated = true;
     }else{
-      currentSceneIndex = nindex;
-      currentPageIndex = scenes[currentSceneIndex]['page_number']-1;
+      if(scenes[nindex] !== undefined){
+        currentSceneIndex = nindex;
+        currentPageIndex = scenes[currentSceneIndex]['page_number']-1;
+      }else{
+        console.log("corrupt index:" + nindex);
+      }
     }
   };
 
@@ -265,11 +267,9 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       var dy=(height - h) / 2 + y;
       if (App.IE) {
         console.log(document.documentMode);
-        if(App.IE_VER == 8.0 || document.documentMode==8){
+        if(App.IE_VER == 8 || document.documentMode==8){
           $("#canvas").css({zoom:i.scale});
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
-        }else if(App.IE_VER == 7.0 || document.documentMode==7) {
-          i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:"+i.scale+";";
         }else{
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:"+i.scale+";";
         }
@@ -341,11 +341,9 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         paintImage(i);
       }
     }else{
-      console.log("paint:"+currentSceneIndex+" "+i.complete + " " + i.scale + " " + i.width);
       paintImage(i);
     }
   };
-
 
   /**
    * 表示モードを通信エラーに切り替える
@@ -432,13 +430,11 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         param = "/"+t;
       }
     }
-
     ajax_get(API_ROOT + '/storyMetaFile/' + storyId+param, 'json', fnSuccess, fnError, cache);
   };
 
   /**
    * [サーバーAPI]
-   *
    * イイネ投票する
    */
   var apiVoteStory = function(comicId, storyId, value, fnSuccess, fnError){
@@ -448,7 +444,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
 
   /**
    * [サーバーAPI]
-   *
    * ブックマークする
    */
   var apiBookmark = function(comicId, fnSuccess, fnError){
@@ -502,7 +497,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     i.onerror = function(){
        //再読み込みする
        console.log("error! id:"+id);
-       if(error > 10){
+       if(error > 20){
          showError();
          return;
        }
@@ -673,6 +668,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
    * @return void
    */
   var jumpTo = function(newIndex) {
+    console.log("jumpTo:" + newIndex);
     hideMenu(500);
     hideFinished();
     if(current_view === VIEW_PAGE){
@@ -809,7 +805,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       }
     }else{
       if (SceneAnimator.isAtScrollStart()) {
-        jumpPrev();;
+        jumpPrev();
       } else if (SceneAnimator.isScrolling()) {
         jumpPrev();
       } else if (SceneAnimator.isAtScrollBackEnd()){
@@ -822,7 +818,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     if(e){
       e.preventDefault();
     }
-
   };
 
   var show_first_click = function(e){
@@ -840,6 +835,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var menuIsVisible = function(){
     return $("#menu").css("top") === "0px";
   };
+
 
   var menu_click = function(e){
     showMenu(500, 500);
@@ -1071,9 +1067,14 @@ function $Reader(_member, _superuser, _t, _nomenu) {
    * @return void
    */
   var goNext = function() {
+    console.log("goNext");
     SceneAnimator.reverse = false;
     SceneAnimator.dirFwd = true;
     reverse = false;
+    if(!hasAllTitleShown){
+        jumpNext();
+        return;
+    }
     if(current_view === VIEW_PAGE){
       if (pageX >= width) {
         console.log("*** alert next ***");
@@ -1085,10 +1086,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         paint();
       }
     }else{
-      if(!hasAllTitleShown){
-          jumpNext();
-          return;
-      }
       if (SceneAnimator.isAtScrollStart()) {
         SceneAnimator.startScroll();
         animation();
