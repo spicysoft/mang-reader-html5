@@ -231,15 +231,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       context.fillStyle = canvas.style.background;
       context.fillRect(0, 0, width, height);
 
-      //Android2.1以下のCanvas drawImageバグ対応
-      //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
-      //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
-      if(App.ANDROID21){
-        context.save();
-        var rate =  Math.sqrt(320/screen.width);
-        context.scale(rate, rate);
-      }
-
       context.drawImage(i0, dx0, dy0);
       if(i1){
         context.drawImage(i1, dx1, dy1);
@@ -279,15 +270,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         var context = canvas.getContext("2d");
         context.fillStyle = canvas.style.background;
         context.fillRect(0, 0, width, height);
-
-        //Android2.1以下のCanvas drawImageバグ対応
-        //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
-        //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
-        if(App.ANDROID21){
-          context.save();
-          var rate =  Math.sqrt(320/screen.width);
-          context.scale(rate, rate);
-        }
         context.drawImage(i, dx, dy, i.scaledWidth(), i.scaledHeight());
         if(App.ANDROID21){
           context.restore();
@@ -678,10 +660,12 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }
 
     if(comicTitleInsert && !hasComicTitleShown){
+      console.log("show comic title");
       showComicTitle();
       return;
     }
     if(storyTitleInsert && !hasStoryTitleShown){
+      console.log("show story title");
       showStoryTitle();
       return;
     }
@@ -1179,6 +1163,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
 
 
   var saveConfig = function(){
+    console.log("saved config");
     $.cookie('mang.reader.config.view',current_view,{ expires: 14 });
     $.cookie('mang.reader.config.mode',current_mode,{ expires: 14 });
   };
@@ -1186,10 +1171,12 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var change_mode_original = function(){
     if(storyMetaFile['enable_original_mode']){
         current_mode  = MODE_ORIGINAL;
-        if(current_view === VIEW_PAGE){
-          jumpTo(currentPageIndex);
-        }else{
-          jumpTo(currentSceneIndex);
+        if(hasAllTitleShown){
+          if(current_view === VIEW_PAGE){
+            jumpTo(currentPageIndex);
+          }else{
+            jumpTo(currentSceneIndex);
+          }
         }
         $("#toggle_reading").hide();
         $("#toggle_original").show();
@@ -1199,11 +1186,14 @@ function $Reader(_member, _superuser, _t, _nomenu) {
 
   var change_mode_reading = function(){
     current_mode  = MODE_READING;
-    if(current_view === VIEW_PAGE){
+    if(hasAllTitleShown){
+      if(current_view === VIEW_PAGE){
         jumpTo(currentPageIndex);
-    }else{
+      }else{
         jumpTo(currentSceneIndex);
+      }
     }
+
     $("#toggle_original").hide();
     $("#toggle_reading").show();
     saveConfig();
@@ -1212,7 +1202,9 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var change_view_page = function(){
     if(storyMetaFile['enable_page_mode']){
       current_view = VIEW_PAGE;
-      jumpTo(currentPageIndex);
+      if(hasAllTitleShown){
+        jumpTo(currentPageIndex);
+      }
       $("#toggle_scene_view").hide();
       $("#toggle_page_view").show();
       $("#prev_scene").hide();
@@ -1223,7 +1215,9 @@ function $Reader(_member, _superuser, _t, _nomenu) {
 
   var change_view_scene = function(){
       current_view = VIEW_SCENE;
-      jumpTo(currentSceneIndex);
+      if(hasAllTitleShown){
+        jumpTo(currentSceneIndex);
+      }
       $("#toggle_page_view").hide();
       $("#toggle_scene_view").show();
       $("#prev_page").hide();
@@ -1232,17 +1226,26 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var loadConfig = function(){
+    var m = false;
+    var v = false;
     if(storyMetaFile['enable_original_mode']){
-      var v = $.cookie('mang.reader.config.mode');
+      v = $.cookie('mang.reader.config.mode');
       if(v && v === MODE_ORIGINAL){
-        change_mode_original();
+          current_mode  = MODE_ORIGINAL;
       }
     }
     if(storyMetaFile['enable_page_mode']){
-      var m = $.cookie('mang.reader.config.view');
+      m = $.cookie('mang.reader.config.view');
       if(m && parseInt(m,10) === VIEW_PAGE){
-        change_view_page();
+          current_view = VIEW_PAGE;
       }
+    }
+
+    if(m && parseInt(m,10) === VIEW_PAGE){
+        change_view_page();
+    }
+    if(v && v === MODE_ORIGINAL){
+        change_mode_original();
     }
   };
 
