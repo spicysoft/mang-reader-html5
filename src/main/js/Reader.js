@@ -953,7 +953,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
               function(e) {
                 console.log("clicked: next");
                 setTimeout(function(){
-                  goToNextStory(next_story_id, comic_id, "");
+                  goToNextStory(next_story_id, comic_id, "none");
                 },0);
                 hideAll();
                 prevent_default(e);
