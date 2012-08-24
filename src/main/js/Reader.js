@@ -52,8 +52,9 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var reverse = false;
   var pageScroll = false;
   var limitX = 0;
+  var is_back = false;
 
-  console.log("v3.0.18");
+  console.log("v3.0.19");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -257,8 +258,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       var dx=(width - w) / 2 + x;
       var dy=(height - h) / 2 + y;
       if (App.IE) {
-        console.log(document.documentMode);
-        if(App.IE_VER == 8 || document.documentMode==8){
+        if(App.IE_VER==8 || document.documentMode==8){
           $("#canvas").css({zoom:i.scale});
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
         }else{
@@ -324,6 +324,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       }
     }else{
       paintImage(i);
+      console.log("paint scene:"+ currentSceneIndex);
     }
   };
 
@@ -453,7 +454,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }
     var url = '';
     if(next_story_id === false){
-       url = '/comic/view/'+comic_id+'/story/_undelivered'+after_param;
+      url = '/story/undelivered/'+comic_id+after_param;
     }else{
       if (member) {
         url = '/story/'+next_story_id+after_param;
@@ -724,6 +725,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       prev = currentSceneIndex - 1;
     }
     if (0 <= prev) {
+      is_back = true;
       jumpTo(prev);
     }
   };
@@ -810,6 +812,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       prevent_default(e);
       return;
     }
+    is_back = false;
     activate_button($("#first_scene"), 500);
     hideFinished();
     jumpTo(0);
@@ -822,12 +825,16 @@ function $Reader(_member, _superuser, _t, _nomenu) {
 
 
   var menu_click = function(e){
+    is_back = false;
     showMenu(500, 500);
     e.preventDefault();
   };
 
   var hideMenu = function(fadeout){
     if(!menuIsVisible()){
+      return;
+    }
+    if(is_back){
       return;
     }
     $("#menu").animate(
@@ -839,6 +846,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var menu_hide_click = function(e){
+    is_back = false;
     hideMenu(500);
     e.preventDefault();
   };
@@ -895,6 +903,10 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     $("#bookmark").unbind(act_button);
     $("#canvas").unbind(act_start,canvas_click);
 
+    disable_button($("#vote"));
+    disable_button($("#bookmark"));
+    disable_button($("#next"));
+
     if (member) {
       setTimeout(
         function(){
@@ -932,17 +944,9 @@ function $Reader(_member, _superuser, _t, _nomenu) {
            enable_button($("#bookmark"));
          }
       ,500);
-      disable_button($("#vote"));
-      disable_button($("#bookmark"));
-    }else{
-      disable_button($("#vote"));
-      disable_button($("#bookmark"));
     }
 
-    if(su){
-      disable_button($("#next"));
-    }else{
-      disable_button($("#next"));
+    if(!su){
       setTimeout(
           function(){
             $("#next").bind(act_start,
@@ -978,6 +982,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     if(isLoading){
       return;
     }
+    is_back = false;
     if(comicTitleInsert && !hasComicTitleShown ||
         storyTitleInsert && !hasStoryTitleShown){
       jumpTo(0);
@@ -1056,8 +1061,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     SceneAnimator.dirFwd = true;
     reverse = false;
     if(!hasAllTitleShown){
-        jumpNext();
-        return;
+      jumpNext();
+      return;
     }
     if(current_view === VIEW_PAGE){
       if (pageX >= width) {
@@ -1123,6 +1128,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       "number_of_story": storyMetaFile.number_of_story
     };
     isLoading = false;
+    is_back = false;
   };
 
   var clearSceneImages = function(){
@@ -1169,6 +1175,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var change_mode_original = function(){
+    is_back = false;
     if(storyMetaFile['enable_original_mode']){
         current_mode  = MODE_ORIGINAL;
         if(hasAllTitleShown){
@@ -1185,6 +1192,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var change_mode_reading = function(){
+    is_back = false;
     current_mode  = MODE_READING;
     if(hasAllTitleShown){
       if(current_view === VIEW_PAGE){
@@ -1200,6 +1208,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var change_view_page = function(){
+    is_back = false;
     if(storyMetaFile['enable_page_mode']){
       current_view = VIEW_PAGE;
       if(hasAllTitleShown){
@@ -1214,6 +1223,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var change_view_scene = function(){
+      is_back = false;
       current_view = VIEW_SCENE;
       if(hasAllTitleShown){
         jumpTo(currentSceneIndex);
