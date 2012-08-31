@@ -12,6 +12,10 @@ function $Controll() {
     //親フレーム用のキー入力受付
     //小フレーム用はReader.js内にあります
     $(document).keydown(function(e){
+      var tag = $(':focus').get(0);
+      if(tag && (/textarea/i.test(tag.tagName) || /input/i.test(tag.tagName))){
+        return;
+      }
       if(e.keyCode == 32      //space
         || e.keyCode == 13  //enter
         || e.keyCode == 39  //right

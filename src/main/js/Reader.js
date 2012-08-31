@@ -22,6 +22,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var current_view = VIEW_SCENE;
 
   var storyId;
+  var creatorId;
+  var comicId;
   var storyMetaFile;
   var scenes;
   var pages;
@@ -54,7 +56,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var limitX = 0;
   var is_back = false;
 
-  console.log("v3.0.19");
+  console.log("v3.0.20");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -319,12 +321,10 @@ function $Reader(_member, _superuser, _t, _nomenu) {
           paintPageImage(i, pageImages[current_mode][currentPageIndex+1]);
         }
       }else{
-        console.log("stop:"+currentPageIndex);
         paintImage(i);
       }
     }else{
       paintImage(i);
-      console.log("paint scene:"+ currentSceneIndex);
     }
   };
 
@@ -686,11 +686,13 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     if(comicTitleInsert && !hasComicTitleShown){
       console.log("show comic title");
       showComicTitle();
+      trackPageView('comictitle');
       return;
     }
     if(storyTitleInsert && !hasStoryTitleShown){
       console.log("show story title");
       showStoryTitle();
+      trackPageView('storytitle');
       return;
     }
 
@@ -716,6 +718,18 @@ function $Reader(_member, _superuser, _t, _nomenu) {
           hideMenu(500);
       },500);
       paint();
+
+      var quality = '/';
+      if(current_mode==MODE_READING){
+        quality = '/compressed';
+      }else{
+        quality = '/original';
+      }
+      if(current_view === VIEW_SCENE){
+          trackPageView('frame'+quality+'/'+newIndex);
+      }else{
+          trackPageView('page'+quality+'/'+newIndex);
+      }
     }
 
     if (i !== undefined && i.hasLoaded()) {
@@ -919,7 +933,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
 
   var showFinished = function() {
     var next_story_id = storyMetaFile["next_story_id"];
-    var comic_id = storyMetaFile["comic_id"];
     showMenu(0);
     $("#next").unbind(act_button);
     $("#vote").unbind(act_button);
@@ -941,8 +954,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
             function(e) {
               activate_button($("#vote"), 0);
               setTimeout(function(){
-                apiVoteStory(comic_id, storyId, 1, function(){
-                  goToNextStory(next_story_id, comic_id, "vote");
+                apiVoteStory(comicId, storyId, 1, function(){
+                  goToNextStory(next_story_id, comicId, "vote");
                 },function(){showError();});
                 hideAll();
               },0);
@@ -956,8 +969,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
              function(e) {
                activate_button($("#bookmark"), 0);
                setTimeout(function(){
-                 apiBookmark(comic_id, function(){
-                   goToNextStory(next_story_id, comic_id, "bookmark");
+                 apiBookmark(comicId, function(){
+                   goToNextStory(next_story_id, comicId, "bookmark");
                  },function(){showError();});
                hideAll();
              },0);
@@ -980,7 +993,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
               function(e) {
                 console.log("clicked: next");
                 setTimeout(function(){
-                  goToNextStory(next_story_id, comic_id, "none");
+                  goToNextStory(next_story_id, comicId, "none");
                 },0);
                 hideAll();
                 prevent_default(e);
@@ -996,6 +1009,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     $("#dialog_error").hide();
     $("#finish").show();
     $("#finish_actions").show();
+
+    trackPageView('backcover');
   };
 
   /**
@@ -1282,6 +1297,12 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }
   };
 
+  var trackPageView = function(action){
+     var url = '/comicreading/'+creatorId+'/'+comicId+'/'+storyId+'/'+action;
+     console.log('track:' + url);
+    _gaq.push(['_trackPageview', url]);
+  }
+
   /**
    * 指定したマンガの話をリーダーで開く。
    */
@@ -1299,6 +1320,8 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     apiStoryMetaFile(storyId, function(json) {
       console.log("apiStoryMetaFile");
       storyMetaFile = json;
+      comicId = storyMetaFile["comic_id"];
+      creatorId = storyMetaFile["creator_id"];
       scenes = storyMetaFile["scenes"];
       pages = storyMetaFile["pages"];
 
@@ -1335,6 +1358,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       $("#prev_scene").bind(act_button, goPrev);
       $("#prev_page").bind(act_button, goPrev);
       $("#first_scene").bind(act_button, show_first_click);
+      trackPageView('cover');
 
       if (scenes.length === 0) {
         showFinished();
@@ -1348,7 +1372,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }, function() {
       showError();
     });
-    _gaq.push(['_trackPageview', '/event/viewer/open/'+storyId]);
   };
 
   var resize = function() {
