@@ -335,16 +335,21 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     $("#dialog_loading").hide();
     $("#reader").hide();
     $("#finish").hide();
+
+    $("#errmsg_fan_only").hide();
+    $("#errmsg_fan_only_guest").hide();
+    $("#errmsg_friend_only").hide();
+    $("#errmsg_friend_only_guest").hide();
+    $("#errmsg_under18").hide();
+    $("#errmsg_under18_guest").hide();
+    $("#errmsg_servererr").hide();
+    $("#errmsg_expired").hide();
+    $("#errmsg_forbidden").hide();
+
     if(msg){
       $("#errmsg_default").hide();
-      $("#errmsg_servererr").hide();
-      $("#errmsg_expired").hide();
-      $("#errmsg_forbidden").hide();
       $(msg).show();
     }else{
-      $("#errmsg_servererr").hide();
-      $("#errmsg_expired").hide();
-      $("#errmsg_forbidden").hide();
       $("#errmsg_default").show();
     }
     $("#error").show();
@@ -367,6 +372,24 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         console.log(error);
         if(error === "Not Authoriezed"){
           showError("#errmsg_expired");
+        }else if(error === "Fan Only"){
+          if(member){
+            showError("#errmsg_fan_only");
+          }else{
+            showError("#errmsg_fan_only_guest");
+          }
+        }else if(error === "Friend Only"){
+          if(member){
+            showError("#errmsg_friend_only");
+          }else{
+            showError("#errmsg_friend_only_guest");
+          }
+        }else if(error === "Under 18"){
+          if(member){
+            showError("#errmsg_under18");
+          }else{
+            showError("#errmsg_under18_guest");
+          }
         }else if(error === "Forbidden"){
           showError("#errmsg_forbidden");
         }else if(error === "Closed Story"){
