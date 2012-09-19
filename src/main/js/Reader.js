@@ -55,6 +55,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var pageScroll = false;
   var limitX = 0;
   var is_back = false;
+  var trackstart = false;
 
   console.log("v3.0.20");
 
@@ -477,13 +478,16 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }
     var url = '';
     if(next_story_id === false){
-      url = '/story/undelivered/'+comic_id+after_param;
+      if (member) {
+        url = '/story/undelivered/'+comic_id+after_param;
+      } else {
+        url = '/story/landing/nomember?next=/story/undelivered/'+comic_id+after_param;
+      }
     }else{
       if (member) {
         url = '/story/'+next_story_id+after_param;
       } else {
-        url = '/story/landing/nomember?next=/comic/view/'+
-          comic_id+'/story/'+next_story_id;
+        url = '/story/landing/nomember?next=/story/'+next_story_id;
       }
     }
     (parent["goNextUrl"])(url);
@@ -718,7 +722,9 @@ function $Reader(_member, _superuser, _t, _nomenu) {
           hideMenu(500);
       },500);
       paint();
-
+      if(!trackstart){
+        return;
+      }
       var quality = '/';
       if(current_mode==MODE_READING){
         quality = '/compressed';
@@ -1354,6 +1360,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       }
       loadConfig();
       saveConfig();
+      trackstart = true;
 
       $("#prev_scene").bind(act_button, goPrev);
       $("#prev_page").bind(act_button, goPrev);
