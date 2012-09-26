@@ -1307,7 +1307,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
      var url = '/comicreading/'+creatorId+'/'+comicId+'/'+storyId+'/'+action;
      console.log('track:' + url);
     _gaq.push(['_trackPageview', url]);
-  }
+  };
 
   /**
    * 指定したマンガの話をリーダーで開く。

@@ -3,6 +3,7 @@ _gaq.push(['_setAccount', 'UA-22337891-1']);
 _gaq.push(['_setDomainName', '.mang.jp']);
 _gaq.push(['_setAllowLinker', true]);
 _gaq.push(['_setAllowHash', false]);
+_gaq.push(['_setReferrerOverride', document.referrer]);
 (function() {
 var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
