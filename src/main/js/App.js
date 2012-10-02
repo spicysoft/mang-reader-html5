@@ -242,6 +242,4 @@ $(function() {
   }else{
     Reader.openStory(params.storyId);
   }
-
-
 });

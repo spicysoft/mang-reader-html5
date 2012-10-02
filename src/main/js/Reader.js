@@ -1379,6 +1379,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }, function() {
       showError();
     });
+    loadGoogleAnalytics();
   };
 
   var resize = function() {
