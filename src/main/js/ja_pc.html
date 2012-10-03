@@ -12,9 +12,16 @@
       fileref.setAttribute("type", "text/css");
       if($(window).width() < 480){
           fileref.setAttribute("href", "layout.320.css?v=6" );
+          if(/Android/.test(window.navigator.userAgent)){
+              $("html").css("zoom" ,$(window).width()/320);
+          }
       }else{
+          if(/Android/.test(window.navigator.userAgent)){
+              $("html").css("zoom" ,$(window).width()/480);
+          }
           fileref.setAttribute("href", "layout.480.css?v=6" );
       }
+
       document.getElementsByTagName('head').item(0).appendChild(fileref);
     </script>
 </head>
