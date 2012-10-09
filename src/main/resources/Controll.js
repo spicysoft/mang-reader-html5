@@ -33,6 +33,10 @@ function $Controll() {
     });
   });
 
+  $('iframe:first').load(function(e){
+      document.getElementById('reader_reader').contentWindow._gaq =  _gaq;
+  });
+
   var elem = function(hash){
     var $ = document.getElementById('reader_reader').contentWindow.$;
     if($){
@@ -145,6 +149,10 @@ function $Controll() {
         }, 100);
       });
    }
+
+  this.enableGA = function(){
+      document.getElementById('reader_reader').contentWindow._gaq =  _gaq;
+  };
 };
 
 var Controll = new $Controll();
@@ -235,10 +243,12 @@ var popUpChangeView = function(){
   $("#popup_original").hide();
 };
 
+
 var startReader = function(storyId){
     var current_view = "";
     var current_mode = "";
     $('iframe:first').load(function(e){
+      Controll.enableGA();
       setInterval(function(){
         if(!Controll.ready()){
           return;

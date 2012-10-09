@@ -10,18 +10,21 @@
       var fileref=document.createElement("link");
       fileref.setAttribute("rel", "stylesheet");
       fileref.setAttribute("type", "text/css");
+      $("html").css("zoom", 1);
+      console.log("windows width:" + $(window).width());
+      console.log("doc width:" + $(document).width());
       if($(window).width() < 480){
-          fileref.setAttribute("href", "layout.320.css?v=6" );
+          fileref.setAttribute("href", "layout.320.css?v=7" );
           if(/Android/.test(window.navigator.userAgent)){
               $("html").css("zoom" ,$(window).width()/320);
           }
       }else{
+          fileref.setAttribute("href", "layout.480.css?v=6" );
           if(/Android/.test(window.navigator.userAgent)){
               $("html").css("zoom" ,$(window).width()/480);
           }
-          fileref.setAttribute("href", "layout.480.css?v=6" );
       }
-
+      console.log("zoomed windows width:" + $(window).width());
       document.getElementsByTagName('head').item(0).appendChild(fileref);
     </script>
 </head>

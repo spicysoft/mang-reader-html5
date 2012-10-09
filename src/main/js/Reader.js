@@ -1,4 +1,4 @@
-/*global $, JQuery, _, _gaq, window, strings, App, $SceneAnimator */
+/*global $, JQuery, _, _gaq,_gat, window, strings, App, $SceneAnimator */
 
 /**
  * マンガを読み込み中のUI処理を行う MVCのコンポーネントに相当する処理を行う。
@@ -1304,9 +1304,15 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var trackPageView = function(action){
-     var url = '/comicreading/'+creatorId+'/'+comicId+'/'+storyId+'/'+action;
-     console.log('track:' + url);
-    _gaq.push(['_trackPageview', url]);
+    var url = '/comicreading/'+creatorId+'/'+comicId+'/'+storyId+'/'+action;
+     try{
+        if(typeof(_gaq) !== 'undefined') {
+        _gaq.push(['_trackPageview', url]);
+        }
+        console.log('track:' + url);
+     }catch(e){
+       //
+     }
   };
 
   /**
@@ -1379,7 +1385,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }, function() {
       showError();
     });
-    loadGoogleAnalytics();
   };
 
   var resize = function() {
