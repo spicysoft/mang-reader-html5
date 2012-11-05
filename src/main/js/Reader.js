@@ -235,6 +235,15 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       context.fillStyle = canvas.style.background;
       context.fillRect(0, 0, width, height);
 
+      //Android2.1以下のCanvas drawImageバグ対応
+      //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
+      //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
+      if(App.ANDROID21){
+        context.save();
+        var rate =  Math.sqrt(320/screen.width);
+        context.scale(rate, rate);
+      }
+
       context.drawImage(i0, dx0, dy0);
       if(i1){
         context.drawImage(i1, dx1, dy1);
