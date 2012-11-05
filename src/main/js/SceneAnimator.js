@@ -254,7 +254,7 @@ function $SceneAnimator(_readerWidth,_readerHeight,_fps)
     }else{
       action = 0;
     }
-    caliculate();
+    caliculate(1);
     scrolling = false;
   };
 

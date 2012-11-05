@@ -7,7 +7,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var member = _member;
   var su = _superuser;
   var nomenu = _nomenu;
-  var FPS = 33;
+  var FPS = 50;
   var API_ROOT = '/api';
   var width = 0;
   var height = 0;
@@ -601,7 +601,13 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     var under = sceneIndex - 2;
     var max;
     if(current_mode  === MODE_READING){
-      max = 6;
+      if(sceneIndex < 2){
+        max = 3;
+      }else if(4 < sceneIndex){
+        max = 8;
+      }else{
+        max = sceneIndex+sceneIndex;
+      }
     }else{
       max = 2;
     }
@@ -1080,15 +1086,14 @@ function $Reader(_member, _superuser, _t, _nomenu) {
             pageX = pageX + limitX;
         }
       }
-
-      setTimeout(animation, 1000 / FPS);
+      requestAnimationFrame(animation);
     }else{
       if (SceneAnimator.isScrolling()) {
         SceneAnimator.step();
         paint();
       }
       if (SceneAnimator.isScrolling()) {
-        setTimeout(animation, 1000 / FPS);
+        requestAnimationFrame(animation);
       }
     }
   };

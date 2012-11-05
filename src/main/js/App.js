@@ -44,6 +44,18 @@ function $App() {
     if (typeof window.console !== 'object'){
       window.console = {log:function(){},debug:function(){},info:function(){},warn:function(){},error:function(){},assert:function(){},dir:function(){},dirxml:function(){},trace:function(){},group:function(){},groupEnd:function(){},time:function(){},timeEnd:function(){},profile:function(){},profileEnd:function(){},count:function(){}};
     }
+
+    window.requestAnimationFrame = (function(){
+      return window.requestAnimationFrame	||
+        window.webkitRequestAnimationFrame	||
+        window.mozRequestAnimationFrame		||
+        window.oRequestAnimationFrame		||
+        window.msRequestAnimationFrame		||
+        function(callback, element){
+          window.setTimeout(callback, 1000 / 60);
+        };
+    })();
+
     _ = this.getLocalizedString;
 
     var ua = navigator.userAgent;
