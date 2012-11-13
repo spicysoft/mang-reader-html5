@@ -3,11 +3,11 @@
 /**
  * マンガを読み込み中のUI処理を行う MVCのコンポーネントに相当する処理を行う。
  */
-function $Reader(_member, _superuser, _t, _nomenu) {
+function $Reader(_member, _superuser, _t, _nomenu, _fps) {
   var member = _member;
   var su = _superuser;
   var nomenu = _nomenu;
-  var FPS = 50;
+  var FPS = _fps;
   var API_ROOT = '/api';
   var width = 0;
   var height = 0;
@@ -57,7 +57,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var is_back = false;
   var trackstart = false;
 
-  console.log("v3.0.20");
+  console.log("v4.0.2");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -174,10 +174,10 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   };
 
   var paintComicTitle = function(i){
-      var w=i.width*2;
-      var h=i.height*2;
-      var dx= (width - w) / 2 ;
-      var dy= (height - h) / 2 ;
+      var w=i.width;
+      var h=i.height;
+      var dx= Math.round((width - w) / 2);
+      var dy= Math.round((height - h) / 2);
 
       if (App.IE) {
         i.width = w;
@@ -264,7 +264,6 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         x=SceneAnimator.x();
         y=SceneAnimator.y();
       }
-
       var w=i.scaledWidth();
       var h=i.scaledHeight();
       var dx=(width - w) / 2 + x;
@@ -280,12 +279,19 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         $("#canvas").empty().append(i).append(mask);
       } else {
         var context = canvas.getContext("2d");
+        context.save();
         context.fillStyle = canvas.style.background;
         context.fillRect(0, 0, width, height);
-        context.drawImage(i, dx, dy, i.scaledWidth(), i.scaledHeight());
+        //Android2.1以下のCanvas drawImageバグ対応
+        //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
+        //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
         if(App.ANDROID21){
-          context.restore();
+          var rate =  Math.sqrt(320/screen.width);
+          context.scale(rate, rate);
         }
+        console.log(dx + ' ' + dy + ' ' + i.scaledWidth() + ' ' + i.scaledHeight());
+        context.drawImage(i, dx, dy, i.scaledWidth(), i.scaledHeight());
+        context.restore();
       }
     };
 
@@ -594,7 +600,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
   var apiComicTitleImage = function(comicId) {
       return apiImage(comicId, 0, 0, false,
           function(host, comicId, mode, dpi, param){
-            return host + '/icon/large/' + comicId + param;
+            return host + '/icon/xlarge/' + comicId + param;
           },
           function(comicId, mode, dpi){
             //
@@ -671,7 +677,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         setTimeout(function(){
             hideMenu(500);
         },500);
-        paint();
+        setTimeout(paint, 0);
     }
 
     if (comicTitleImage !== undefined && comicTitleImage.hasLoaded()) {
@@ -736,7 +742,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
       setTimeout(function(){
           hideMenu(500);
       },500);
-      paint();
+      setTimeout(paint, 0);
       if(!trackstart){
         return;
       }
@@ -765,7 +771,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         jumpTo(newIndex);
         return;
       }
-      if(current_view === VIEW_SCENE){
+      if(current_view === VIEW_SCENE){pai
         SceneAnimator.initializeWhenUnloaded();
       }
       i.onload = onloaded;
@@ -845,7 +851,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         pageScroll = true;
         animation();
       } else {
-        paint();
+        setTimeout(paint, 0);
       }
     }else{
       if (SceneAnimator.isAtScrollStart()) {
@@ -1072,7 +1078,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
    */
   var animation = function() {
     if(current_view === VIEW_PAGE){
-      paint();
+      setTimeout(paint, 0);
       if(pageX >= width){
         pageScroll = false;
         prev_image = undefined;
@@ -1099,7 +1105,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
     }else{
       if (SceneAnimator.isScrolling()) {
         SceneAnimator.step();
-        paint();
+        setTimeout(paint, 0);
       }
       if (SceneAnimator.isScrolling()) {
         requestAnimationFrame(animation);
@@ -1130,7 +1136,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         pageScroll = true;
         animation();
       } else {
-        paint();
+        setTimeout(paint, 0);
       }
     }else{
       if (SceneAnimator.isAtScrollStart()) {
@@ -1138,7 +1144,7 @@ function $Reader(_member, _superuser, _t, _nomenu) {
         animation();
       } else if (SceneAnimator.isScrolling()) {
         SceneAnimator.skipScroll();
-        paint();
+        setTimeout(paint,0);
       } else if (SceneAnimator.isAtScrollEnd()) {
         jumpNext();
       } else {

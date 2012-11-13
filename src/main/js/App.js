@@ -35,14 +35,21 @@ function $App() {
   this.IE_VER = false;
   this.ANDROID21 = false;
   this.isSmartPhone = false;
+  this.speed = 1;
 
   /**
    * コンストラクター実装
    */
   this.constructor = function(){
-
     if (typeof window.console !== 'object'){
       window.console = {log:function(){},debug:function(){},info:function(){},warn:function(){},error:function(){},assert:function(){},dir:function(){},dirxml:function(){},trace:function(){},group:function(){},groupEnd:function(){},time:function(){},timeEnd:function(){},profile:function(){},profileEnd:function(){},count:function(){}};
+    }
+    if(typeof window.requestAnimationFrame         == 'undefined'
+      && typeof window.webkitRequestAnimationFrame == 'undefined'
+      && typeof window.mozRequestAnimationFrame    == 'undefined'
+      && typeof window.oRequestAnimationFrame      == 'undefined'
+      && typeof window.msRequestAnimationFrame     == 'undefined'){
+        this.speed = 2;
     }
 
     window.requestAnimationFrame = (function(){
@@ -52,7 +59,7 @@ function $App() {
         window.oRequestAnimationFrame		||
         window.msRequestAnimationFrame		||
         function(callback, element){
-          window.setTimeout(callback, 1000 / 60);
+          window.setTimeout(callback, 33);
         };
     })();
 
@@ -244,7 +251,7 @@ $(function() {
 
   App = new $App();
   var params = getRealParameters();
-  Reader = new $Reader(params.member, params.superuser, params.time, params.nomenu);
+  Reader = new $Reader(params.member, params.superuser, params.time, params.nomenu, 50/App.speed);
 
   $(window).resize(function(){
     Reader.resize();
