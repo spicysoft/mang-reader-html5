@@ -35,6 +35,7 @@ function $App() {
   this.IE_VER = false;
   this.ANDROID21 = false;
   this.isSmartPhone = false;
+  this.isApp = false;
   this.speed = 1;
 
   /**
@@ -88,6 +89,9 @@ function $App() {
       this.isSmartPhone = true;
     } else {
       this.isSmartPhone = false;
+    }
+    if(/mang\/\d+/.test(ua)){
+      this.isApp = true;
     }
   };
 

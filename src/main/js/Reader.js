@@ -1327,9 +1327,19 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
     var url = '/comicreading/'+creatorId+'/'+comicId+'/'+storyId+'/'+action;
      try{
         if(typeof(_gaq) !== 'undefined') {
-        _gaq.push(['_trackPageview', url]);
-        }
-        console.log('track:' + url);
+          if(member) {
+            _gaq.push(['_setCustomVar', 1, 'IsMember', 'YES', 1]);
+          } else {
+            _gaq.push(['_setCustomVar', 1, 'IsMember', 'NO', 1]);
+          }
+          if(App.isApp){
+            _gaq.push(['_setCustomVar', 2, 'Platform', 'Appli', 1]);
+          } else {
+            _gaq.push(['_setCustomVar', 2, 'Platform', 'Browser', 1]);
+          }
+          _gaq.push(['_trackPageview', url]);
+          console.log('track:' + url);
+       }
      }catch(e){
        //
      }
