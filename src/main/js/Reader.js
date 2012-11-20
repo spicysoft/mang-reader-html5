@@ -289,7 +289,6 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
           var rate =  Math.sqrt(320/screen.width);
           context.scale(rate, rate);
         }
-        console.log(dx + ' ' + dy + ' ' + i.scaledWidth() + ' ' + i.scaledHeight());
         context.drawImage(i, dx, dy, i.scaledWidth(), i.scaledHeight());
         context.restore();
       }
