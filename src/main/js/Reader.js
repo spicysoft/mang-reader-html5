@@ -368,9 +368,37 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
     }else{
       $("#errmsg_default").show();
     }
+	
     $("#error").show();
-    $("#dialog_error").show();
+	if(msg == "#errmsg_under18_guest") {
+		set_error_img_src(msg);
+		$("#dialog_error").hide();
+	} else {
+		$("#dialog_error").show();
+	}
+    
   };
+  var set_error_img_src = function(msg){
+  	var s_canvas = $(msg + " canvas");
+	var rect = s_canvas.width();
+	s_canvas.width(rect);
+	s_canvas.height(rect);
+	console.log(rect);
+	var s_context = s_canvas[0].getContext("2d");
+	var img = new Image();
+	img.src = "/icon/story_image/"+dpi+"/" + storyId + "/"+t +'?d='+ new Date().getTime();
+	img.onload = function(){
+		console.log(img.src);
+		console.log(img.height,img.width);
+		s_context.clearRect(0,0,rect,rect);
+		if(img.width>=img.height){
+			s_context.drawImage(img, ((img.width-img.height)/2), 0, img.height, img.height, 0, 0, 300, 150);
+		} else {
+			s_context.drawImage(img, 0, ((img.height-img.width)/2), img.width, img.width, 0, 0, 300, 150);
+		}
+		$("#menu").hide();
+	}
+  }
 
   var ajax = function(url, datatype, fnSuccess, fnError, method, cache){
     var settings = {
@@ -771,7 +799,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
         jumpTo(newIndex);
         return;
       }
-      if(current_view === VIEW_SCENE){pai
+      if(current_view === VIEW_SCENE){/*pai*/
         SceneAnimator.initializeWhenUnloaded();
       }
       i.onload = onloaded;

@@ -70,3 +70,41 @@
 
 #start                       {background-position: 0 -483px;width: 213px; height: 60px; cursor: pointer;}
 #start:hover, #start.active  {background-position: -214px -483px;width: 213px; height: 60px; cursor: pointer;}
+
+.large_msg_recommend_login {
+	margin: 0px;
+	padding: 20px;
+	background-color:#000;
+}
+.large_msg_recommend_login h4 {
+	margin: 0px 0px 20px;
+	font-size: 13px;
+}
+.large_msg_recommend_login p {
+	margin:0 0 20px;
+	font-size:13px;
+}
+.large_msg_recommend_login .image_area {
+	padding:0;
+}
+.large_msg_recommend_login .image_area canvas {
+	height: 135px;
+	width: 135px;
+	float: left;
+	margin-right: 15px;
+}
+.large_msg_recommend_login .button_area {
+	text-align:center;
+}
+.large_msg_recommend_login .button_area a {
+	height: 28px;
+	line-height: 30px;
+	width: 132px;
+	margin: 0px;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+}
+.large_msg_recommend_login a.green_button {
+	margin-right:10px;
+}
