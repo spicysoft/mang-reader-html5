@@ -798,7 +798,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
         jumpTo(newIndex);
         return;
       }
-      if(current_view === VIEW_SCENE){/*pai*/
+      if(current_view === VIEW_SCENE){
         SceneAnimator.initializeWhenUnloaded();
       }
       i.onload = onloaded;
