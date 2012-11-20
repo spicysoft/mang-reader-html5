@@ -91,7 +91,13 @@
 			<h4>このマンガを読むにはログインしてください</h4>
 			<p class="image_area"><img />このマンガは、全年齢を対象としたものではないとマンガ作家から申告されています。<br/>
 			このマンガには年齢制限があります。</p>
-			<p class="button_area"><a class="green_button" target="_parent" href="/account/">ログイン</a><a target="_parent" href="/account/register">会員登録</a></p>
+			<p class="button_area"><a class="green_button" target="_parent" href="/account/">ログイン</a><a target="_parent" href="/account/register/">会員登録</a></p>
+			<script>
+				console.log($(parent.document)[0]["URL"]);
+				$(".button_area a").click(function(){
+					$(this).attr("href",$(this).attr("href")+"?next="+$(parent.document)[0]["URL"]);
+				})
+			</script>
 		</div>
       </div>
       <div id="story_title_insert" style="display:none;">

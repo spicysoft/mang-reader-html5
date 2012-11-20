@@ -373,6 +373,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
 	if(msg == "#errmsg_under18_guest") {
 		set_error_img_src(msg);
 		$("#dialog_error").hide();
+		$("#menu").hide();
 	} else {
 		$("#dialog_error").show();
 	}
