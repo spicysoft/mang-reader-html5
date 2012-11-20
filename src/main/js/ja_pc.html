@@ -13,7 +13,7 @@
       fileref.setAttribute("type", "text/css");
       $("html").css("zoom", 1);
       if($(window).width() < 480){
-          fileref.setAttribute("href", "layout.320.css?v=7" );
+          fileref.setAttribute("href", "layout.320.css?v=8.3" );
           if(/Android/.test(window.navigator.userAgent)){
               $("html").css("zoom" ,$(window).width()/320);
           }
@@ -83,10 +83,16 @@
           <span id="errmsg_friend_only" class="msg">マンガ作家の友だちのみ閲覧可能です。</span>
           <span id="errmsg_friend_only_guest" class="msg">友だちかどうか確認するためログインしてください。</span>
           <span id="errmsg_under18" class="msg">お客さまは閲覧対象年齢外のため閲覧できません。</span>
-          <span id="errmsg_under18_guest" class="msg">年齢確認のためログインしてください。</span>
+          <!--span id="errmsg_under18_guest" class="msg">年齢確認のためログインしてください。</span-->
           <span id="errmsg_fan_only" class="msg">マンガ作家のファンのみが閲覧可能です。</span>
           <span id="errmsg_fan_only_guest" class="msg">ファンかどうか確認するためログインしてください。</span>
         </div>
+		<div id="errmsg_under18_guest" class="large_msg_recommend_login">
+			<h4>このマンガを読むにはログインしてください</h4>
+			<p class="image_area"><canvas></canvas>このマンガは、全年齢を対象としたものではないとマンガ作家から申告されています。<br/>
+			このマンガには年齢制限があります。</p>
+			<p class="button_area"><a class="green_button" target="_parent" href="/account/">ログイン</a><a target="_parent" href="/account/register">会員登録</a></p>
+		</div>
       </div>
       <div id="story_title_insert" style="display:none;">
         <div id="story_title_items">

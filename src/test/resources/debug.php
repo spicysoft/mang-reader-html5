@@ -4,9 +4,9 @@
 <div>Development</div>
 <h2>member 480</h2>
 <script type="text/javascript" >
-  var storyId = 1972;
+  var storyId = 27555;
 </script>
-<script src="/local-test/mr/target/dist-debug/jquery-1.5.min.js" type="text/javascript" ></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" ></script>
 <script src="/local-test/mr/target/dist-debug/Controll.js" type="text/javascript" ></script>
 <script type="text/javascript" >
 
@@ -14,7 +14,7 @@
   var t = <?=time()?>;
 
   $(document).ready(function(){
-    var html = '<iframe id="reader_reader" src="/local-test/mr/target/dist-debug/ja_pc.html#'+storyId+',member,nomenu,'+t+'" width="'+ size +'px" height="' + size +'px" frameborder="0" allowfullscreen="true"></iframe>';
+    var html = '<iframe id="reader_reader" src="/local-test/mr/target/dist-debug/ja_pc.html#'+storyId+',nomember,nomenu,'+t+'" width="'+ size +'px" height="' + size +'px" frameborder="0" allowfullscreen="true"></iframe>';
     $("#reader_wrapper").append(html);
     startReader(storyId);
   });
