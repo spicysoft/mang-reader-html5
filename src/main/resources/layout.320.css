@@ -87,10 +87,9 @@
 .large_msg_recommend_login .image_area {
 	padding:0;
 }
-.large_msg_recommend_login .image_area canvas {
+.large_msg_recommend_login .image_area img {
 	height: 135px;
 	width: 135px;
-	float: left;
 	margin-right: 15px;
 }
 .large_msg_recommend_login .button_area {

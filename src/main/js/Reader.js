@@ -379,25 +379,11 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
     
   };
   var set_error_img_src = function(msg){
-  	var s_canvas = $(msg + " canvas");
-	var rect = s_canvas.width();
-	s_canvas.width(rect);
-	s_canvas.height(rect);
-	console.log(rect);
-	var s_context = s_canvas[0].getContext("2d");
-	var img = new Image();
-	img.src = "/icon/story_image/"+dpi+"/" + storyId + "/"+t +'?d='+ new Date().getTime();
-	img.onload = function(){
-		console.log(img.src);
-		console.log(img.height,img.width);
-		s_context.clearRect(0,0,rect,rect);
-		if(img.width>=img.height){
-			s_context.drawImage(img, ((img.width-img.height)/2), 0, img.height, img.height, 0, 0, 300, 150);
-		} else {
-			s_context.drawImage(img, 0, ((img.height-img.width)/2), img.width, img.width, 0, 0, 300, 150);
-		}
-		$("#menu").hide();
-	}
+  	var img = $(msg + " img");
+	var rect = img.width();
+	if(cdn_host==undefined)cdn_host="";
+	img.attr("src",cdn_host+"/icon/story_image/"+rect+"x"+rect+"/" + storyId + "/"+t);
+	
   }
 
   var ajax = function(url, datatype, fnSuccess, fnError, method, cache){
