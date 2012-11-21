@@ -72,7 +72,7 @@ body {
 	float:left;
 	padding:0 18px;
 }
-.large_msg_recommend_login .image_area canvas {
+.large_msg_recommend_login .image_area img {
 	height: 200px;
 	width:200px;
 	float: left;
@@ -100,6 +100,10 @@ body {
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
 }
+/*IE8ハック*/
+.large_msg_recommend_login .button_area a {
+	background-color:#FDFDFD\9;
+}
 .large_msg_recommend_login .button_area a:hover {
 	text-decoration:underline;
 }
@@ -116,7 +120,10 @@ body {
 	-moz-text-shadow: 1px 1px 3px #000; /* Firefox用*/
 	-webkit-text-shadow: 1px 1px 3px #000; /* Google Chrome, Safari用*/
 }
-
+/*IE8ハック*/
+.large_msg_recommend_login a.green_button {
+	background-color:#3CAC17\9;
+}
 
 .vhcenter {
   width:  100%;

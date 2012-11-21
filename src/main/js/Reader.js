@@ -57,9 +57,9 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
   var is_back = false;
   var trackstart = false;
 
-  console.log("v4.0.2");
+  console.log("v4.0.3");
 
-  if (App.IE) {
+  if (App.IE || App.isAndroid) {
     // canvasが実装されていないのでdivに置換
     // style="background: #000;"を定義しないとクリッカブルにならない
     $("#canvas").replaceWith(
@@ -179,7 +179,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       var dx= Math.round((width - w) / 2);
       var dy= Math.round((height - h) / 2);
 
-      if (App.IE) {
+      if (App.IE || App.isAndroid) {
         i.width = w;
         i.height = h;
         i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
@@ -221,36 +221,29 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       dy1=(height - h1) / 2;
     }
 
-    if (App.IE) {
+    if (App.IE || App.isAndroid) {
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
       i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
-      var elm = $("#canvas").empty().append(i0);
+      var c = $("#canvas");
+      c[0].innerHTML="";
+      c.append(i0);
       if(i1){
         i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
-        elm = elm.append(i1);
+        c.append(i1);
       }
-      elm.append(mask);
+      c.append(mask);
+      c = null;
     } else {
       var context = canvas.getContext("2d");
+      context.save();
       context.fillStyle = canvas.style.background;
       context.fillRect(0, 0, width, height);
-
-      //Android2.1以下のCanvas drawImageバグ対応
-      //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
-      //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
-      if(App.ANDROID21){
-        context.save();
-        var rate =  Math.sqrt(320/screen.width);
-        context.scale(rate, rate);
-      }
 
       context.drawImage(i0, dx0, dy0);
       if(i1){
         context.drawImage(i1, dx1, dy1);
       }
-      if(App.ANDROID21){
-        context.restore();
-      }
+      context.restore();
     }
   };
 
@@ -268,7 +261,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       var h=i.scaledHeight();
       var dx=(width - w) / 2 + x;
       var dy=(height - h) / 2 + y;
-      if (App.IE) {
+      if (App.IE || App.isAndroid) {
         if(App.IE_VER==8 || document.documentMode==8){
           $("#canvas").css({zoom:i.scale});
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
@@ -276,19 +269,15 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:"+i.scale+";";
         }
         var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
-        $("#canvas").empty().append(i).append(mask);
+        var c = $("#canvas");
+        c[0].innerHTML="";
+        c.append(i).append(mask);
+        c = null;
       } else {
         var context = canvas.getContext("2d");
         context.save();
         context.fillStyle = canvas.style.background;
         context.fillRect(0, 0, width, height);
-        //Android2.1以下のCanvas drawImageバグ対応
-        //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
-        //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
-        if(App.ANDROID21){
-          var rate =  Math.sqrt(320/screen.width);
-          context.scale(rate, rate);
-        }
         context.drawImage(i, dx, dy, i.scaledWidth(), i.scaledHeight());
         context.restore();
       }
@@ -367,36 +356,23 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
     }else{
       $("#errmsg_default").show();
     }
-	
+
     $("#error").show();
-	if(msg == "#errmsg_under18_guest") {
-		set_error_img_src(msg);
-		$("#dialog_error").hide();
-	} else {
-		$("#dialog_error").show();
-	}
-    
+  if(msg == "#errmsg_under18_guest") {
+    set_error_img_src(msg);
+    $("#dialog_error").hide();
+    $("#menu").hide();
+  } else {
+    $("#dialog_error").show();
+  }
+
   };
   var set_error_img_src = function(msg){
-  	var s_canvas = $(msg + " canvas");
-	var rect = s_canvas.width();
-	s_canvas.width(rect);
-	s_canvas.height(rect);
-	console.log(rect);
-	var s_context = s_canvas[0].getContext("2d");
-	var img = new Image();
-	img.src = "/icon/story_image/"+dpi+"/" + storyId + "/"+t +'?d='+ new Date().getTime();
-	img.onload = function(){
-		console.log(img.src);
-		console.log(img.height,img.width);
-		s_context.clearRect(0,0,rect,rect);
-		if(img.width>=img.height){
-			s_context.drawImage(img, ((img.width-img.height)/2), 0, img.height, img.height, 0, 0, 300, 150);
-		} else {
-			s_context.drawImage(img, 0, ((img.height-img.width)/2), img.width, img.width, 0, 0, 300, 150);
-		}
-		$("#menu").hide();
-	}
+    var img = $(msg + " img");
+  var rect = img.width();
+  if(cdn_host==undefined)cdn_host="";
+  img.attr("src",cdn_host+"/icon/story_image/"+rect+"x"+rect+"/" + storyId + "/"+t);
+
   }
 
   var ajax = function(url, datatype, fnSuccess, fnError, method, cache){
