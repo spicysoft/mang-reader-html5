@@ -9,19 +9,18 @@
     <include type="css" src="src/main/js/pc.css"/>
     <script type="text/javascript" >
       var fileref=document.createElement("link");
+
       fileref.setAttribute("rel", "stylesheet");
       fileref.setAttribute("type", "text/css");
       $("html").css("zoom", 1);
       if($(window).width() < 480){
-          fileref.setAttribute("href", "layout.320.css?v=8.5" );
-          if(/Android/.test(window.navigator.userAgent)){
-              $("html").css("zoom" ,$(window).width()/320);
-          }
+          var css_size = 320;
       }else{
-          fileref.setAttribute("href", "layout.480.css?v=6" );
-          if(/Android/.test(window.navigator.userAgent)){
-              $("html").css("zoom" ,$(window).width()/480);
-          }
+          var css_size = 480;
+      }
+      fileref.setAttribute("href", "layout."+css_size+".css?v=9" );
+      if(/Android/.test(window.navigator.userAgent)){
+          $("html").css("zoom" ,$(window).width()/css_size);
       }
       document.getElementsByTagName('head').item(0).appendChild(fileref);
     </script>
@@ -87,18 +86,18 @@
           <span id="errmsg_fan_only" class="msg">マンガ作家のファンのみが閲覧可能です。</span>
           <span id="errmsg_fan_only_guest" class="msg">ファンかどうか確認するためログインしてください。</span>
         </div>
-		<div id="errmsg_under18_guest" class="large_msg_recommend_login">
-			<h4>このマンガを読むにはログインしてください</h4>
-			<p class="image_area"><img />このマンガは、全年齢を対象としたものではないとマンガ作家から申告されています。<br/>
-			このマンガには年齢制限があります。</p>
-			<p class="button_area"><a class="green_button" target="_parent" href="/account/">ログイン</a><a target="_parent" href="/account/register/">会員登録</a></p>
-			<script>
-				console.log($(parent.document)[0]["URL"]);
-				$(".button_area a").click(function(){
-					$(this).attr("href",$(this).attr("href")+"?next="+$(parent.document)[0]["URL"]);
-				})
-			</script>
-		</div>
+    <div id="errmsg_under18_guest" class="large_msg_recommend_login">
+      <h4>このマンガを読むにはログインしてください</h4>
+      <p class="image_area"><img />このマンガは、全年齢を対象としたものではないとマンガ作家から申告されています。<br/>
+      このマンガには年齢制限があります。</p>
+      <p class="button_area"><a class="green_button" target="_parent" href="/account/">ログイン</a><a target="_parent" href="/account/register/">会員登録</a></p>
+      <script>
+        console.log($(parent.document)[0]["URL"]);
+        $(".button_area a").click(function(){
+          $(this).attr("href",$(this).attr("href")+"?next="+$(parent.document)[0]["URL"]);
+        })
+      </script>
+    </div>
       </div>
       <div id="story_title_insert" style="display:none;">
         <div id="story_title_items">

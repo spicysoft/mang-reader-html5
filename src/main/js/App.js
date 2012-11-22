@@ -261,6 +261,9 @@ $(function() {
   Reader = new $Reader(params.member, params.superuser, params.time, params.nomenu, 50/App.speed);
 
   $(window).resize(function(){
+    if(/Android/.test(window.navigator.userAgent)){
+      $("html").css("zoom" ,$(window).width()/css_size);
+    }
     Reader.resize();
   });
   if(!params.auto){

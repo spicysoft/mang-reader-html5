@@ -131,7 +131,13 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       $("#mangh5r").height(height);
       $("#canvas").width(width);
       $("#canvas").height(height);
-     } else {
+     } else if(App.IE||App.isAndroid){
+      var reader = $("#mangh5r");
+      width = reader.width();
+      height = reader.height();
+      $("#canvas").width(width);
+      $("#canvas").height(height);
+     }else {
       var reader = $("#mangh5r");
       width = reader.width();
       height = reader.height();
@@ -141,7 +147,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       canvas.height = height;
       canvas.style.height = height + "px";
     }
-    if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
+    if (App.IE ||App.isAndroid) {
       dpi = resolveDpi(Math.max(width, height));
     }else{
       dpi = resolveDpi(Math.max(canvas.width, canvas.height));
@@ -225,8 +231,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
       i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
       var c = $("#canvas");
-      c[0].innerHTML="";
-      c.append(i0);
+      c.empty().append(i0);
       if(i1){
         i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
         c.append(i1);
@@ -270,8 +275,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
         }
         var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
         var c = $("#canvas");
-        c[0].innerHTML="";
-        c.append(i).append(mask);
+        c.empty().append(i).append(mask);
         c = null;
       } else {
         var context = canvas.getContext("2d");
@@ -1123,7 +1127,6 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
    * @return void
    */
   var goNext = function() {
-    console.log("goNext");
     SceneAnimator.reverse = false;
     SceneAnimator.dirFwd = true;
     reverse = false;
