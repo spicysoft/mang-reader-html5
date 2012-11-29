@@ -368,9 +368,8 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
     }else{
       $("#errmsg_default").show();
     }
-	
     $("#error").show();
-	if(msg == "#errmsg_under18_guest") {
+	if(msg == "#errmsg_under18_guest" || msg  == "#errmsg_fan_only_guest" || msg  == "#errmsg_friend_only_guest") {
 		set_error_img_src(msg);
 		$("#dialog_error").hide();
 		$("#menu").hide();

@@ -88,6 +88,7 @@ body {
 	width: 200px;
 	margin: 0px 12px;
 	text-decoration:none;
+	background:#FDFDFD;
 	background: -moz-linear-gradient(top, #FDFDFD 0%, #F1F1F2 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FDFDFD), color-stop(100%,#F1F1F2));
 	background: -webkit-linear-gradient(top, #FDFDFD 0%,#F1F1F2 100%);
@@ -110,6 +111,7 @@ body {
 .large_msg_recommend_login a.green_button {
 	color: #FFF;
 	border: 1px solid #24B121;
+	background:#3CAC17;
 	background: -moz-linear-gradient(top, #B2DD2E  0%, #3CAC17 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#B2DD2E ), color-stop(100%,#3CAC17));
 	background: -webkit-linear-gradient(top, #B2DD2E  0%,#3CAC17 100%);
