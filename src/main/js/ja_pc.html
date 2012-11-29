@@ -80,24 +80,38 @@
           <span id="errmsg_servererr" class="msg" style="display:none;">アクセスが集中しています。暫く時間を開けてからページを再読み込みして下さい。</span>
           <span id="errmsg_expired" class="msg" style="display:none;">スーパーユーザーモードでの閲覧期限がタイムアウトしました。ページを再度読み込むと閲覧可能になります。</span>
           <span id="errmsg_friend_only" class="msg">マンガ作家の友だちのみ閲覧可能です。</span>
-          <span id="errmsg_friend_only_guest" class="msg">友だちかどうか確認するためログインしてください。</span>
+          <!--span id="errmsg_friend_only_guest" class="msg">友だちかどうか確認するためログインしてください。</span-->
           <span id="errmsg_under18" class="msg">お客さまは閲覧対象年齢外のため閲覧できません。</span>
           <!--span id="errmsg_under18_guest" class="msg">年齢確認のためログインしてください。</span-->
           <span id="errmsg_fan_only" class="msg">マンガ作家のファンのみが閲覧可能です。</span>
-          <span id="errmsg_fan_only_guest" class="msg">ファンかどうか確認するためログインしてください。</span>
+          <!--span id="errmsg_fan_only_guest" class="msg">ファンかどうか確認するためログインしてください。</span-->
         </div>
+    <div id="errmsg_friend_only_guest" class="large_msg_recommend_login">
+      <h4>このマンガを読むにはログインしてください</h4>
+      <p class="image_area"><img />このマンガは友だち限定で配信されています。<br/>
+      友だちかどうか確認するためログインをするか、新規会員登録しこのマンガ作家に友だち申請を送ってください。</p>
+      <p class="button_area"><a class="green_button" target="_parent" href="/account/">ログイン</a><a target="_parent" href="/account/register/">会員登録</a></p>
+    </div>
+    <div id="errmsg_fan_only_guest" class="large_msg_recommend_login">
+      <h4>このマンガを読むにはログインしてください</h4>
+      <p class="image_area"><img />このマンガはファン限定で配信されています。<br/>
+      ファンかどうか確認するためログインをするか、新規会員登録しこのマンガ作家をファン登録してください。</p>
+      <p class="button_area"><a class="green_button" target="_parent" href="/account/">ログイン</a><a target="_parent" href="/account/register/">会員登録</a></p>
+    </div>
     <div id="errmsg_under18_guest" class="large_msg_recommend_login">
       <h4>このマンガを読むにはログインしてください</h4>
       <p class="image_area"><img />このマンガは、全年齢を対象としたものではないとマンガ作家から申告されています。<br/>
       このマンガには年齢制限があります。</p>
       <p class="button_area"><a class="green_button" target="_parent" href="/account/">ログイン</a><a target="_parent" href="/account/register/">会員登録</a></p>
-      <script>
-        console.log($(parent.document)[0]["URL"]);
-        $(".button_area a").click(function(){
-          $(this).attr("href",$(this).attr("href")+"?next="+$(parent.document)[0]["URL"]);
-        })
-      </script>
+
     </div>
+    <script>
+      $(".button_area a").click(function(){
+        var parentURL = $(parent.document)[0]["URL"];
+        if(parentURL.indexOf("?next=")!=-1)parentURL = parentURL.substring(parentURL.indexOf("?next=")+6,parentURL.length);
+        $(this).attr("href",$(this).attr("href")+"?next="+parentURL);
+      })
+    </script>
       </div>
       <div id="story_title_insert" style="display:none;">
         <div id="story_title_items">
