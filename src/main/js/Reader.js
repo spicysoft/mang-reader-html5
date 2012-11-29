@@ -59,7 +59,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
 
   console.log("v4.0.3");
 
-  if (App.IE || App.isAndroid) {
+  if (App.IE) {
     // canvasが実装されていないのでdivに置換
     // style="background: #000;"を定義しないとクリッカブルにならない
     $("#canvas").replaceWith(
@@ -131,12 +131,6 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       $("#mangh5r").height(height);
       $("#canvas").width(width);
       $("#canvas").height(height);
-     } else if(App.IE||App.isAndroid){
-      var reader = $("#mangh5r");
-      width = reader.width();
-      height = reader.height();
-      $("#canvas").width(width);
-      $("#canvas").height(height);
      }else {
       var reader = $("#mangh5r");
       width = reader.width();
@@ -147,7 +141,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       canvas.height = height;
       canvas.style.height = height + "px";
     }
-    if (App.IE ||App.isAndroid) {
+    if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
       dpi = resolveDpi(Math.max(width, height));
     }else{
       dpi = resolveDpi(Math.max(canvas.width, canvas.height));
@@ -185,7 +179,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       var dx= Math.round((width - w) / 2);
       var dy= Math.round((height - h) / 2);
 
-      if (App.IE || App.isAndroid) {
+      if (App.IE) {
         i.width = w;
         i.height = h;
         i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
@@ -227,7 +221,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       dy1=(height - h1) / 2;
     }
 
-    if (App.IE || App.isAndroid) {
+    if (App.IE) {
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
       i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
       var c = $("#canvas");
@@ -243,6 +237,15 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       context.save();
       context.fillStyle = canvas.style.background;
       context.fillRect(0, 0, width, height);
+
+      //Android2.1以下のCanvas drawImageバグ対応
+      //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
+      //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
+      if(App.ANDROID21){
+        context.save();
+        var rate =  Math.sqrt(320/screen.width);
+        context.scale(rate, rate);
+      }
 
       context.drawImage(i0, dx0, dy0);
       if(i1){
@@ -266,7 +269,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       var h=i.scaledHeight();
       var dx=(width - w) / 2 + x;
       var dy=(height - h) / 2 + y;
-      if (App.IE || App.isAndroid) {
+      if (App.IE) {
         if(App.IE_VER==8 || document.documentMode==8){
           $("#canvas").css({zoom:i.scale});
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
@@ -282,6 +285,13 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
         context.save();
         context.fillStyle = canvas.style.background;
         context.fillRect(0, 0, width, height);
+        //Android2.1以下のCanvas drawImageバグ対応
+        //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
+        //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
+        if(App.ANDROID21){
+          var rate =  Math.sqrt(320/screen.width);
+          context.scale(rate, rate);
+        }
         context.drawImage(i, dx, dy, i.scaledWidth(), i.scaledHeight());
         context.restore();
       }
