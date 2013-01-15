@@ -35,6 +35,8 @@ function $App() {
   this.IE_VER = false;
   this.ANDROID21 = false;
   this.isSmartPhone = false;
+  this.isAndroid = false;
+  this.isApp = false;
   this.speed = 1;
 
   /**
@@ -82,12 +84,17 @@ function $App() {
     if (/Android\s2\.[0|1]/.test(ua)) {
       this.ANDROID21 = true;
       this.isSmartPhone = true;
+      this.isAndroid = true;
     } else if (/Android/.test(ua)){
       this.isSmartPhone = true;
+      this.isAndroid = true;
     } else if (/iPhone\sOS/.test(ua)){
       this.isSmartPhone = true;
     } else {
       this.isSmartPhone = false;
+    }
+    if(/mang\/\d+/.test(ua)){
+      this.isApp = true;
     }
   };
 
@@ -254,6 +261,9 @@ $(function() {
   Reader = new $Reader(params.member, params.superuser, params.time, params.nomenu, 50/App.speed);
 
   $(window).resize(function(){
+    if(/Android/.test(window.navigator.userAgent)){
+      $("html").css("zoom" ,$(window).width()/css_size);
+    }
     Reader.resize();
   });
   if(!params.auto){

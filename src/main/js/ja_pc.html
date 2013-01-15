@@ -9,19 +9,18 @@
     <include type="css" src="src/main/js/pc.css"/>
     <script type="text/javascript" >
       var fileref=document.createElement("link");
+
       fileref.setAttribute("rel", "stylesheet");
       fileref.setAttribute("type", "text/css");
       $("html").css("zoom", 1);
       if($(window).width() < 480){
-          fileref.setAttribute("href", "layout.320.css?v=8.5" );
-          if(/Android/.test(window.navigator.userAgent)){
-              $("html").css("zoom" ,$(window).width()/320);
-          }
+          var css_size = 320;
       }else{
-          fileref.setAttribute("href", "layout.480.css?v=6" );
-          if(/Android/.test(window.navigator.userAgent)){
-              $("html").css("zoom" ,$(window).width()/480);
-          }
+          var css_size = 480;
+      }
+      fileref.setAttribute("href", "layout."+css_size+".css?v=9" );
+      if(/Android/.test(window.navigator.userAgent)){
+          $("html").css("zoom" ,$(window).width()/css_size);
       }
       document.getElementsByTagName('head').item(0).appendChild(fileref);
     </script>
