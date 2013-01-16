@@ -398,8 +398,8 @@ body {
 	background:rgba(0,0,0,0.7);
 	top:50%;
 	left:50%;
-	margin-top:-143px;
-	margin-left:-163px;
+	/*margin-top:-143px;
+	margin-left:-163px;*/
 }
 div.top_button {
 	padding-top:20px !important;
@@ -416,9 +416,6 @@ div.top_button {
 	text-decoration:none;
 }
 #ad_cover .area {
-	/*width:300px;
-	height:200px;
-	background:red;*/
 	margin-bottom:13px;
 }
 #ad_cover #close_ad  {

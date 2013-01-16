@@ -1456,6 +1456,10 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 	ad_cover.show();
 	if(!ad_cover.children(".area").children().length){
 		ad_cover.children(".area").append(App.adText())
+		ad_cover.css({
+			marginTop:"-"+(ad_cover.height()/2+13)+"px",
+			marginLeft:"-"+(ad_cover.width()/2+13)+"px"
+		});
 	}
 	setTimeout(function(){
 		$("#close_ad").removeClass("disable").bind("click",function(){
