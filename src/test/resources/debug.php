@@ -18,7 +18,7 @@
     $("#reader_wrapper").append(html);
     startReader(storyId);
     $('iframe:first').ready(function(){
-    	Controll.injectAd("<div>test</div>");
+    	Controll.injectAd("<div style='width:250px;height:250px;'>test</div>");
     });
   });
 </script>

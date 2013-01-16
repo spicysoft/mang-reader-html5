@@ -402,7 +402,7 @@ body {
 div.top_button {
 	padding-top:20px !important;
 }	
-#ad_cover a {
+#ad_cover .go_premium {
 	font-size:13px;
 	color:#FFF;
 	text-decoration:underline;
