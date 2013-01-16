@@ -57,6 +57,10 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
   var is_back = false;
   var trackstart = false;
 
+  //Andoridでmenu_switchをクリックした際に、下のcanvasも同時にクリックされる不具合があるため
+  //menuが表示されるまでの間、canvasのクリックをロックする
+  var menu_click_lock = false;
+
   console.log("v4.0.3");
 
   if (App.IE) {
@@ -904,12 +908,14 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
 
 
   var menu_click = function(e){
+    menu_click_lock = true;
     is_back = false;
     showMenu(500, 500);
     e.preventDefault();
   };
 
   var hideMenu = function(fadeout){
+    menu_click_lock = false;
     if(!menuIsVisible()){
       return;
     }
@@ -935,6 +941,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
    */
   var showMenu = function (lifetime, fadeout){
     if(menuIsVisible() || nomenu){
+      menu_click_lock = false;
       return;
     }
     $("#menu_switch").unbind('click', menu_click);
@@ -943,6 +950,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
         fadeout,'swing',
         function(){
           $("#menu_switch").unbind(act_start, menu_click);
+          menu_click_lock = false;
         });
 
     if(current_view === VIEW_SCENE){
@@ -1182,7 +1190,10 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
   };
 
   var canvas_click = function(event) {
-      goNext();
+      console.log("canvas_click");
+      if(!menu_click_lock){
+          goNext();
+      }
       prevent_default(event);
   };
 
