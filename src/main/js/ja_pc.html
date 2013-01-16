@@ -13,12 +13,12 @@
       fileref.setAttribute("type", "text/css");
       $("html").css("zoom", 1);
       if($(window).width() < 480){
-          fileref.setAttribute("href", "layout.320.css?v=8.5" );
+          fileref.setAttribute("href", "layout.320.css?v=9" );
           if(/Android/.test(window.navigator.userAgent)){
               $("html").css("zoom" ,$(window).width()/320);
           }
       }else{
-          fileref.setAttribute("href", "layout.480.css?v=6" );
+          fileref.setAttribute("href", "layout.480.css?v=7" );
           if(/Android/.test(window.navigator.userAgent)){
               $("html").css("zoom" ,$(window).width()/480);
           }
@@ -36,10 +36,16 @@
           </span>
         </div>
       </div>
-	  <div id="ad_cover">
+	  <div id="ad_cover" class="">
 	  		<a target="_parent" href="/premium/appeal">この広告は非表示にできます</a>
 			<div class="area"></div>
-			<span id="close_ad" class="sprite">閉じる</span>
+			<span id="close_ad" class="sprite disable">閉じる</span>
+			<script type="text/javascript">
+				if(Math.random()>0.5){
+					$("#ad_cover").addClass("top_button");
+					$("#close_ad").addClass("top_button");
+				}
+			</script>
 	  </div>
       <div id="reader" class="stage">
         <canvas id="canvas"></canvas>

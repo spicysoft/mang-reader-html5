@@ -390,16 +390,35 @@ body {
   text-align: center;
 }
 #ad_cover {
+	display:none;
+	padding:13px 13px 0;
 	position:absolute;
 	z-index: 11;
 	background:#000;
-	background:rgba(0,0,0,0.5);
+	background:rgba(0,0,0,0.7);
 }
+
 #ad_cover a {
 	font-size:13px;
 	color:#FFF;
 	text-decoration:underline;
+	margin-bottom:13px;
+	display: inline-block;
 }
 #ad_cover a:hover {
 	text-decoration:none;
+}
+#ad_cover .area {
+	width:300px;
+	height:200px;
+	background:red;
+	margin-bottom:13px;
+}
+#ad_cover #close_ad  {
+	margin:0 auto 13px;
+}
+#ad_cover span.top_button {
+	position:absolute;
+	top:13px;
+	right:13px;
 }

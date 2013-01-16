@@ -71,3 +71,6 @@
 #close_ad                  		  {background-position: -607px -74px;width: 74px;height: 36px; cursor: pointer;}
 #close_ad:hover, #close_ad.active {background-position: -683px -74px;width: 74px;height: 36px; cursor: pointer;}
 #close_ad.disable         		  {background-position: -683px -112px;width: 74px;height: 36px; cursor: pointer;}
+div.top_button {
+	padding-top:30px  !important;
+}
