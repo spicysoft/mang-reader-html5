@@ -57,7 +57,11 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
   var is_back = false;
   var trackstart = false;
 
-  console.log("v4.0.2");
+  //Andoridでmenu_switchをクリックした際に、下のcanvasも同時にクリックされる不具合があるため
+  //menuが表示されるまでの間、canvasのクリックをロックする
+  var menu_click_lock = false;
+
+  console.log("v4.0.3");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -131,7 +135,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       $("#mangh5r").height(height);
       $("#canvas").width(width);
       $("#canvas").height(height);
-     } else {
+     }else {
       var reader = $("#mangh5r");
       width = reader.width();
       height = reader.height();
@@ -224,14 +228,17 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
     if (App.IE) {
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
       i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
-      var elm = $("#canvas").empty().append(i0);
+      var c = $("#canvas");
+      c.empty().append(i0);
       if(i1){
         i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
-        elm = elm.append(i1);
+        c.append(i1);
       }
-      elm.append(mask);
+      c.append(mask);
+      c = null;
     } else {
       var context = canvas.getContext("2d");
+      context.save();
       context.fillStyle = canvas.style.background;
       context.fillRect(0, 0, width, height);
 
@@ -248,9 +255,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       if(i1){
         context.drawImage(i1, dx1, dy1);
       }
-      if(App.ANDROID21){
-        context.restore();
-      }
+      context.restore();
     }
   };
 
@@ -276,7 +281,9 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:"+i.scale+";";
         }
         var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
-        $("#canvas").empty().append(i).append(mask);
+        var c = $("#canvas");
+        c.empty().append(i).append(mask);
+        c = null;
       } else {
         var context = canvas.getContext("2d");
         context.save();
@@ -289,7 +296,6 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
           var rate =  Math.sqrt(320/screen.width);
           context.scale(rate, rate);
         }
-        console.log(dx + ' ' + dy + ' ' + i.scaledWidth() + ' ' + i.scaledHeight());
         context.drawImage(i, dx, dy, i.scaledWidth(), i.scaledHeight());
         context.restore();
       }
@@ -369,21 +375,20 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       $("#errmsg_default").show();
     }
     $("#error").show();
-	if(msg == "#errmsg_under18_guest" || msg  == "#errmsg_fan_only_guest" || msg  == "#errmsg_friend_only_guest") {
-		set_error_img_src(msg);
-		$("#dialog_error").hide();
-		$("#menu").hide();
-	} else {
-		$("#dialog_error").show();
-	}
-    
+    if(msg == "#errmsg_under18_guest" || msg  == "#errmsg_fan_only_guest" || msg  == "#errmsg_friend_only_guest") {
+      set_error_img_src(msg);
+      $("#dialog_error").hide();
+      $("#menu").hide();
+    } else {
+      $("#dialog_error").show();
+    }
   };
   var set_error_img_src = function(msg){
-  	var img = $(msg + " img");
-	var rect = img.width();
-	if(cdn_host==undefined)cdn_host="";
-	img.attr("src",cdn_host+"/icon/story_image/"+rect+"x"+rect+"/" + storyId + "/"+t);
-	
+    var img = $(msg + " img");
+  var rect = img.width();
+  if(cdn_host==undefined)cdn_host="";
+  img.attr("src",cdn_host+"/icon/story_image/"+rect+"x"+rect+"/" + storyId + "/"+t);
+
   }
 
   var ajax = function(url, datatype, fnSuccess, fnError, method, cache){
@@ -785,7 +790,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
         jumpTo(newIndex);
         return;
       }
-      if(current_view === VIEW_SCENE){/*pai*/
+      if(current_view === VIEW_SCENE){
         SceneAnimator.initializeWhenUnloaded();
       }
       i.onload = onloaded;
@@ -903,12 +908,14 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
 
 
   var menu_click = function(e){
+    menu_click_lock = true;
     is_back = false;
     showMenu(500, 500);
     e.preventDefault();
   };
 
   var hideMenu = function(fadeout){
+    menu_click_lock = false;
     if(!menuIsVisible()){
       return;
     }
@@ -934,6 +941,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
    */
   var showMenu = function (lifetime, fadeout){
     if(menuIsVisible() || nomenu){
+      menu_click_lock = false;
       return;
     }
     $("#menu_switch").unbind('click', menu_click);
@@ -942,6 +950,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
         fadeout,'swing',
         function(){
           $("#menu_switch").unbind(act_start, menu_click);
+          menu_click_lock = false;
         });
 
     if(current_view === VIEW_SCENE){
@@ -1134,7 +1143,6 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
    * @return void
    */
   var goNext = function() {
-    console.log("goNext");
     SceneAnimator.reverse = false;
     SceneAnimator.dirFwd = true;
     reverse = false;
@@ -1182,7 +1190,10 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
   };
 
   var canvas_click = function(event) {
-      goNext();
+      console.log("canvas_click");
+      if(!menu_click_lock){
+          goNext();
+      }
       prevent_default(event);
   };
 
@@ -1341,9 +1352,19 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
     var url = '/comicreading/'+creatorId+'/'+comicId+'/'+storyId+'/'+action;
      try{
         if(typeof(_gaq) !== 'undefined') {
-        _gaq.push(['_trackPageview', url]);
-        }
-        console.log('track:' + url);
+          if(member) {
+            _gaq.push(['_setCustomVar', 1, 'IsMember', 'YES', 1]);
+          } else {
+            _gaq.push(['_setCustomVar', 1, 'IsMember', 'NO', 1]);
+          }
+          if(App.isApp){
+            _gaq.push(['_setCustomVar', 2, 'Platform', 'Appli', 1]);
+          } else {
+            _gaq.push(['_setCustomVar', 2, 'Platform', 'Browser', 1]);
+          }
+          _gaq.push(['_trackPageview', url]);
+          console.log('track:' + url);
+       }
      }catch(e){
        //
      }
