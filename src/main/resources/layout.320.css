@@ -8,8 +8,8 @@
   margin: 4px 6px 4px 6px;
 }
 
-.sprite {background-image: url(ja.320.png?v=4); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
-.sprite2 {background-image: url(ja.320.png?v=4); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
+.sprite {background-image: url(ja.320.png?v=5); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
+.sprite2 {background-image: url(ja.320.png?v=5); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
 
 #vote {
     margin-right: 10px;
