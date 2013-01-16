@@ -1089,7 +1089,8 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     }
     if (current_view === VIEW_PAGE && next >= pages.length ||
         current_view === VIEW_SCENE && next >= scenes.length) {
-      showFinished();
+      //showFinished();
+	  showAd();
     } else {
       jumpTo(next);
     }
@@ -1384,6 +1385,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     currentSceneIndex = 0;
     currentPageIndex = 0;
     storyMetaFile = null;
+	showAd();
     showLoading();
 
     apiStoryMetaFile(storyId, function(json) {
@@ -1442,7 +1444,23 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     }, function() {
       showError();
     });
-    console.log(App.ad_text());
+    
+  };
+  
+  var showAd = function() {
+  	if(should_show_ad)return;
+	var ad_cover=$("#ad_cover");
+	ad_cover.show();
+	setTimeout(function(){
+		$("#close_ad").removeClass("disable").bind("click",function(){
+			if(current_view === VIEW_PAGE && currentPageIndex + 1 >= pages.length ||
+			        current_view === VIEW_SCENE && currentSceneIndex + 1 >= scenes.length) {
+			      showFinished();
+			}
+			ad_cover.hide();
+			$(this).unbind("click").addClass("disable");
+		})
+	},3000);
   };
 
   var resize = function() {

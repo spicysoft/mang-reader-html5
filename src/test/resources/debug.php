@@ -17,6 +17,9 @@
     var html = '<iframe id="reader_reader" src="/local-test/mr/target/dist-debug/ja_pc.html#'+storyId+',nomember,nomenu,'+t+'" width="'+ size +'px" height="' + size +'px" frameborder="0" allowfullscreen="true"></iframe>';
     $("#reader_wrapper").append(html);
     startReader(storyId);
+    $('iframe:first').ready(function(){
+    	Controll.injectAd("<div>test</div>");
+    });
   });
 </script>
 <div id="reader_container" style="padding:0;margin:0;position:relative;">

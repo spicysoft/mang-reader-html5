@@ -271,13 +271,10 @@ $(function() {
     }
     Reader.resize();
   });
-  setTimeout(function(){
     if(!params.auto){
         Reader.showPreview(params.storyId);
       }else{
         Reader.openStory(params.storyId);
       }
-    }
-  },0);
 
 });
