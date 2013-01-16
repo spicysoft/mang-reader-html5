@@ -1,9 +1,9 @@
-/*global $, JQuery, _, _gaq,_gat, window, strings, App, $SceneAnimator */
+/*global $, JQuery, _, _gaq,_gat,_ad_text, window, strings, App, $SceneAnimator */
 
 /**
  * マンガを読み込み中のUI処理を行う MVCのコンポーネントに相当する処理を行う。
  */
-function $Reader(_member, _superuser, _t, _nomenu, _fps) {
+function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   var member = _member;
   var su = _superuser;
   var nomenu = _nomenu;
@@ -11,6 +11,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
   var API_ROOT = '/api';
   var width = 0;
   var height = 0;
+  var should_show_ad = _ad;
   var canvas;
 
   var MODE_ORIGINAL = 'original';
@@ -61,7 +62,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v4.0.3");
+  console.log("v5.0.0");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -1384,6 +1385,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
     currentPageIndex = 0;
     storyMetaFile = null;
     showLoading();
+
     apiStoryMetaFile(storyId, function(json) {
       console.log("apiStoryMetaFile");
       storyMetaFile = json;
@@ -1440,6 +1442,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
     }, function() {
       showError();
     });
+    console.log(App.ad_text());
   };
 
   var resize = function() {
