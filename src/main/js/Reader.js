@@ -358,6 +358,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     $("#dialog_loading").hide();
     $("#reader").hide();
     $("#finish").hide();
+	$("#ad_cover").hide();
 
     $("#errmsg_fan_only").hide();
     $("#errmsg_fan_only_guest").hide();

@@ -416,9 +416,9 @@ div.top_button {
 	text-decoration:none;
 }
 #ad_cover .area {
-	width:300px;
+	/*width:300px;
 	height:200px;
-	background:red;
+	background:red;*/
 	margin-bottom:13px;
 }
 #ad_cover #close_ad  {
