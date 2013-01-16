@@ -51,80 +51,80 @@ body {
 }
 
 .large_msg_recommend_login {
-  z-index: 20;
-  color: white;
-   font-size: 140%;
-  text-indent: 0px;
-  margin:8px 12px 8px 12px;
-  position: absolute;
-  top:0;
-  left:0;
+	z-index: 20;
+	color: white;
+ 	font-size: 140%;
+	text-indent: 0px;
+	margin:8px 12px 8px 12px;
+	position: absolute;
+	top:0;
+	left:0;
 }
 .large_msg_recommend_login h4 {
-  text-align: center;
-  margin: 60px 0px 40px;
-  font-size: 18px;
+	text-align: center;
+	margin: 60px 0px 40px;
+	font-size: 18px;
 }
 .large_msg_recommend_login p {
-  margin:0 0 40px;
+	margin:0 0 40px;
 }
 .large_msg_recommend_login .image_area {
-  float:left;
-  padding:0 18px;
+	float:left;
+	padding:0 18px;
 }
 .large_msg_recommend_login .image_area img {
-  height: 200px;
-  width:200px;
-  float: left;
-  margin-right: 20px;
+	height: 200px;
+	width:200px;
+	float: left;
+	margin-right: 20px;
 }
 .large_msg_recommend_login .button_area {
-  text-align:center;
+	text-align:center;
 }
 .large_msg_recommend_login .button_area a {
-  display:inline-block;
-  height: 44px;
-  line-height: 48px;
-  width: 200px;
-  margin: 0px 12px;
-  text-decoration:none;
-  background:#FDFDFD;
-  background: -moz-linear-gradient(top, #FDFDFD 0%, #F1F1F2 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FDFDFD), color-stop(100%,#F1F1F2));
-  background: -webkit-linear-gradient(top, #FDFDFD 0%,#F1F1F2 100%);
-  background: -ms-linear-gradient(top, #FDFDFD 0%,#F1F1F2 100%);
-  background: linear-gradient(top, #FDFDFD 0%,#F1F1F2 100%);
-  background-image: url("/img/ja_pc/gradient.svg");
-  border: 1px solid #B3B3B3;
-  color: #333;
-  border-radius: 8px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
+	display:inline-block;
+	height: 44px;
+	line-height: 48px;
+	width: 200px;
+	margin: 0px 12px;
+	text-decoration:none;
+	background:#FDFDFD;
+	background: -moz-linear-gradient(top, #FDFDFD 0%, #F1F1F2 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FDFDFD), color-stop(100%,#F1F1F2));
+	background: -webkit-linear-gradient(top, #FDFDFD 0%,#F1F1F2 100%);
+	background: -ms-linear-gradient(top, #FDFDFD 0%,#F1F1F2 100%);
+	background: linear-gradient(top, #FDFDFD 0%,#F1F1F2 100%);
+	background-image: url("/img/ja_pc/gradient.svg");
+	border: 1px solid #B3B3B3;
+	color: #333;
+	border-radius: 8px;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
 }
 /*IE8ハック*/
 .large_msg_recommend_login .button_area a {
-  background-color:#FDFDFD\9;
+	background-color:#FDFDFD\9;
 }
 .large_msg_recommend_login .button_area a:hover {
-  text-decoration:underline;
+	text-decoration:underline;
 }
 .large_msg_recommend_login a.green_button {
-  color: #FFF;
-  border: 1px solid #24B121;
-  background:#3CAC17;
-  background: -moz-linear-gradient(top, #B2DD2E  0%, #3CAC17 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#B2DD2E ), color-stop(100%,#3CAC17));
-  background: -webkit-linear-gradient(top, #B2DD2E  0%,#3CAC17 100%);
-  background: -ms-linear-gradient(top, #B2DD2E  0%,#3CAC17 100%);
-  background: linear-gradient(top, #B2DD2E  0%,#3CAC17 100%);
-  background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxIDEiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPgo8bGluZWFyR3JhZGllbnQgaWQ9Imc2OSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMCUiIHkyPSIxMDAlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0IyREQyRSIgb2Zmc2V0PSIwIi8+PHN0b3Agc3RvcC1jb2xvcj0iIzNDQUMxNyIgb2Zmc2V0PSIxIi8+CjwvbGluZWFyR3JhZGllbnQ+CjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZzY5KSIgLz4KPC9zdmc+);
-  text-shadow: 1px 1px 3px #000; /*CSS3*/
-  -moz-text-shadow: 1px 1px 3px #000; /* Firefox用*/
-  -webkit-text-shadow: 1px 1px 3px #000; /* Google Chrome, Safari用*/
+	color: #FFF;
+	border: 1px solid #24B121;
+	background:#3CAC17;
+	background: -moz-linear-gradient(top, #B2DD2E  0%, #3CAC17 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#B2DD2E ), color-stop(100%,#3CAC17));
+	background: -webkit-linear-gradient(top, #B2DD2E  0%,#3CAC17 100%);
+	background: -ms-linear-gradient(top, #B2DD2E  0%,#3CAC17 100%);
+	background: linear-gradient(top, #B2DD2E  0%,#3CAC17 100%);
+	background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxIDEiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPgo8bGluZWFyR3JhZGllbnQgaWQ9Imc2OSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMCUiIHkyPSIxMDAlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0IyREQyRSIgb2Zmc2V0PSIwIi8+PHN0b3Agc3RvcC1jb2xvcj0iIzNDQUMxNyIgb2Zmc2V0PSIxIi8+CjwvbGluZWFyR3JhZGllbnQ+CjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZzY5KSIgLz4KPC9zdmc+);
+	text-shadow: 1px 1px 3px #000; /*CSS3*/
+	-moz-text-shadow: 1px 1px 3px #000; /* Firefox用*/
+	-webkit-text-shadow: 1px 1px 3px #000; /* Google Chrome, Safari用*/
 }
 /*IE8ハック*/
 .large_msg_recommend_login a.green_button {
-  background-color:#3CAC17\9;
+	background-color:#3CAC17\9;
 }
 
 .vhcenter {
@@ -140,7 +140,6 @@ body {
   width: 100%;
   padding: 0;
   zoom: 1;
-  overflow: hidden;
 }
 
 #preview {
@@ -211,7 +210,6 @@ body {
   top: 0;
   height: 100%;
   width: 100%;
-  overflow: hidden;
 }
 
 #reader *{
@@ -398,8 +396,15 @@ body {
 	z-index: 11;
 	background:#000;
 	background:rgba(0,0,0,0.7);
+	top:50%;
+	left:50%;
+	margin-top:-143px;
+	margin-left:-163px;
 }
-
+div.top_button {
+	padding-top:20px !important;
+	margin-top:-131px !important;
+}	
 #ad_cover a {
 	font-size:13px;
 	color:#FFF;
