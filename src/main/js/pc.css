@@ -389,4 +389,17 @@ body {
   width: 100%;
   text-align: center;
 }
-
+#ad_cover {
+	position:absolute;
+	z-index: 11;
+	background:#000;
+	background:rgba(0,0,0,0.5);
+}
+#ad_cover a {
+	font-size:13px;
+	color:#FFF;
+	text-decoration:underline;
+}
+#ad_cover a:hover {
+	text-decoration:none;
+}

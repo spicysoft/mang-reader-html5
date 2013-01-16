@@ -71,6 +71,10 @@
 #start                       {background-position: 0 -483px;width: 213px; height: 60px; cursor: pointer;}
 #start:hover, #start.active  {background-position: -214px -483px;width: 213px; height: 60px; cursor: pointer;}
 
+#close_ad                       	{background-position: -407px -46px;width: 48px;height: 23px; cursor:pointer;}
+#close_ad:hover, #close_ad.active   {background-position: -457px -46px;width: 48px;height: 23px; cursor:pointer;}
+#close_ad.disable				    {background-position: -457px -71px;width: 48px;height: 23px; cursor:pointer;}		
+
 .large_msg_recommend_login {
 	margin: 0px;
 	padding: 20px;
