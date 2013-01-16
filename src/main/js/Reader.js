@@ -1453,7 +1453,9 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   var showAd = function() {
 	var ad_cover=$("#ad_cover");
 	ad_cover.show();
-	console.log(App);
+	if(!ad_cover.children(".area").children().length){
+		ad_cover.children(".area").append(App.adText())
+	}
 	setTimeout(function(){
 		$("#close_ad").removeClass("disable").bind("click",function(){
 			if(current_view === VIEW_PAGE && currentPageIndex + 1 >= pages.length ||
