@@ -1460,28 +1460,30 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   	console.log("Ad:call function")
 	var ad_cover=$("#ad_cover");
 	ad_cover.show();
-	$("#close_ad").addClass("disable");
-	//trackPageView("ads/"+timing)
-	if(!ad_cover.children(".area").children().length){
-		ad_cover.children(".area").append(App.adText());
-		ad_cover.css({
-			marginTop:"-"+(ad_cover.height()/2+13)+"px",
-			marginLeft:"-"+(ad_cover.width()/2+13)+"px"
+	var close_button = $("#close_ad");
+	close_button.addClass("disable");
+	var ad_area=$("#ad_area");
+	if(Math.random()>0.5){
+		ad_area.toggleClass("top_button");
+		close_button.toggleClass("top_button");
+	}
+	if(!ad_area.children(".area").children().length){
+		ad_area.children(".area").append(App.adText());
+		ad_area.css({
+			marginTop:"-"+(ad_area.height()/2+13)+"px",
+			marginLeft:"-"+(ad_area.width()/2+13)+"px"
 		});
-		console.log("Ad:bind_close_button_function");
-		$("#close_ad").bind(act_button,function(){
+	}
+	//trackPageView("ads/"+timing)	
+	setTimeout(function(){
+		close_button.removeClass("disable").one(act_button,function(){
 			console.log("Ad:click close_button");
-			if($(this).hasClass("disable"))return;
 			if(current_view === VIEW_PAGE && currentPageIndex + 1 >= pages.length ||
 			        current_view === VIEW_SCENE && currentSceneIndex + 1 >= scenes.length) {
 			      showFinished();
 			}
 			ad_cover.hide();
-		})
-	}
-	setTimeout(function(){
-		console.log("Ad:timeout");
-		$("#close_ad").removeClass("disable");
+		});
 	},3000);
   };
 
