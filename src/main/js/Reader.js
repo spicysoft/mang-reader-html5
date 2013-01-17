@@ -1457,17 +1457,20 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   };
   
   var showAd = function(timing) {
+  	console.log("Ad:call function")
 	var ad_cover=$("#ad_cover");
 	ad_cover.show();
 	$("#close_ad").addClass("disable");
-	trackPageView("ads/"+timing)
+	//trackPageView("ads/"+timing)
 	if(!ad_cover.children(".area").children().length){
-		ad_cover.children(".area").append(App.adText())
+		ad_cover.children(".area").append(App.adText());
 		ad_cover.css({
 			marginTop:"-"+(ad_cover.height()/2+13)+"px",
 			marginLeft:"-"+(ad_cover.width()/2+13)+"px"
 		});
-		$("#close_ad").bind("click",function(){
+		console.log("Ad:bind_close_button_function");
+		$("#close_ad").bind(act_button,function(){
+			console.log("Ad:click close_button");
 			if($(this).hasClass("disable"))return;
 			if(current_view === VIEW_PAGE && currentPageIndex + 1 >= pages.length ||
 			        current_view === VIEW_SCENE && currentSceneIndex + 1 >= scenes.length) {
@@ -1477,6 +1480,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 		})
 	}
 	setTimeout(function(){
+		console.log("Ad:timeout");
 		$("#close_ad").removeClass("disable");
 	},3000);
   };
