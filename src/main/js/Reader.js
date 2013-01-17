@@ -1467,13 +1467,13 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 		ad_area.toggleClass("top_button");
 		close_button.toggleClass("top_button");
 	}
+	if(!ad_area.children(".area").children().length){
+		ad_area.children(".area").append(App.adText());
+	}
 	ad_area.css({
 		marginTop:"-"+(ad_area.height()/2+13)+"px",
 		marginLeft:"-"+(ad_area.width()/2+13)+"px"
 	});
-	if(!ad_area.children(".area").children().length){
-		ad_area.children(".area").append(App.adText());
-	}
 	//trackPageView("ads/"+timing)	
 	setTimeout(function(){
 		close_button.removeClass("disable").one(act_button,function(){
