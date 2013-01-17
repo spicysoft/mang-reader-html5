@@ -1091,7 +1091,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     if (current_view === VIEW_PAGE && next >= pages.length ||
         current_view === VIEW_SCENE && next >= scenes.length) {
       if (should_show_ad) {
-	  	showAd();
+	  	showAd("after");
 	  } else {
 	  	showFinished();
 	  }
@@ -1358,10 +1358,15 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     var url = '/comicreading/'+creatorId+'/'+comicId+'/'+storyId+'/'+action;
      try{
         if(typeof(_gaq) !== 'undefined') {
-          if(member) {
+		  if(!should_show_ad){
+		  	_gaq.push(['_setCustomVar', 1, 'IsMember', 'YES', 1]);
+			_gaq.push(['_setCustomVar', 3, 'MemberType', 'Premium', 1]);
+		  } else if(member) {
             _gaq.push(['_setCustomVar', 1, 'IsMember', 'YES', 1]);
+			_gaq.push(['_setCustomVar', 3, 'MemberType', 'Free', 1]);
           } else {
             _gaq.push(['_setCustomVar', 1, 'IsMember', 'NO', 1]);
+			_gaq.push(['_setCustomVar', 3, 'MemberType', 'Guest', 1]);
           }
           if(App.isApp){
             _gaq.push(['_setCustomVar', 2, 'Platform', 'Appli', 1]);
@@ -1389,7 +1394,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     currentSceneIndex = 0;
     currentPageIndex = 0;
     storyMetaFile = null;
-	if(should_show_ad)showAd();
+	if(should_show_ad)showAd("before");
     showLoading();
 
     apiStoryMetaFile(storyId, function(json) {
@@ -1451,25 +1456,28 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     
   };
   
-  var showAd = function() {
+  var showAd = function(timing) {
 	var ad_cover=$("#ad_cover");
 	ad_cover.show();
+	$("#close_ad").addClass("disable");
+	trackPageView("ads/"+timing)
 	if(!ad_cover.children(".area").children().length){
 		ad_cover.children(".area").append(App.adText())
 		ad_cover.css({
 			marginTop:"-"+(ad_cover.height()/2+13)+"px",
 			marginLeft:"-"+(ad_cover.width()/2+13)+"px"
 		});
-	}
-	setTimeout(function(){
-		$("#close_ad").removeClass("disable").bind("click",function(){
+		$("#close_ad").bind("click",function(){
+			if($(this).hasClass("disable"))return;
 			if(current_view === VIEW_PAGE && currentPageIndex + 1 >= pages.length ||
 			        current_view === VIEW_SCENE && currentSceneIndex + 1 >= scenes.length) {
 			      showFinished();
 			}
 			ad_cover.hide();
-			$(this).unbind("click").addClass("disable");
 		})
+	}
+	setTimeout(function(){
+		$("#close_ad").removeClass("disable");
 	},3000);
   };
 
