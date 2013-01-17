@@ -98,7 +98,7 @@ function $App() {
     }
 
     this.adText = function(){
-      return $(_ad_text);
+      return _ad_text;
     }
   };
 

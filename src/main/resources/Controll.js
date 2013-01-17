@@ -151,12 +151,12 @@ function $Controll() {
    }
 
   this.enableGA = function(){
-      document.getElementById('reader_reader').contentWindow._gaq =  _gaq;
+    document.getElementById('reader_reader').contentWindow._gaq =  _gaq;
   };
 
   this.injectAd = function(html){
     console.log(html);
-      document.getElementById('reader_reader').contentWindow._ad_text = html;
+    document.getElementById('reader_reader').contentWindow._ad_text = $('<div>').html(html).text();
   };
 };
 
