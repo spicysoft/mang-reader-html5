@@ -1498,7 +1498,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 		var href = document.getElementById('reader_ad').contentWindow.location.href;
 		if(++count > 10 && ad_src && ad_src != href){
 			ad_cover.hide();
-			frame_timer.clearInterval();
+			clearInterval(frame_timer);
 			tryPushAnalytics([event, category+adSpaceId, 'do', adNetworkId]);
 		    (parent["goNextUrl"])(href);
 		}
@@ -1512,6 +1512,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 			}
 			tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworkId]);
 			ad_cover.hide();
+			clearInterval(frame_timer);
 		});
 	},3000);
   };
