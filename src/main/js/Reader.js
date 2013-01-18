@@ -1460,7 +1460,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   
   
   var showAd = function(adSpaceId) {
-	var event = "_trackEvent";
+	//var event = "_trackEvent";
 	var category="/ad/";
 	var adNetworkId="adNetworkID";
 	
@@ -1475,11 +1475,17 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 		close_button.toggleClass("top_button");
 	}
 	var ad = ad_area.children(".area");
+	ad.bind(act_button,function(){
+		e.preventDefault()
+	})
+	setTimeout(function(){
+		ad.unbind(act_button);
+	},1000)
 	if(!ad.children().length){
 		ad.append(App.adText());
-		$(".go_premium").bind("click",function(){
+		/*$(".go_premium").bind("click",function(){
 			tryPushAnalytics([event, category+adSpaceId, 'premium', adNetworkId]);
-		})
+		})*/
 	}
 	ad_area.css({
 		marginTop:"-"+(ad_area.height()/2+13)+"px",
@@ -1499,7 +1505,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 		if(++count > 10 && ad_src && ad_src != href){
 			ad_cover.hide();
 			clearInterval(frame_timer);
-			tryPushAnalytics([event, category+adSpaceId, 'do', adNetworkId]);
+			//tryPushAnalytics([event, category+adSpaceId, 'do', adNetworkId]);
 		    (parent["goNextUrl"])(href);
 		}
 	},100);
@@ -1510,7 +1516,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 			        current_view === VIEW_SCENE && currentSceneIndex + 1 >= scenes.length) {
 			      showFinished();
 			}
-			tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworkId]);
+			//tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworkId]);
 			ad_cover.hide();
 			clearInterval(frame_timer);
 		});
