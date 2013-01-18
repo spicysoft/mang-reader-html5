@@ -1456,14 +1456,10 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     
   };
   
-  var showAd = function(label) {
-  	console.log("Ad:call function");
-	
+  var showAd = function(adSpaceId) {
 	var event = "_trackEvent";
 	var category="/ad/";
-	var adId="adID";
-	var virtualUrl = category+label+"/"+adId+"/"+storyId;
-	//_gaq.push(['_trackPageview', virtualUrl]);
+	var adNetworlId="adNetworkID";
 	
 	var ad_cover=$("#ad_cover");
 	ad_cover.show();
@@ -1475,13 +1471,14 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 		ad_area.toggleClass("top_button");
 		close_button.toggleClass("top_button");
 	}
-	if(!ad_area.children(".area").children().length){
-		ad_area.children(".area").append(App.adText());
-		ad_area.bind("click",function(){
-			//_gaq.push([event, category+adId, 'do', label]);
+	var ad = ad_area.children(".area");
+	if(!ad.children().length){
+		ad.append(App.adText());
+		ad.bind("click",function(){
+			tryPushAnalytics([event, category+adSpaceId, 'do', adNetworlId]);
 		})
 		$(".go_premium").bind("click",function(){
-			//_gaq.push([event, category+adId, 'premium', label]);
+			tryPushAnalytics([event, category+adSpaceId, 'premium', adNetworlId]);
 		})
 	}
 	ad_area.css({
@@ -1489,19 +1486,27 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 		marginLeft:"-"+(ad_area.width()/2+13)+"px"
 	});
 	
+	var virtualUrl = category+adSpaceId+"/"+adNetworlId+"/"+storyId;
+	tryPushAnalytics(['_trackPageview', virtualUrl]);
 	
 	setTimeout(function(){
 		close_button.removeClass("disable").one(act_button,function(){
-			console.log("Ad:click close_button");
 			if(current_view === VIEW_PAGE && currentPageIndex + 1 >= pages.length ||
 			        current_view === VIEW_SCENE && currentSceneIndex + 1 >= scenes.length) {
 			      showFinished();
 			}
-			//_gaq.push([event, category+adId, 'skip', label]);
+			tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworlId]);
 			ad_cover.hide();
 		});
 	},3000);
   };
+  var tryPushAnalytics = function(data){
+  	try{
+		_gaq.push(data);
+	} catch(e){
+		console.log(e+":"+data)
+	}
+  }
 
   var resize = function() {
     setWidthAndHeight();
