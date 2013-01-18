@@ -58,6 +58,8 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   var is_back = false;
   var trackstart = false;
 
+  var ad_src = false;
+
   //Andoridでmenu_switchをクリックした際に、下のcanvasも同時にクリックされる不具合があるため
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
@@ -1453,7 +1455,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     }, function() {
       showError();
     });
-    
+
   };
   
   var showAd = function(adSpaceId) {
@@ -1465,7 +1467,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 	ad_cover.show();
 	var close_button = $("#close_ad");
 	close_button.addClass("disable");
-	
+
 	var ad_area=$("#ad_area");
 	if(Math.random()>0.5){
 		ad_area.toggleClass("top_button");
@@ -1489,6 +1491,19 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 	var virtualUrl = category+adSpaceId+"/"+adNetworkId+"/"+storyId;
 	tryPushAnalytics(['_trackPageview', virtualUrl]);
 	
+
+	var test = ad_area.find('iframe:first');
+	test.load(function(){
+		setInterval(function(){
+			var href = document.getElementById('reader_ad').contentWindow.location.href;
+			if(ad_src && ad_src != href){
+				ad_cover.hide();
+			    (parent["goNextUrl"])(href);
+			}
+		},100);
+		ad_src = document.getElementById('reader_ad').contentWindow.location.href;
+	});
+
 	setTimeout(function(){
 		close_button.removeClass("disable").one(act_button,function(){
 			if(current_view === VIEW_PAGE && currentPageIndex + 1 >= pages.length ||
