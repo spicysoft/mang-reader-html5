@@ -1475,11 +1475,11 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 		close_button.toggleClass("top_button");
 	}
 	var ad = ad_area.children(".area");
-	ad.bind(act_button,function(){
+	ad.bind("click",function(){
 		e.preventDefault()
 	})
 	setTimeout(function(){
-		ad.unbind(act_button);
+		ad.unbind("click");
 	},1000)
 	if(!ad.children().length){
 		ad.append(App.adText());
