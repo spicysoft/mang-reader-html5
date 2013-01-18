@@ -1091,7 +1091,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     if (current_view === VIEW_PAGE && next >= pages.length ||
         current_view === VIEW_SCENE && next >= scenes.length) {
       if (should_show_ad) {
-	  	showAd("after");
+	  	showAd("afterReadingInReader");
 	  } else {
 	  	showFinished();
 	  }
@@ -1394,7 +1394,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     currentSceneIndex = 0;
     currentPageIndex = 0;
     storyMetaFile = null;
-	if(should_show_ad)showAd("before");
+	if(should_show_ad)showAd("beforeReadingInReader");
     showLoading();
 
     apiStoryMetaFile(storyId, function(json) {
@@ -1456,12 +1456,20 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     
   };
   
-  var showAd = function(timing) {
-  	console.log("Ad:call function")
+  var showAd = function(label) {
+  	console.log("Ad:call function");
+	
+	var event = "_trackEvent";
+	var category="/ad/";
+	var adId="adID";
+	var virtualUrl = category+label+"/"+adId+"/"+storyId;
+	//_gaq.push(['_trackPageview', virtualUrl]);
+	
 	var ad_cover=$("#ad_cover");
 	ad_cover.show();
 	var close_button = $("#close_ad");
 	close_button.addClass("disable");
+	
 	var ad_area=$("#ad_area");
 	if(Math.random()>0.5){
 		ad_area.toggleClass("top_button");
@@ -1469,12 +1477,19 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 	}
 	if(!ad_area.children(".area").children().length){
 		ad_area.children(".area").append(App.adText());
+		ad_area.bind("click",function(){
+			//_gaq.push([event, category+adId, 'do', label]);
+		})
+		$(".go_premium").bind("click",function(){
+			//_gaq.push([event, category+adId, 'premium', label]);
+		})
 	}
 	ad_area.css({
 		marginTop:"-"+(ad_area.height()/2+13)+"px",
 		marginLeft:"-"+(ad_area.width()/2+13)+"px"
 	});
-	//trackPageView("ads/"+timing)	
+	
+	
 	setTimeout(function(){
 		close_button.removeClass("disable").one(act_button,function(){
 			console.log("Ad:click close_button");
@@ -1482,6 +1497,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 			        current_view === VIEW_SCENE && currentSceneIndex + 1 >= scenes.length) {
 			      showFinished();
 			}
+			//_gaq.push([event, category+adId, 'skip', label]);
 			ad_cover.hide();
 		});
 	},3000);
