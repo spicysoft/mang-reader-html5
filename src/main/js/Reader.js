@@ -1459,7 +1459,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   var showAd = function(adSpaceId) {
 	var event = "_trackEvent";
 	var category="/ad/";
-	var adNetworlId="adNetworkID";
+	var adNetworkId="adNetworkID";
 	
 	var ad_cover=$("#ad_cover");
 	ad_cover.show();
@@ -1475,10 +1475,10 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 	if(!ad.children().length){
 		ad.append(App.adText());
 		ad.bind("click",function(){
-			tryPushAnalytics([event, category+adSpaceId, 'do', adNetworlId]);
+			tryPushAnalytics([event, category+adSpaceId, 'do', adNetworkId]);
 		})
 		$(".go_premium").bind("click",function(){
-			tryPushAnalytics([event, category+adSpaceId, 'premium', adNetworlId]);
+			tryPushAnalytics([event, category+adSpaceId, 'premium', adNetworkId]);
 		})
 	}
 	ad_area.css({
@@ -1486,7 +1486,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 		marginLeft:"-"+(ad_area.width()/2+13)+"px"
 	});
 	
-	var virtualUrl = category+adSpaceId+"/"+adNetworlId+"/"+storyId;
+	var virtualUrl = category+adSpaceId+"/"+adNetworkId+"/"+storyId;
 	tryPushAnalytics(['_trackPageview', virtualUrl]);
 	
 	setTimeout(function(){
@@ -1495,14 +1495,14 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 			        current_view === VIEW_SCENE && currentSceneIndex + 1 >= scenes.length) {
 			      showFinished();
 			}
-			tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworlId]);
+			tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworkId]);
 			ad_cover.hide();
 		});
 	},3000);
   };
   var tryPushAnalytics = function(data){
   	try{
-		_gaq.push(data);
+		if(typeof(_gaq) !== 'undefined') _gaq.push(data);
 	} catch(e){
 		console.log(e+":"+data)
 	}
