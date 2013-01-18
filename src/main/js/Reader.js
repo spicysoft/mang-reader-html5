@@ -1475,12 +1475,10 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 		close_button.toggleClass("top_button");
 	}
 	var ad = ad_area.children(".area");
-	ad.bind("click",function(){
-		e.preventDefault()
-	})
+	ad.css("pointer-events","none");
 	setTimeout(function(){
-		ad.unbind("click");
-	},1000)
+		ad.css("pointer-events","auto");
+	},1000);
 	if(!ad.children().length){
 		ad.append(App.adText());
 		/*$(".go_premium").bind("click",function(){
@@ -1499,10 +1497,9 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 		ad_src = document.getElementById('reader_ad').contentWindow.location.href;
 	});
 	
-	var count=0;
 	var frame_timer = setInterval(function(){
 		var href = document.getElementById('reader_ad').contentWindow.location.href;
-		if(++count > 10 && ad_src && ad_src != href){
+		if(ad_src && ad_src != href){
 			ad_cover.hide();
 			clearInterval(frame_timer);
 			//tryPushAnalytics([event, category+adSpaceId, 'do', adNetworkId]);
