@@ -1458,6 +1458,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 
   };
   
+  
   var showAd = function(adSpaceId) {
 	var event = "_trackEvent";
 	var category="/ad/";
@@ -1476,9 +1477,6 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 	var ad = ad_area.children(".area");
 	if(!ad.children().length){
 		ad.append(App.adText());
-		ad.bind("click",function(){
-			tryPushAnalytics([event, category+adSpaceId, 'do', adNetworkId]);
-		})
 		$(".go_premium").bind("click",function(){
 			tryPushAnalytics([event, category+adSpaceId, 'premium', adNetworkId]);
 		})
@@ -1491,18 +1489,20 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 	var virtualUrl = category+adSpaceId+"/"+adNetworkId+"/"+storyId;
 	tryPushAnalytics(['_trackPageview', virtualUrl]);
 	
-
-	var test = ad_area.find('iframe:first');
-	test.load(function(){
-		setInterval(function(){
-			var href = document.getElementById('reader_ad').contentWindow.location.href;
-			if(ad_src && ad_src != href){
-				ad_cover.hide();
-			    (parent["goNextUrl"])(href);
-			}
-		},100);
+	ad_area.find('iframe:first').load(function(){
 		ad_src = document.getElementById('reader_ad').contentWindow.location.href;
 	});
+	
+	var count=0;
+	var frame_timer = setInterval(function(){
+		var href = document.getElementById('reader_ad').contentWindow.location.href;
+		if(++count > 10 && ad_src && ad_src != href){
+			ad_cover.hide();
+			frame_timer.clearInterval();
+			tryPushAnalytics([event, category+adSpaceId, 'do', adNetworkId]);
+		    (parent["goNextUrl"])(href);
+		}
+	},100);
 
 	setTimeout(function(){
 		close_button.removeClass("disable").one(act_button,function(){
