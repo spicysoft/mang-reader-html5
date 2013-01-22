@@ -1093,7 +1093,8 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     if (current_view === VIEW_PAGE && next >= pages.length ||
         current_view === VIEW_SCENE && next >= scenes.length) {
       if (should_show_ad) {
-	  	showAd("afterReadingInReader");
+        (parent["Controll"]["showAd"])(storyId, "afterReadingInReader", showFinished);
+	  	//showAd("afterReadingInReader");
 	  } else {
 	  	showFinished();
 	  }
@@ -1396,7 +1397,10 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     currentSceneIndex = 0;
     currentPageIndex = 0;
     storyMetaFile = null;
-	if(should_show_ad)showAd("beforeReadingInReader");
+	if(should_show_ad){
+		console.log(parent["Controll"]);
+        (parent["Controll"]["showAd"])(storyId, "beforeReadingInReader", showFinished);
+	}
     showLoading();
 
     apiStoryMetaFile(storyId, function(json) {
@@ -1457,13 +1461,13 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     });
 
   };
-  
-  
+
+
   var showAd = function(adSpaceId) {
 	//var event = "_trackEvent";
 	var category="/ad/";
 	var adNetworkId="adNetworkID";
-	
+
 	var ad_cover=$("#ad_cover");
 	ad_cover.show();
 	var close_button = $("#close_ad");
@@ -1489,14 +1493,14 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 		marginTop:"-"+(ad_area.height()/2+13)+"px",
 		marginLeft:"-"+(ad_area.width()/2+13)+"px"
 	});
-	
+
 	var virtualUrl = category+adSpaceId+"/"+adNetworkId+"/"+storyId;
 	tryPushAnalytics(['_trackPageview', virtualUrl]);
-	
+
 	ad_area.find('iframe:first').load(function(){
 		ad_src = document.getElementById('reader_ad').contentWindow.location.href;
 	});
-	
+
 	var frame_timer = setInterval(function(){
 		var href = document.getElementById('reader_ad').contentWindow.location.href;
 		if(ad_src && ad_src != href){
@@ -1547,7 +1551,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   };
 
   var prepareMenu = function(){
-    $("#menu").css("top", -1 * 132 + "px");//FIXME menuの高さが合わないのでハードコーディングした。なおしたい。
+    $("#menu").css("top", -1 * 132 + "px");
     $("#menu").show();
     $("#menu_tab").bind('click', menu_hide_click);
     disable_button($("#toggle_reading"));
