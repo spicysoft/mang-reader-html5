@@ -248,14 +248,38 @@ var popUpChangeView = function(){
   $("#popup_original").hide();
 };
 
-
+var controll_timer;
 var startReader = function(storyId){
     var current_view = "";
     var current_mode = "";
+	setTimeout(function(){
+		if(controll_timer)return;
+		console.log("cached iframe");
+		sync_iframe();
+	},1000);
     $('iframe:first').load(function(e){
-      Controll.enableGA();
-      setInterval(function(){
+	  console.log("loaded iframe");
+	  sync_iframe();
+      
+    });
+
+    $("#menu_first").click(Controll.first);
+    $("#menu_prev").click(Controll.prev);
+    $("#menu_next").click(Controll.next);
+    $("#menu_mode_reading").click(popUpChangeMode);
+    $("#menu_mode_original").click(popUpChangeMode);
+    $("#menu_scene_view").click(popUpChangeView);
+    $("#menu_page_view").click(popUpChangeView);
+
+    $("#popup_reading").click(toggleMode);
+    $("#popup_original").click(toggleMode);
+    $("#popup_scene").click(toggleView);
+    $("#popup_page").click(toggleView);
+	var sync_iframe = function(){
+	  Controll.enableGA();
+      controll_timer =  setInterval(function(){
         if(!Controll.ready()){
+			console.log("error:",Controll.ready());
           return;
         }
         if(Controll.supportOriginalMode()){
@@ -319,19 +343,6 @@ var startReader = function(storyId){
           current_mode = Controll.mode();
         }
       }, 100);
-    });
-
-    $("#menu_first").click(Controll.first);
-    $("#menu_prev").click(Controll.prev);
-    $("#menu_next").click(Controll.next);
-    $("#menu_mode_reading").click(popUpChangeMode);
-    $("#menu_mode_original").click(popUpChangeMode);
-    $("#menu_scene_view").click(popUpChangeView);
-    $("#menu_page_view").click(popUpChangeView);
-
-    $("#popup_reading").click(toggleMode);
-    $("#popup_original").click(toggleMode);
-    $("#popup_scene").click(toggleView);
-    $("#popup_page").click(toggleView);
+    }
 }
 
