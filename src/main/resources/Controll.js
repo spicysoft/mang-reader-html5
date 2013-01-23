@@ -160,55 +160,58 @@ function $Controll() {
   };
 
   this.showAd = function(storyId, adSpaceId, callbackSkipAd) {
-      var category="/ad/";
-      var adNetworkId="adNetworkID";
+  	var event = "_trackEvent";
+	var category="/ad/";
+	var adNetworkId="default";
 
-      var ad_cover=$("#ad_cover");
-      ad_cover.show();
-      var close_button = $("#close_ad");
-      close_button.addClass("disable");
+	var ad_cover=$("#ad_cover");
+	ad_cover.show();
+	var close_button = $("#close_ad");
+	close_button.addClass("disable");
 
-      var ad_area=$("#ad_area");
-      if(Math.random()>0.5){
-        ad_area.toggleClass("top_button");
-        close_button.toggleClass("top_button");
-      }
+	var ad_area=$("#ad_area");
+	if(Math.random()>0.5){
+		ad_area.toggleClass("top_button");
+		close_button.toggleClass("top_button");
+	}
+	var ad = ad_area.children(".area");
+	ad.css("pointer-events","none");
+	setTimeout(function(){
+		ad.css("pointer-events","auto");
+		/*var iframeDoc = $("#imobile_adspotframe1").contents().get(0);
+		iframeDoc.unbind("click").bind("click",function(){
+			tryPushAnalytics([event, category+adSpaceId, 'do', adNetworkId]);
+		});*/
+		},1000);
+	
+	$(".go_premium").unbind("click").one("click",function(){
+		tryPushAnalytics([event, category+adSpaceId, 'premium', adNetworkId]);
+	});
+	ad_area.css({
+		marginTop:"-"+(ad_area.height()/2+13)+"px",
+		marginLeft:"-"+(ad_area.width()/2+13)+"px"
+	});
 
-      var ad = ad_area.children(".area");
-      ad.css("pointer-events","none");
-      setTimeout(function(){
-        ad.css("pointer-events","auto");
-      },1000);
+	var virtualUrl = category+adSpaceId+"/"+adNetworkId+"/"+storyId;
+	tryPushAnalytics(['_trackPageview', virtualUrl]);
 
-      if(!ad.children().length){
-        /*$(".go_premium").bind("click",function(){
-            tryPushAnalytics([event, category+adSpaceId, 'premium', adNetworkId]);
-        })*/
-      }
-      ad_area.css({
-        marginTop:"-"+(ad_area.height()/2+13)+"px",
-        marginLeft:"-"+(ad_area.width()/2+13)+"px"
-      });
-
-      var virtualUrl = category+adSpaceId+"/"+adNetworkId+"/"+storyId;
-      tryPushAnalytics(['_trackPageview', virtualUrl]);
-
-      setTimeout(function(){
-        close_button.removeClass("disable").one("click",function(){
-          if(Controll.current() >= Controll.total()) {
-            callbackSkipAd();
-          }
-          //tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworkId]);
-          ad_cover.hide();
-        });
-      },3000);
-    };
+	setTimeout(function(){
+		close_button.removeClass("disable").one("click",function(){
+			if(Controll.current() >= Controll.total()) {
+				callbackSkipAd();
+			}
+			tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworkId]);
+			ad_cover.hide();
+		});
+		},3000);
+	};
 };
 
 var Controll = new $Controll();
 
 var tryPushAnalytics = function(data){
     try{
+		console.log("G/A:"+data)
       if(typeof(_gaq) !== 'undefined') _gaq.push(data);
     } catch(e){
       console.log(e+":"+data)
