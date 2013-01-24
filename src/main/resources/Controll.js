@@ -196,9 +196,9 @@ function $Controll() {
 	tryPushAnalytics(['_trackPageview', virtualUrl]);
 
 	var clickEvent = 'click';
-    if(window.navigator.userAgent.indexOf('Mobile') !== -1){
+    /*if(window.navigator.userAgent.indexOf('Mobile') !== -1){
     	clickEvent = 'touchstart';
-    }
+    }*/
 	setTimeout(function(){
 		close_button.removeClass("disable").one(clickEvent,function(){
 			console.log("ad close button : click : " + Controll.current()  +"-"+ Controll.total());
