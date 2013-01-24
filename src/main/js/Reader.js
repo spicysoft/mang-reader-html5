@@ -1092,9 +1092,9 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     }
     if (current_view === VIEW_PAGE && next >= pages.length ||
         current_view === VIEW_SCENE && next >= scenes.length) {
-      if (should_show_ad) {
+      if (should_show_ad &&
+    		  (current_view === VIEW_PAGE && 1 < pages.length || current_view === VIEW_SCENE && 1 < scenes.length) ) {
         (parent["Controll"]["showAd"])(storyId, "afterReadingInReader", showFinished);
-	  	//showAd("afterReadingInReader");
 	  } else {
 	  	showFinished();
 	  }

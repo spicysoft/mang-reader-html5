@@ -183,7 +183,7 @@ function $Controll() {
 			tryPushAnalytics([event, category+adSpaceId, 'do', adNetworkId]);
 		});*/
 		},1000);
-	
+
 	$(".go_premium").unbind("click").one("click",function(){
 		tryPushAnalytics([event, category+adSpaceId, 'premium', adNetworkId]);
 	});
@@ -195,13 +195,19 @@ function $Controll() {
 	var virtualUrl = category+adSpaceId+"/"+adNetworkId+"/"+storyId;
 	tryPushAnalytics(['_trackPageview', virtualUrl]);
 
+	var clickEvent = 'click';
+    if(window.navigator.userAgent.indexOf('Mobile') !== -1){
+    	clickEvent = 'touchstart';
+    }
 	setTimeout(function(){
-		close_button.removeClass("disable").one("click",function(){
-			if(Controll.current() >= Controll.total()) {
+		close_button.removeClass("disable").one(clickEvent,function(){
+			console.log("ad close button : click : " + Controll.current()  +"-"+ Controll.total());
+			if("1"!=Controll.current() && Controll.current() == Controll.total()) {
 				callbackSkipAd();
 			}
 			tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworkId]);
 			ad_cover.hide();
+			console.log("ad close button : click done");
 		});
 		},3000);
 	};
