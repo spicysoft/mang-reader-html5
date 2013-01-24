@@ -169,11 +169,15 @@ function $Controll() {
 	var close_button = $("#close_ad");
 	close_button.addClass("disable");
 
-	var ad_area=$("#ad_area");
+	
 	if(Math.random()>0.5){
-		ad_area.toggleClass("top_button");
-		close_button.toggleClass("top_button");
+		$("#top_button").show();
+		$("#bottom_button").hide();
+	} else {
+		$("#top_button").hide();
+		$("#bottom_button").show();
 	}
+	var ad_area=$("#ad_area");
 	var ad = ad_area.children(".area");
 	ad.css("pointer-events","none");
 	setTimeout(function(){
@@ -188,8 +192,8 @@ function $Controll() {
 		tryPushAnalytics([event, category+adSpaceId, 'premium', adNetworkId]);
 	});
 	ad_area.css({
-		marginTop:"-"+(ad_area.height()/2+13)+"px",
-		marginLeft:"-"+(ad_area.width()/2+13)+"px"
+		marginTop:"-"+(ad_area.height()+13)/2+"px",
+		marginLeft:"-"+(ad_area.width()+13)/2+"px"
 	});
 
 	var virtualUrl = category+adSpaceId+"/"+adNetworkId+"/"+storyId;
