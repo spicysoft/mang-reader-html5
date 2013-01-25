@@ -165,11 +165,19 @@ function $Controll() {
 	var adNetworkId="default";
 
 	var ad_cover=$("#ad_cover");
-	ad_cover.show();
+	if(window.showInterstitial != undefined){
+		console.log(_inmobi);
+		showInterstitial();
+		setTimeout(function(){
+			console.log(_inmobi);
+		});
+	}else{
+		ad_cover.show();
+	}
+
 	var close_button = $(".ad_button_area a");
 	close_button.addClass("disable");
 
-	
 	if(Math.random()>0.5){
 		$("#top_button").show();
 		$("#bottom_button").hide();
