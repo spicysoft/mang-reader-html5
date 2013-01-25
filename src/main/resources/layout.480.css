@@ -8,8 +8,8 @@
   margin: 4px 8px 4px 8px;
 }
 
-.sprite {background-image: url(ja.480.png?v=5); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
-.sprite2 {background-image: url(ja.480.png?v=5); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
+.sprite {background-image: url(ja.480.png?v=7); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
+.sprite2 {background-image: url(ja.480.png?v=7); background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
 #vote {
     margin-right: 15px;
     margin-left: auto;
@@ -55,8 +55,8 @@
 #toggle_scene_view.disable  {background-position:0px -817px; width: 222px;height: 48px; cursor:default;}
 #toggle_reading.disable {background-position: -223px -817px; width: 222px;height: 48px; cursor:default;}
 
-#menu_tab {background-position: -583px -38px;width: 69px;height: 35px; cursor:pointer;}
-#menu_tab:hover, #menu_tab.active {background-position: -513px -38px;width: 69px;height: 35px; cursor:pointer;}
+#menu_tab_close {background-position: -583px -38px;width: 69px;height: 35px; cursor:pointer;}
+#menu_tab_close:hover, #menu_tab_close.active {background-position: -513px -38px;width: 69px;height: 35px; cursor:pointer;}
 
 #close                      {background-position: -560px -74px;width: 46px;height: 46px; cursor: pointer;}
 #close:hover, #close.active {background-position: -513px -74px;width: 46px;height: 46px; cursor: pointer;}
@@ -69,8 +69,10 @@
 #start:hover, #start.active  {background-position: -321px -726px; width: 320px; height: 90px;cursor: pointer;}
 
 #close_ad                  		  {background-position: -607px -74px;width: 74px;height: 36px; cursor: pointer;}
-#close_ad:hover, #close_ad.active {background-position: -683px -74px;width: 74px;height: 36px; cursor: pointer;}
-#close_ad.disable         		  {background-position: -683px -112px;width: 74px;height: 36px; cursor: wait;}
-div.top_button {
-	padding-top:30px  !important;
-}
+#close_ad:hover, #close_ad.active {background-position: -683px -74px;width: 74px;height: 46px; cursor: pointer;}
+#close_ad.disable         		  {background-position: -683px -112px;width: 74px;height: 36px; cursor: pointer;}
+
+
+#close_ad_top							  {background-position: -683px -150px;width: 36px;height: 36px; cursor: pointer;}
+#close_ad_top:hover, #close_ad_top.active {background-position: -683px -188px;width: 36px;height: 36px; cursor: pointer;}
+#close_ad_top.disable         		  	  {background-position: -683px -226px;width: 36px;height: 36px; cursor: pointer;}

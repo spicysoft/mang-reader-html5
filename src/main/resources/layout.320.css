@@ -8,8 +8,8 @@
   margin: 4px 6px 4px 6px;
 }
 
-.sprite {background-image: url(ja.320.png?v=6); background-size: 512px 724px; background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
-.sprite2 {background-image: url(ja.320.png?v=6); background-size: 512px 724px; background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
+.sprite {background-image: url(ja.320.png?v=4); background-size: 500px 700px; background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
+.sprite2 {background-image: url(ja.320.png?v=4); background-size: 500px 700px; background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
 
 #vote {
     margin-right: 10px;
@@ -26,56 +26,65 @@
     left:53px;
 }
 
-#next                     {background-position: 0 -213px;width: 300px;height: 89px;cursor: pointer;}
-#next:hover, #next.active {background-position: 0 -303px;width: 300px;height: 89px;cursor: pointer;}
-#next.disable             {background-position: 0 -393px;width: 300px;height: 89px;cursor: default;}
+#next                     {background-position: 0 -323px;width: 300px;height: 89px;cursor: pointer;}
+#next:hover, #next.active {background-position: 0 -414px;width: 300px;height: 89px;cursor: pointer;}
+#next.disable             {background-position: 0 -505px;width: 300px;height: 89px;cursor: default;}
+
+#bookmark                         {background-position: 0 -199px;width: 145px;height: 59px; cursor: pointer;}
+#bookmark:hover, #bookmark.active {background-position: -146px -199px;width: 145px;height: 59px; cursor: pointer;}
+#bookmark.disable                 {background-position: -292px -199px;width: 145px;height: 59px; cursor: default;}
+
+#vote                      {background-position: 0 -138px;width: 144px;height: 59px; cursor: pointer;}
+#vote:hover, #vote.active  {background-position: -146px -138px;width: 144px;height: 59px; cursor: pointer;}
+#vote.disable              {background-position: -292px -138px;width: 144px;height: 59px; cursor: default;}
+
+#prev_scene                           {background-position: 0 0;width: 112px;height: 44px; cursor: pointer;}
+#prev_scene:hover, #prev_scene.active {background-position: -114px 0;width: 112px;height: 44px; cursor: pointer;}
+#prev_scene.disable                   {background-position: -228px 0;width: 112px;height: 44px; cursor: default;}
+
+#prev_page                          {background-position:  0 -46px;    width: 112px;height: 44px; cursor: pointer;}
+#prev_page:hover, #prev_page.active {background-position:  -114px -46px; width: 112px;height: 44px; cursor: pointer;}
+#prev_page.disable                  {background-position: -228px -46px; width: 112px;height: 44px; cursor: default;}
+
+#first_scene                            {background-position: 0 -92px;width: 112px;height: 44px; cursor: pointer;}
+#first_scene:hover, #first_scene.active {background-position: -114px -92px;width: 112px;height: 44px; cursor: pointer;}
+#first_scene.disable                    {background-position: -228px -92px;width: 112px;height: 44px; cursor: default;}
 
 
-#bookmark                         {background-position: 0 -153px;width: 145px;height: 59px; cursor: pointer;}
-#bookmark:hover, #bookmark.active {background-position: -146px -153px;width: 145px;height: 59px; cursor: pointer;}
-#bookmark.disable                 {background-position: -292px -153px;width: 145px;height: 59px; cursor: default;}
+#toggle_reading    {background-position: -302px -468px; width: 148px;height: 31px; cursor:pointer;}
+#toggle_original   {background-position: -302px -368px; width: 148px;height: 31px; cursor:pointer;}
 
-#vote                      {background-position: 0 -92px;width: 145px;height: 59px; cursor: pointer;}
-#vote:hover, #vote.active  {background-position: -146px -92px;width: 145px;height: 59px; cursor: pointer;}
-#vote.disable              {background-position: -292px -92px;width: 145px;height: 59px; cursor: default;}
+#toggle_page_view  {background-position: -302px -402px; width: 148px;height: 31px; cursor:pointer;}
+#toggle_scene_view {background-position: -302px -368px; width: 148px;height: 31px; cursor:pointer;}
 
-#prev_scene                           {background-position: 0 0;width: 113px;height: 45px; cursor: pointer;}
-#prev_scene:hover, #prev_scene.active {background-position: -114px 0;width: 113px;height: 45px; cursor: pointer;}
-#prev_scene.disable                   {background-position: -228px 0;width: 113px;height: 45px; cursor: default;}
+#toggle_scene_view.disable {background-position: -302px -435px; width: 148px;height: 31px; cursor:default;}
+#toggle_reading.disable {background-position: -302px -534px; width: 148px;height: 31px; cursor:default;}
 
-#prev_page                          {background-position:  0px -576px;    width: 113px;height: 45px; cursor: pointer;}
-#prev_page:hover, #prev_page.active {background-position:  -115px -576px; width: 113px;height: 45px; cursor: pointer;}
-#prev_page.disable                  {background-position: -230px -576px; width: 113px;height: 45px; cursor: default;}
+#menu_tab                         {background-position: -342px -22px;width: 45px;height: 15px; cursor:pointer;}
+#menu_tab:hover, #menu_tab.active {background-position: -342px -22px;width: 45px;height: 15px; cursor:pointer;}
 
-#first_scene                            {background-position: 0 -46px;width: 113px;height: 45px; cursor: pointer;}
-#first_scene:hover, #first_scene.active {background-position: -114px -46px;width: 113px;height: 45px; cursor: pointer;}
-#first_scene.disable                    {background-position: -228px -46px;width: 113px;height: 45px; cursor: default;}
+#menu_tab_close                       		  {background-position: -342px -39px;width: 45px;height: 23px; cursor:pointer;}
+#menu_tab_close:hover, #menu_tab_close.active {background-position: -342px -39px;width: 45px;height: 23px; cursor:pointer;}
 
-#toggle_reading         {background-position: -300px -322px; width: 149px;height: 31px; cursor:pointer;}
-#toggle_original   {background-position: -300px -354px; width: 149px;height: 31px; cursor:pointer;}
+#close                      {background-position: -342px -64px;width: 30px;height: 30px; cursor:pointer;}
+#close:hover, #close.active {background-position: -342px -64px;width: 30px;height: 30px; cursor:pointer;}
 
-#toggle_page_view  {background-position: -300px -290px; width: 149px;height: 31px; cursor:pointer;}
-#toggle_scene_view {background-position: -301px -258px; width: 149px;height: 31px; cursor:pointer;}
 
-#toggle_scene_view.disable {background-position: 0px -544px; width: 148px;height: 31px; cursor:default;}
-#toggle_reading.disable {background-position: -148px -544px; width: 149px;height: 31px; cursor:default;}
+#dialog_error   {background-position: 0 -596px;width: 213px;height: 60px;}
+#dialog_loading {background-position: -302px -323px;width: 112px;height: 44px; cursor:wait;}
+#logo_reader    {background-position: -343px 0;width: 92px;height: 210px;position:absolute; right:12px; top:12px;}
 
-#menu_tab                         {background-position: -390px -22px;width: 45px;height: 23px; cursor:pointer;}
-#menu_tab:hover, #menu_tab.active {background-position: -343px -22px;width: 45px;height: 23px; cursor:pointer;}
+#start                       {background-position: 0 -261px;width: 213px; height: 60px; cursor: pointer;}
+#start:hover, #start.active  {background-position: -215px -261x;width: 213px; height: 60px; cursor: pointer;}
 
-#close                      {background-position: -375px -46px;width: 31px;height: 30px; cursor:pointer;}
-#close:hover, #close.active {background-position: -343px -46px;width: 31px;height: 30px; cursor:pointer;}
+#close_ad                       	{background-position: -342px -96px;width: 48px;height: 23px; cursor:pointer;}
+#close_ad:hover, #close_ad.active   {background-position: -392px -96px;width: 48px;height: 23px; cursor:pointer;}
+#close_ad.disable				    {background-position: -442px -96px;width: 48px;height: 23px; cursor:pointer;}		
 
-#dialog_error   {background-position: -301px -386px;width: 213px;height: 60px;}
-#dialog_loading {background-position: -301px -213px;width: 112px;height: 44px; cursor:wait;}
-#logo_reader    {background-position: -343px 0;width: 92px;height: 21px;position:absolute; right:12px; top:12px;}
+#close_ad_top                       		{background-position: -406px -64px;width: 23px;height: 23px; cursor:pointer;}
+#close_ad_top:hover, #close_ad_top.active   {background-position: -431px -64px;width: 23px;height: 23px; cursor:pointer;}
+#close_ad_top.disable				    	{background-position: -456px -64px;width: 23px;height: 23px; cursor:pointer;}		
 
-#start                       {background-position: 0 -483px;width: 214px; height: 60px; cursor: pointer;}
-#start:hover, #start.active  {background-position: -214px -483px;width: 214px; height: 60px; cursor: pointer;}
-
-#close_ad                       	{background-position: -407px -46px;width: 48px;height: 23px; cursor:pointer;}
-#close_ad:hover, #close_ad.active   {background-position: -457px -46px;width: 48px;height: 23px; cursor:pointer;}
-#close_ad.disable				    {background-position: -457px -71px;width: 48px;height: 23px; cursor:pointer;}		
 
 .large_msg_recommend_login {
 	margin: 0px;

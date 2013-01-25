@@ -1553,7 +1553,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   var prepareMenu = function(){
     $("#menu").css("top", -1 * 132 + "px");
     $("#menu").show();
-    $("#menu_tab").bind('click', menu_hide_click);
+    $("#menu_tab_close").bind('click', menu_hide_click);
     disable_button($("#toggle_reading"));
     disable_button($("#toggle_scene_view"));
    };
