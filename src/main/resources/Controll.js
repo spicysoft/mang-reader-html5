@@ -174,7 +174,7 @@ function $Controll() {
 	}else{
 		ad_cover.show();
 	}
-
+	
 	var close_button = $(".ad_button_area a");
 	close_button.addClass("disable");
 
