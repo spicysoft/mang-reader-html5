@@ -166,11 +166,8 @@ function $Controll() {
 
 	var ad_cover=$("#ad_cover");
 	if(window.showInterstitial != undefined){
-		console.log(_inmobi);
 		showInterstitial();
-		setTimeout(function(){
-			console.log(_inmobi);
-		});
+		if(adSpaceId=="afterReadingInReader")callbackSkipAd();
 	}else{
 		ad_cover.show();
 	}
