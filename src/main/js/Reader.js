@@ -20,7 +20,8 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 
   var VIEW_SCENE   = 0;
   var VIEW_PAGE    = 1;
-  var current_view = VIEW_SCENE;
+  //var current_view = VIEW_SCENE;
+  var current_view = VIEW_PAGE;
 
   var storyId;
   var creatorId;
@@ -58,13 +59,18 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   var is_back = false;
   var trackstart = false;
 
+  //0..右開き
+  var spread = 0;
+  //var orientation = 'vertical';
+  var orientation = 'horizontal';
+
   var ad_src = false;
 
   //Andoridでmenu_switchをクリックした際に、下のcanvasも同時にクリックされる不具合があるため
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v5.0.0");
+  console.log("v6.0.2");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -149,9 +155,9 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       canvas.style.height = height + "px";
     }
     if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
-      dpi = resolveDpi(Math.max(width, height));
+      dpi = resolveDpi(height);
     }else{
-      dpi = resolveDpi(Math.max(canvas.width, canvas.height));
+      dpi = resolveDpi(canvas.height);
     }
     console.log(width + "x" + height + " dpi:" + dpi);
   };
@@ -195,6 +201,67 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
         var context = canvas.getContext("2d");
         context.drawImage(i, dx, dy, w, h);
       }
+  };
+
+  var paintPageImageSpread = function(i0, i1){
+	    var d=-(width/2 - i0.width);
+
+	    var x0 = d;
+	    var x1;
+	    if(reverse){
+	      x1=d-width/2;
+	    }else{
+	      x1=d+width/2;
+	    }
+
+	    var w0=i0.width;
+	    var h0=i0.height;
+	    var dx0=(width - w0) / 2 + x0;
+	    var dy0=(height - h0) / 2;
+
+	    var w1 = 0;
+	    var h1 = 0;
+	    var dx1 = 0;
+	    var dy1 = 0;
+	    if(i1){
+	      w1=i1.width;
+	      h1=i1.height;
+	      dx1=(width - w1) / 2 + x1;
+	      dy1=(height - h1) / 2;
+	    }
+
+	    if (App.IE) {
+	      var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
+	      i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
+	      var c = $("#canvas");
+	      c.empty().append(i0);
+	      if(i1){
+	        i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
+	        c.append(i1);
+	      }
+	      c.append(mask);
+	      c = null;
+	    } else {
+	      var context = canvas.getContext("2d");
+	      context.save();
+	      context.fillStyle = canvas.style.background;
+	      context.fillRect(0, 0, width, height);
+
+	      //Android2.1以下のCanvas drawImageバグ対応
+	      //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
+	      //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
+	      if(App.ANDROID21){
+	        context.save();
+	        var rate =  Math.sqrt(320/screen.width);
+	        context.scale(rate, rate);
+	      }
+
+	      context.drawImage(i0, dx0, dy0);
+	      if(i1){
+	        context.drawImage(i1, dx1, dy1);
+	      }
+	      context.restore();
+	    }
   };
 
   var paintPageImage = function(i0, i1){
@@ -334,20 +401,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       return;
     }
     if(current_view === VIEW_PAGE){
-      if(prev_image === undefined ||
-          reverse && currentPageIndex === 0 ||
-          !reverse && currentPageIndex === pages.length-1){
-        paintImage(i);
-        prev_image = i;
-      }else if(pageScroll){
-        if(reverse){
-          paintPageImage(i, pageImages[current_mode][currentPageIndex-1]);
-        }else{
-          paintPageImage(i, pageImages[current_mode][currentPageIndex+1]);
-        }
-      }else{
-        paintImage(i);
-      }
+        paintPageImageSpread(i, pageImages[current_mode][currentPageIndex-1]);
     }else{
       paintImage(i);
     }
@@ -1440,6 +1494,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       }
       loadConfig();
       saveConfig();
+      change_view_page();//FIXME
       trackstart = true;
 
       $("#prev_scene").bind(act_button, goPrev);
