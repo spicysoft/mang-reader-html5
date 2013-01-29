@@ -198,7 +198,7 @@ function $Controll() {
 	});
 	ad_area.css({
 		marginTop:"-"+(ad_area.height()+13)/2+"px",
-		marginLeft:"-"+(ad_area.width()+13)/2+"px"
+		marginLeft:"-"+(ad_area.width()+26)/2+"px"
 	});
 
 	var virtualUrl = category+adSpaceId+"/"+adNetworkId+"/"+storyId;
