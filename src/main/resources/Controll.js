@@ -151,11 +151,87 @@ function $Controll() {
    }
 
   this.enableGA = function(){
-      document.getElementById('reader_reader').contentWindow._gaq =  _gaq;
+    document.getElementById('reader_reader').contentWindow._gaq =  _gaq;
   };
+
+  this.injectAd = function(html){
+    console.log(html);
+    document.getElementById('reader_reader').contentWindow._ad_text = $('<div>').html(html).text();
+  };
+
+  this.showAd = function(storyId, adSpaceId, callbackSkipAd) {
+  	var event = "_trackEvent";
+	var category="/ad/";
+	var adNetworkId="default";
+
+	var ad_cover=$("#ad_cover");
+	if(window.showInterstitial != undefined){
+		showInterstitial();
+		if(adSpaceId=="afterReadingInReader")callbackSkipAd();
+	}else{
+		ad_cover.show();
+	}
+	
+	var close_button = $(".ad_button_area a");
+	close_button.addClass("disable");
+
+	if(Math.random()>0.5){
+		$("#top_button").show();
+		$("#bottom_button").hide();
+	} else {
+		$("#top_button").hide();
+		$("#bottom_button").show();
+	}
+	var ad_area=$("#ad_area");
+	var ad = ad_area.children(".area");
+	ad.css("pointer-events","none");
+	setTimeout(function(){
+		ad.css("pointer-events","auto");
+		/*var iframeDoc = $("#imobile_adspotframe1").contents().get(0);
+		iframeDoc.unbind("click").bind("click",function(){
+			tryPushAnalytics([event, category+adSpaceId, 'do', adNetworkId]);
+		});*/
+		},1000);
+
+	$(".go_premium").unbind("click").one("click",function(){
+		tryPushAnalytics([event, category+adSpaceId, 'premium', adNetworkId]);
+	});
+	ad_area.css({
+		marginTop:"-"+(ad_area.height()+13)/2+"px",
+		marginLeft:"-"+(ad_area.width()+26)/2+"px"
+	});
+
+	var virtualUrl = category+adSpaceId+"/"+adNetworkId+"/"+storyId;
+	tryPushAnalytics(['_trackPageview', virtualUrl]);
+
+	var clickEvent = 'click';
+    /*if(window.navigator.userAgent.indexOf('Mobile') !== -1){
+    	clickEvent = 'touchstart';
+    }*/
+	setTimeout(function(){
+		close_button.removeClass("disable").one(clickEvent,function(){
+			console.log("ad close button : click : " + Controll.current()  +"-"+ Controll.total());
+			if("1"!=Controll.current() && Controll.current() == Controll.total()) {
+				callbackSkipAd();
+			}
+			tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworkId]);
+			ad_cover.hide();
+			console.log("ad close button : click done");
+		});
+		},3000);
+	};
 };
 
 var Controll = new $Controll();
+
+var tryPushAnalytics = function(data){
+    try{
+		console.log("G/A:"+data)
+      if(typeof(_gaq) !== 'undefined') _gaq.push(data);
+    } catch(e){
+      console.log(e+":"+data)
+    }
+}
 
 var isVisible = function(elem){
   return elem.css("display") != 'none';
@@ -243,14 +319,37 @@ var popUpChangeView = function(){
   $("#popup_original").hide();
 };
 
-
+var controll_timer;
 var startReader = function(storyId){
     var current_view = "";
     var current_mode = "";
+	setTimeout(function(){
+		if(controll_timer)return;
+		console.log("cached iframe");
+		sync_iframe();
+	},1000);
     $('iframe:first').load(function(e){
-      Controll.enableGA();
-      setInterval(function(){
+	  console.log("loaded iframe");
+	  sync_iframe();
+    });
+
+    $("#menu_first").click(Controll.first);
+    $("#menu_prev").click(Controll.prev);
+    $("#menu_next").click(Controll.next);
+    $("#menu_mode_reading").click(popUpChangeMode);
+    $("#menu_mode_original").click(popUpChangeMode);
+    $("#menu_scene_view").click(popUpChangeView);
+    $("#menu_page_view").click(popUpChangeView);
+
+    $("#popup_reading").click(toggleMode);
+    $("#popup_original").click(toggleMode);
+    $("#popup_scene").click(toggleView);
+    $("#popup_page").click(toggleView);
+	var sync_iframe = function(){
+	  Controll.enableGA();
+      controll_timer =  setInterval(function(){
         if(!Controll.ready()){
+			console.log("error:",Controll.ready());
           return;
         }
         if(Controll.supportOriginalMode()){
@@ -314,19 +413,6 @@ var startReader = function(storyId){
           current_mode = Controll.mode();
         }
       }, 100);
-    });
-
-    $("#menu_first").click(Controll.first);
-    $("#menu_prev").click(Controll.prev);
-    $("#menu_next").click(Controll.next);
-    $("#menu_mode_reading").click(popUpChangeMode);
-    $("#menu_mode_original").click(popUpChangeMode);
-    $("#menu_scene_view").click(popUpChangeView);
-    $("#menu_page_view").click(popUpChangeView);
-
-    $("#popup_reading").click(toggleMode);
-    $("#popup_original").click(toggleMode);
-    $("#popup_scene").click(toggleView);
-    $("#popup_page").click(toggleView);
+    }
 }
 

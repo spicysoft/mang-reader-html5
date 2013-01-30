@@ -4,7 +4,7 @@
 <div>Development</div>
 <h2>member 480</h2>
 <script type="text/javascript" >
-  var storyId = 27698;
+  var storyId = 27960;
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" ></script>
 <script src="/local-test/mr/target/dist-debug/Controll.js" type="text/javascript" ></script>
@@ -14,9 +14,12 @@
   var t = <?=time()?>;
 
   $(document).ready(function(){
-    var html = '<iframe id="reader_reader" src="/local-test/mr/target/dist-debug/ja_pc.html#'+storyId+',nomember,nomenu,'+t+'" width="'+ size +'px" height="' + size +'px" frameborder="0" allowfullscreen="true"></iframe>';
+    var html = '<iframe id="reader_reader" src="/local-test/mr/target/dist-debug/ja_pc.html#'+storyId+',nomember,nomenu,ad,'+t+'" width="'+ size +'px" height="' + size +'px" frameborder="0" allowfullscreen="true"></iframe>';
     $("#reader_wrapper").append(html);
     startReader(storyId);
+    $('iframe:first').ready(function(){
+    	Controll.injectAd("<div style='width:250px;height:250px;'>test</div>");
+    });
   });
 </script>
 <div id="reader_container" style="padding:0;margin:0;position:relative;">

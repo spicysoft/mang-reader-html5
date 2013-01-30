@@ -96,6 +96,10 @@ function $App() {
     if(/mang\/\d+/.test(ua)){
       this.isApp = true;
     }
+
+    this.adText = function(){
+      return _ad_text;
+    }
   };
 
   /**
@@ -181,8 +185,7 @@ function $App() {
    * @param String str QueryString
    * @returns Array デコード結果
    */
-  this.parseQueryString = function(str)
-  {
+  this.parseQueryString = function(str) {
     var hash = {};
     if(str === 'undefined') {
       console.log('GET:Empty');
@@ -243,6 +246,7 @@ $(function() {
     real.auto    = in_array('auto', raw);
     real.superuser = in_array('superuser', raw);
     real.nomenu = in_array('nomenu', raw);
+    real.ad = in_array('ad', raw);
     real.time = 0;
     for(var i=1;i<raw.length;i++){
       if(isNumeric(raw[i])){
@@ -258,17 +262,19 @@ $(function() {
 
   App = new $App();
   var params = getRealParameters();
-  Reader = new $Reader(params.member, params.superuser, params.time, params.nomenu, 50/App.speed);
+  Reader = new $Reader(params.member, params.superuser, params.time, params.nomenu, params.ad, 50/App.speed);
 
   $(window).resize(function(){
+    console.log("window resize : " + $(window).width() + " " + $(window).height());
     if(/Android/.test(window.navigator.userAgent)){
       $("html").css("zoom" ,$(window).width()/css_size);
     }
     Reader.resize();
   });
-  if(!params.auto){
-    Reader.showPreview(params.storyId);
-  }else{
-    Reader.openStory(params.storyId);
-  }
+    if(!params.auto){
+        Reader.showPreview(params.storyId);
+      }else{
+        Reader.openStory(params.storyId);
+      }
+
 });

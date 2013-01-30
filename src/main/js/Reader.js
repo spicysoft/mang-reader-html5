@@ -1,9 +1,9 @@
-/*global $, JQuery, _, _gaq,_gat, window, strings, App, $SceneAnimator */
+/*global $, JQuery, _, _gaq,_gat,_ad_text, window, strings, App, $SceneAnimator */
 
 /**
  * マンガを読み込み中のUI処理を行う MVCのコンポーネントに相当する処理を行う。
  */
-function $Reader(_member, _superuser, _t, _nomenu, _fps) {
+function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   var member = _member;
   var su = _superuser;
   var nomenu = _nomenu;
@@ -11,6 +11,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
   var API_ROOT = '/api';
   var width = 0;
   var height = 0;
+  var should_show_ad = _ad;
   var canvas;
 
   var MODE_ORIGINAL = 'original';
@@ -57,9 +58,15 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
   var is_back = false;
   var trackstart = false;
 
-  console.log("v4.0.3");
+  var ad_src = false;
 
-  if (App.IE || App.isAndroid) {
+  //Andoridでmenu_switchをクリックした際に、下のcanvasも同時にクリックされる不具合があるため
+  //menuが表示されるまでの間、canvasのクリックをロックする
+  var menu_click_lock = false;
+
+  console.log("v5.0.0");
+
+  if (App.IE) {
     // canvasが実装されていないのでdivに置換
     // style="background: #000;"を定義しないとクリッカブルにならない
     $("#canvas").replaceWith(
@@ -131,12 +138,6 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       $("#mangh5r").height(height);
       $("#canvas").width(width);
       $("#canvas").height(height);
-     } else if(App.IE||App.isAndroid){
-      var reader = $("#mangh5r");
-      width = reader.width();
-      height = reader.height();
-      $("#canvas").width(width);
-      $("#canvas").height(height);
      }else {
       var reader = $("#mangh5r");
       width = reader.width();
@@ -147,7 +148,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       canvas.height = height;
       canvas.style.height = height + "px";
     }
-    if (App.IE ||App.isAndroid) {
+    if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
       dpi = resolveDpi(Math.max(width, height));
     }else{
       dpi = resolveDpi(Math.max(canvas.width, canvas.height));
@@ -185,7 +186,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       var dx= Math.round((width - w) / 2);
       var dy= Math.round((height - h) / 2);
 
-      if (App.IE || App.isAndroid) {
+      if (App.IE) {
         i.width = w;
         i.height = h;
         i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
@@ -227,7 +228,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       dy1=(height - h1) / 2;
     }
 
-    if (App.IE || App.isAndroid) {
+    if (App.IE) {
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
       i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
       var c = $("#canvas");
@@ -243,6 +244,15 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       context.save();
       context.fillStyle = canvas.style.background;
       context.fillRect(0, 0, width, height);
+
+      //Android2.1以下のCanvas drawImageバグ対応
+      //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
+      //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
+      if(App.ANDROID21){
+        context.save();
+        var rate =  Math.sqrt(320/screen.width);
+        context.scale(rate, rate);
+      }
 
       context.drawImage(i0, dx0, dy0);
       if(i1){
@@ -266,7 +276,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       var h=i.scaledHeight();
       var dx=(width - w) / 2 + x;
       var dy=(height - h) / 2 + y;
-      if (App.IE || App.isAndroid) {
+      if (App.IE) {
         if(App.IE_VER==8 || document.documentMode==8){
           $("#canvas").css({zoom:i.scale});
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
@@ -282,6 +292,13 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
         context.save();
         context.fillStyle = canvas.style.background;
         context.fillRect(0, 0, width, height);
+        //Android2.1以下のCanvas drawImageバグ対応
+        //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
+        //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
+        if(App.ANDROID21){
+          var rate =  Math.sqrt(320/screen.width);
+          context.scale(rate, rate);
+        }
         context.drawImage(i, dx, dy, i.scaledWidth(), i.scaledHeight());
         context.restore();
       }
@@ -343,6 +360,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
     $("#dialog_loading").hide();
     $("#reader").hide();
     $("#finish").hide();
+	$("#ad_cover").hide();
 
     $("#errmsg_fan_only").hide();
     $("#errmsg_fan_only_guest").hide();
@@ -361,14 +379,13 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
       $("#errmsg_default").show();
     }
     $("#error").show();
-	if(msg == "#errmsg_under18_guest" || msg  == "#errmsg_fan_only_guest" || msg  == "#errmsg_friend_only_guest") {
-		set_error_img_src(msg);
-		$("#dialog_error").hide();
-		$("#menu").hide();
-	} else {
-		$("#dialog_error").show();
-	}
-    
+    if(msg == "#errmsg_under18_guest" || msg  == "#errmsg_fan_only_guest" || msg  == "#errmsg_friend_only_guest") {
+      set_error_img_src(msg);
+      $("#dialog_error").hide();
+      $("#menu").hide();
+    } else {
+      $("#dialog_error").show();
+    }
   };
   var set_error_img_src = function(msg){
     var img = $(msg + " img");
@@ -895,12 +912,14 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
 
 
   var menu_click = function(e){
+    menu_click_lock = true;
     is_back = false;
     showMenu(500, 500);
     e.preventDefault();
   };
 
   var hideMenu = function(fadeout){
+    menu_click_lock = false;
     if(!menuIsVisible()){
       return;
     }
@@ -926,6 +945,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
    */
   var showMenu = function (lifetime, fadeout){
     if(menuIsVisible() || nomenu){
+      menu_click_lock = false;
       return;
     }
     $("#menu_switch").unbind('click', menu_click);
@@ -934,6 +954,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
         fadeout,'swing',
         function(){
           $("#menu_switch").unbind(act_start, menu_click);
+          menu_click_lock = false;
         });
 
     if(current_view === VIEW_SCENE){
@@ -1071,7 +1092,12 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
     }
     if (current_view === VIEW_PAGE && next >= pages.length ||
         current_view === VIEW_SCENE && next >= scenes.length) {
-      showFinished();
+      if (should_show_ad &&
+    		  (current_view === VIEW_PAGE && 1 < pages.length || current_view === VIEW_SCENE && 1 < scenes.length) ) {
+        (parent["Controll"]["showAd"])(storyId, "afterReadingInReader", showFinished);
+	  } else {
+	  	showFinished();
+	  }
     } else {
       jumpTo(next);
     }
@@ -1173,7 +1199,10 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
   };
 
   var canvas_click = function(event) {
-      goNext();
+      console.log("canvas_click");
+      if(!menu_click_lock){
+          goNext();
+      }
       prevent_default(event);
   };
 
@@ -1332,10 +1361,15 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
     var url = '/comicreading/'+creatorId+'/'+comicId+'/'+storyId+'/'+action;
      try{
         if(typeof(_gaq) !== 'undefined') {
-          if(member) {
+		  if(!should_show_ad){
+		  	_gaq.push(['_setCustomVar', 1, 'IsMember', 'YES', 1]);
+			_gaq.push(['_setCustomVar', 3, 'MemberType', 'Premium', 1]);
+		  } else if(member) {
             _gaq.push(['_setCustomVar', 1, 'IsMember', 'YES', 1]);
+			_gaq.push(['_setCustomVar', 3, 'MemberType', 'Free', 1]);
           } else {
             _gaq.push(['_setCustomVar', 1, 'IsMember', 'NO', 1]);
+			_gaq.push(['_setCustomVar', 3, 'MemberType', 'Guest', 1]);
           }
           if(App.isApp){
             _gaq.push(['_setCustomVar', 2, 'Platform', 'Appli', 1]);
@@ -1363,7 +1397,12 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
     currentSceneIndex = 0;
     currentPageIndex = 0;
     storyMetaFile = null;
+	if(should_show_ad){
+		console.log(parent["Controll"]);
+        (parent["Controll"]["showAd"])(storyId, "beforeReadingInReader", showFinished);
+	}
     showLoading();
+
     apiStoryMetaFile(storyId, function(json) {
       console.log("apiStoryMetaFile");
       storyMetaFile = json;
@@ -1420,7 +1459,77 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
     }, function() {
       showError();
     });
+
   };
+
+
+  var showAd = function(adSpaceId) {
+	//var event = "_trackEvent";
+	var category="/ad/";
+	var adNetworkId="adNetworkID";
+
+	var ad_cover=$("#ad_cover");
+	ad_cover.show();
+	var close_button = $("#close_ad");
+	close_button.addClass("disable");
+
+	var ad_area=$("#ad_area");
+	if(Math.random()>0.5){
+		ad_area.toggleClass("top_button");
+		close_button.toggleClass("top_button");
+	}
+	var ad = ad_area.children(".area");
+	ad.css("pointer-events","none");
+	setTimeout(function(){
+		ad.css("pointer-events","auto");
+	},1000);
+	if(!ad.children().length){
+		ad.append(App.adText());
+		/*$(".go_premium").bind("click",function(){
+			tryPushAnalytics([event, category+adSpaceId, 'premium', adNetworkId]);
+		})*/
+	}
+	ad_area.css({
+		marginTop:"-"+(ad_area.height()/2+13)+"px",
+		marginLeft:"-"+(ad_area.width()/2+13)+"px"
+	});
+
+	var virtualUrl = category+adSpaceId+"/"+adNetworkId+"/"+storyId;
+	tryPushAnalytics(['_trackPageview', virtualUrl]);
+
+	ad_area.find('iframe:first').load(function(){
+		ad_src = document.getElementById('reader_ad').contentWindow.location.href;
+	});
+
+	var frame_timer = setInterval(function(){
+		var href = document.getElementById('reader_ad').contentWindow.location.href;
+		if(ad_src && ad_src != href){
+			ad_cover.hide();
+			clearInterval(frame_timer);
+			//tryPushAnalytics([event, category+adSpaceId, 'do', adNetworkId]);
+		    (parent["goNextUrl"])(href);
+		}
+	},100);
+
+	setTimeout(function(){
+		close_button.removeClass("disable").one(act_button,function(){
+			if(current_view === VIEW_PAGE && currentPageIndex + 1 >= pages.length ||
+			        current_view === VIEW_SCENE && currentSceneIndex + 1 >= scenes.length) {
+			      showFinished();
+			}
+			//tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworkId]);
+			ad_cover.hide();
+			clearInterval(frame_timer);
+		});
+	},3000);
+  };
+  var tryPushAnalytics = function(data){
+  	try{
+		if(typeof(_gaq) !== 'undefined') _gaq.push(data);
+	} catch(e){
+		console.log(e+":"+data)
+	}
+  }
 
   var resize = function() {
     setWidthAndHeight();
@@ -1442,9 +1551,9 @@ function $Reader(_member, _superuser, _t, _nomenu, _fps) {
   };
 
   var prepareMenu = function(){
-    $("#menu").css("top", -1 * 132 + "px");//FIXME menuの高さが合わないのでハードコーディングした。なおしたい。
+    $("#menu").css("top", -1 * 132 + "px");
     $("#menu").show();
-    $("#menu_tab").bind('click', menu_hide_click);
+    $("#menu_tab_close").bind('click', menu_hide_click);
     disable_button($("#toggle_reading"));
     disable_button($("#toggle_scene_view"));
    };
