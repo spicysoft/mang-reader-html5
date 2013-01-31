@@ -25,7 +25,14 @@
 #menu_bar_fullscreen {background-image:url(menubar_inside.gif);;background-repeat:repeat; width: 545px; height: 28px;}
 #menu_bar_fullscreen_r {background-image:url(menubar_tip.gif);;background-repeat:no-repeat; width: 1px; height: 28px;}
 #menu_bar_ex         {background-position: -330px -29px; width: 131px; height: 28px;}
-#menu_bar            {background-position: -360px 0;     width: 101px; height: 28px;}
+#menu_bar            {
+	background-position: -360px 0;
+	width: 301px;
+	height: 27px;
+	background-image:none;
+	margin-top:2px;
+	border-right: 1px solid #000;
+}
 
 #menu_scene_view         {background-position: 0      -58px; width: 101px;height: 28px; cursor:pointer;}
 #menu_scene_view:hover   {background-position: -102px -58px; width: 101px;height: 28px; cursor:pointer;}

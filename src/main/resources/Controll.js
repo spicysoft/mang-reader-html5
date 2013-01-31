@@ -166,15 +166,13 @@ function $Controll() {
 
 	var ad_cover=$("#ad_cover");
 	if(window.showInterstitial != undefined){
-		console.log(_inmobi);
+		console.log(this);
 		showInterstitial();
-		setTimeout(function(){
-			console.log(_inmobi);
-		});
+		if(adSpaceId=="afterReadingInReader")callbackSkipAd();
 	}else{
 		ad_cover.show();
 	}
-
+	
 	var close_button = $(".ad_button_area a");
 	close_button.addClass("disable");
 
@@ -188,12 +186,11 @@ function $Controll() {
 	var ad_area=$("#ad_area");
 	var ad = ad_area.children(".area");
 	ad.css("pointer-events","none");
+	var clickCover = $("#click_controll");
+	clickCover.show();
 	setTimeout(function(){
 		ad.css("pointer-events","auto");
-		/*var iframeDoc = $("#imobile_adspotframe1").contents().get(0);
-		iframeDoc.unbind("click").bind("click",function(){
-			tryPushAnalytics([event, category+adSpaceId, 'do', adNetworkId]);
-		});*/
+		clickCover.hide();
 		},1000);
 
 	$(".go_premium").unbind("click").one("click",function(){
@@ -201,16 +198,13 @@ function $Controll() {
 	});
 	ad_area.css({
 		marginTop:"-"+(ad_area.height()+13)/2+"px",
-		marginLeft:"-"+(ad_area.width()+13)/2+"px"
+		marginLeft:"-"+(ad_area.width()+26)/2+"px"
 	});
 
 	var virtualUrl = category+adSpaceId+"/"+adNetworkId+"/"+storyId;
 	tryPushAnalytics(['_trackPageview', virtualUrl]);
 
 	var clickEvent = 'click';
-    /*if(window.navigator.userAgent.indexOf('Mobile') !== -1){
-    	clickEvent = 'touchstart';
-    }*/
 	setTimeout(function(){
 		close_button.removeClass("disable").one(clickEvent,function(){
 			console.log("ad close button : click : " + Controll.current()  +"-"+ Controll.total());
