@@ -72,7 +72,7 @@
 
 #dialog_error   {background-position: 0 -596px;width: 213px;height: 60px;}
 #dialog_loading {background-position: -302px -323px;width: 112px;height: 44px; cursor:wait;}
-#logo_reader    {background-position: -343px 0;width: 92px;height: 210px;position:absolute; right:12px; top:12px;}
+#logo_reader    {background-position: -343px 0;width: 92px;height: 21px;position:absolute; right:12px; top:12px;}
 
 #start                       {background-position: 0 -261px;width: 213px; height: 60px; cursor: pointer;}
 #start:hover, #start.active  {background-position: -215px -261x;width: 213px; height: 60px; cursor: pointer;}
