@@ -1413,17 +1413,17 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 
       cdn_host = storyMetaFile["cdn_host"];
       updateProgress();
-
-      if(storyMetaFile['enable_original_mode']){
-        enable_button($("#toggle_reading"));
-        $("#toggle_reading").bind(act_button, change_mode_original);
-        $("#toggle_original").bind(act_button, change_mode_reading);
-      }
-      if(storyMetaFile['enable_page_mode']){
-        enable_button($("#toggle_scene_view"));
-        $("#toggle_scene_view").bind(act_button, change_view_page);
-        $("#toggle_page_view").bind(act_button, change_view_scene);
-      }
+//
+//      if(storyMetaFile['enable_original_mode']){
+//        enable_button($("#toggle_reading"));
+//        $("#toggle_reading").bind(act_button, change_mode_original);
+//        $("#toggle_original").bind(act_button, change_mode_reading);
+//      }
+//      if(storyMetaFile['enable_page_mode']){
+//        enable_button($("#toggle_scene_view"));
+//        $("#toggle_scene_view").bind(act_button, change_view_page);
+//        $("#toggle_page_view").bind(act_button, change_view_scene);
+//      }
 
       comicTitleInsert = storyMetaFile['comic_title_insert']==='1';
       if(comicTitleInsert)	{
@@ -1438,7 +1438,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       if(comicTitleInsert || storyTitleInsert){
           hasAllTitleShown = false;
       }
-      loadConfig();
+ //     loadConfig();
       saveConfig();
       trackstart = true;
 
