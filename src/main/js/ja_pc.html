@@ -18,7 +18,7 @@
       }else{
           var css_size = 480;
       }
-      fileref.setAttribute("href", "layout."+css_size+".css?v=11" );
+      fileref.setAttribute("href", "layout."+css_size+".css?v=12" );
       if(/Android/.test(window.navigator.userAgent)){
           $("html").css("zoom" ,$(window).width()/css_size);
       }
@@ -87,32 +87,32 @@
           <span id="errmsg_fan_only" class="msg">マンガ作家のファンのみが閲覧可能です。</span>
           <!--span id="errmsg_fan_only_guest" class="msg">ファンかどうか確認するためログインしてください。</span-->
         </div>
-    <div id="errmsg_friend_only_guest" class="large_msg_recommend_login">
-      <h4>このマンガを読むにはログインしてください</h4>
-      <p class="image_area"><img />このマンガは友だち限定で配信されています。<br/>
-      友だちかどうか確認するためログインをするか、新規会員登録しこのマンガ作家に友だち申請を送ってください。</p>
-      <p class="button_area"><a class="green_button" target="_parent" href="/account/">ログイン</a><a target="_parent" href="/account/register/">会員登録</a></p>
-    </div>
-    <div id="errmsg_fan_only_guest" class="large_msg_recommend_login">
-      <h4>このマンガを読むにはログインしてください</h4>
-      <p class="image_area"><img />このマンガはファン限定で配信されています。<br/>
-      ファンかどうか確認するためログインをするか、新規会員登録しこのマンガ作家をファン登録してください。</p>
-      <p class="button_area"><a class="green_button" target="_parent" href="/account/">ログイン</a><a target="_parent" href="/account/register/">会員登録</a></p>
-    </div>
-    <div id="errmsg_under18_guest" class="large_msg_recommend_login">
-      <h4>このマンガを読むにはログインしてください</h4>
-      <p class="image_area"><img />このマンガは、全年齢を対象としたものではないとマンガ作家から申告されています。<br/>
-      このマンガには年齢制限があります。</p>
-      <p class="button_area"><a class="green_button" target="_parent" href="/account/">ログイン</a><a target="_parent" href="/account/register/">会員登録</a></p>
-
-    </div>
-    <script>
-      $(".button_area a").click(function(){
-        var parentURL = $(parent.document)[0]["URL"];
-        if(parentURL.indexOf("?next=")!=-1)parentURL = parentURL.substring(parentURL.indexOf("?next=")+6,parentURL.length);
-        $(this).attr("href",$(this).attr("href")+"?next="+parentURL);
-      })
-    </script>
+		<div id="errmsg_friend_only_guest" class="large_msg_recommend_login">
+			<h4>このマンガを読むにはログインしてください</h4>
+			<p class="image_area"><img />このマンガは友だち限定で配信されています。<br/>
+			友だちかどうか確認するためログインをするか、新規会員登録しこのマンガ作家に友だち申請を送ってください。</p>
+			<p class="button_area"><a class="green_button" target="_parent" href="/account/">ログイン</a><a target="_parent" href="/account/register/">会員登録</a></p>
+		</div>
+		<div id="errmsg_fan_only_guest" class="large_msg_recommend_login">
+			<h4>このマンガを読むにはログインしてください</h4>
+			<p class="image_area"><img />このマンガはファン限定で配信されています。<br/>
+			ファンかどうか確認するためログインをするか、新規会員登録しこのマンガ作家をファン登録してください。</p>
+			<p class="button_area"><a class="green_button" target="_parent" href="/account/">ログイン</a><a target="_parent" href="/account/register/">会員登録</a></p>
+		</div>
+		<div id="errmsg_under18_guest" class="large_msg_recommend_login">
+			<h4>このマンガを読むにはログインしてください</h4>
+			<p class="image_area"><img />このマンガは、全年齢を対象としたものではないとマンガ作家から申告されています。<br/>
+			このマンガには年齢制限があります。</p>
+			<p class="button_area"><a class="green_button" target="_parent" href="/account/">ログイン</a><a target="_parent" href="/account/register/">会員登録</a></p>
+			
+		</div>
+		<script>
+			$(".button_area a").click(function(){
+				var parentURL = $(parent.document)[0]["URL"];
+				if(parentURL.indexOf("?next=")!=-1)parentURL = parentURL.substring(parentURL.indexOf("?next=")+6,parentURL.length);
+				$(this).attr("href",$(this).attr("href")+"?next="+parentURL);
+			})
+		</script>
       </div>
       <div id="story_title_insert" style="display:none;">
         <div id="story_title_items">
