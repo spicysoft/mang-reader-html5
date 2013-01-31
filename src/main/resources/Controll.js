@@ -186,8 +186,11 @@ function $Controll() {
 	var ad_area=$("#ad_area");
 	var ad = ad_area.children(".area");
 	ad.css("pointer-events","none");
+	var clickCover = $("#click_controll");
+	clickCover.show();
 	setTimeout(function(){
 		ad.css("pointer-events","auto");
+		clickCover.hide();
 		},1000);
 
 	$(".go_premium").unbind("click").one("click",function(){

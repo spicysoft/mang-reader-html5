@@ -100,6 +100,10 @@ body {
 	border-radius: 8px;
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
+<<<<<<< HEAD
+
+=======
+>>>>>>> origin/alpha
 }
 /*IE8ハック*/
 .large_msg_recommend_login .button_area a {
@@ -121,6 +125,10 @@ body {
 	text-shadow: 1px 1px 3px #000; /*CSS3*/
 	-moz-text-shadow: 1px 1px 3px #000; /* Firefox用*/
 	-webkit-text-shadow: 1px 1px 3px #000; /* Google Chrome, Safari用*/
+<<<<<<< HEAD
+
+=======
+>>>>>>> origin/alpha
 }
 /*IE8ハック*/
 .large_msg_recommend_login a.green_button {
