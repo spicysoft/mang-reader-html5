@@ -371,6 +371,8 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     $("#errmsg_servererr").hide();
     $("#errmsg_expired").hide();
     $("#errmsg_forbidden").hide();
+	
+	(parent["Controll"]["hideAd"])();
 
     if(msg){
       $("#errmsg_default").hide();
@@ -379,6 +381,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       $("#errmsg_default").show();
     }
     $("#error").show();
+	console.log("errorMSG:",msg);
     if(msg == "#errmsg_under18_guest" || msg  == "#errmsg_fan_only_guest" || msg  == "#errmsg_friend_only_guest") {
       set_error_img_src(msg);
       $("#dialog_error").hide();
@@ -987,6 +990,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 
   var showFinished = function() {
     var next_story_id = storyMetaFile["next_story_id"];
+	if(!next_story_id)return;
     showMenu(0);
     $("#next").unbind(act_button);
     $("#vote").unbind(act_button);
