@@ -990,7 +990,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 
   var showFinished = function() {
     var next_story_id = storyMetaFile["next_story_id"];
-	if(!next_story_id)return;
+	console.log("finish_func",next_story_id);
     showMenu(0);
     $("#next").unbind(act_button);
     $("#vote").unbind(act_button);

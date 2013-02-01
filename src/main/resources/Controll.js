@@ -209,13 +209,14 @@ function $Controll() {
 
 	var clickEvent = 'click';
 	setTimeout(function(){
+		close_button.unbind("click");
 		close_button.removeClass("disable").one(clickEvent,function(){
 			console.log("ad close button : click : " + Controll.current()  +"-"+ Controll.total());
 			tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworkId]);
 			ad_cover.hide();
-			console.log("ad close button : click done");
 			if("1"!=Controll.current() && Controll.current() == Controll.total()) {
 				callbackSkipAd();
+				console.log("finished comic!")
 			}
 		});
 		},3000);
