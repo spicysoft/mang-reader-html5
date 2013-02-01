@@ -90,7 +90,7 @@ body {
  </div>
  <div id="reader_wrapper">
   <div id="fullscreen_prev" class="sprite" onclick="Controll.prev();" ></div>
-  <iframe id="reader_reader" src="/local-test/mr/target/dist-debug/ja_pc.html#20724,member,<?=time()?>" width="960" height="480" frameborder="0" allowfullscreen="true" scrolling="no"></iframe>
+  <iframe id="reader_reader" src="/local-test/mr/target/dist-debug/ja_pc.html#20724,member,<?=time()?>" width="1080" height="960" frameborder="0" allowfullscreen="true" scrolling="no"></iframe>
   <div id="fullscreen_next" class="sprite" onclick="Controll.next();"></div>
  </div>
  <div id="footer">

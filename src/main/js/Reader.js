@@ -70,7 +70,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v6.0.2");
+  console.log("v6.0.3");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -204,64 +204,58 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   };
 
   var paintPageImageSpread = function(i0, i1){
-	    var d=-(width/2 - i0.width);
 
-	    var x0 = d;
-	    var x1;
-	    if(reverse){
-	      x1=d-width/2;
-	    }else{
-	      x1=d+width/2;
-	    }
+    var x0 = (width/2-i0.width);
+    var x1 = width/2;
 
-	    var w0=i0.width;
-	    var h0=i0.height;
-	    var dx0=(width - w0) / 2 + x0;
-	    var dy0=(height - h0) / 2;
+    var w0=i0.width;
+    var h0=i0.height;
+    var dx0= x0;
+    var dy0=(height - h0) / 2;
 
-	    var w1 = 0;
-	    var h1 = 0;
-	    var dx1 = 0;
-	    var dy1 = 0;
-	    if(i1){
-	      w1=i1.width;
-	      h1=i1.height;
-	      dx1=(width - w1) / 2 + x1;
-	      dy1=(height - h1) / 2;
-	    }
+    var w1 = 0;
+    var h1 = 0;
+    var dx1 = 0;
+    var dy1 = 0;
+    if(i1){
+      w1=i1.width;
+      h1=i1.height;
+      dx1=x1;
+      dy1=(height - h1) / 2;
+    }
 
-	    if (App.IE) {
-	      var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
-	      i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
-	      var c = $("#canvas");
-	      c.empty().append(i0);
-	      if(i1){
-	        i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
-	        c.append(i1);
-	      }
-	      c.append(mask);
-	      c = null;
-	    } else {
-	      var context = canvas.getContext("2d");
-	      context.save();
-	      context.fillStyle = canvas.style.background;
-	      context.fillRect(0, 0, width, height);
+    if (App.IE) {
+      var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
+      i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
+      var c = $("#canvas");
+      c.empty().append(i0);
+      if(i1){
+        i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
+        c.append(i1);
+      }
+      c.append(mask);
+      c = null;
+    } else {
+      var context = canvas.getContext("2d");
+      context.save();
+      context.fillStyle = canvas.style.background;
+      context.fillRect(0, 0, width, height);
 
-	      //Android2.1以下のCanvas drawImageバグ対応
-	      //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
-	      //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
-	      if(App.ANDROID21){
-	        context.save();
-	        var rate =  Math.sqrt(320/screen.width);
-	        context.scale(rate, rate);
-	      }
+      //Android2.1以下のCanvas drawImageバグ対応
+      //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
+      //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
+      if(App.ANDROID21){
+        context.save();
+        var rate =  Math.sqrt(320/screen.width);
+        context.scale(rate, rate);
+      }
 
-	      context.drawImage(i0, dx0, dy0);
-	      if(i1){
-	        context.drawImage(i1, dx1, dy1);
-	      }
-	      context.restore();
-	    }
+      context.drawImage(i0, dx0, dy0);
+      if(i1){
+        context.drawImage(i1, dx1, dy1);
+      }
+      context.restore();
+    }
   };
 
   var paintPageImage = function(i0, i1){
@@ -1467,17 +1461,17 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 
       cdn_host = storyMetaFile["cdn_host"];
       updateProgress();
-//
-//      if(storyMetaFile['enable_original_mode']){
-//        enable_button($("#toggle_reading"));
-//        $("#toggle_reading").bind(act_button, change_mode_original);
-//        $("#toggle_original").bind(act_button, change_mode_reading);
-//      }
-//      if(storyMetaFile['enable_page_mode']){
-//        enable_button($("#toggle_scene_view"));
-//        $("#toggle_scene_view").bind(act_button, change_view_page);
-//        $("#toggle_page_view").bind(act_button, change_view_scene);
-//      }
+
+      if(storyMetaFile['enable_original_mode']){
+        enable_button($("#toggle_reading"));
+        $("#toggle_reading").bind(act_button, change_mode_original);
+        $("#toggle_original").bind(act_button, change_mode_reading);
+      }
+      if(storyMetaFile['enable_page_mode']){
+        enable_button($("#toggle_scene_view"));
+        $("#toggle_scene_view").bind(act_button, change_view_page);
+        $("#toggle_page_view").bind(act_button, change_view_scene);
+      }
 
       comicTitleInsert = storyMetaFile['comic_title_insert']==='1';
       if(comicTitleInsert)	{
@@ -1492,7 +1486,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       if(comicTitleInsert || storyTitleInsert){
           hasAllTitleShown = false;
       }
- //     loadConfig();
+      loadConfig();
       saveConfig();
       change_view_page();//FIXME
       trackstart = true;
