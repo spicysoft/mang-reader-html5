@@ -159,11 +159,14 @@ function $Controll() {
     document.getElementById('reader_reader').contentWindow._ad_text = $('<div>').html(html).text();
   };
 
+  this.hideAd = function(){
+  	$("#ad_cover").hide();;
+  }
   this.showAd = function(storyId, adSpaceId, callbackSkipAd) {
   	var event = "_trackEvent";
 	var category="/ad/";
 	var adNetworkId="default";
-
+	
 	var ad_cover=$("#ad_cover");
 	if(window.showInterstitial != undefined){
 		console.log(this);
@@ -208,12 +211,12 @@ function $Controll() {
 	setTimeout(function(){
 		close_button.removeClass("disable").one(clickEvent,function(){
 			console.log("ad close button : click : " + Controll.current()  +"-"+ Controll.total());
-			if("1"!=Controll.current() && Controll.current() == Controll.total()) {
-				callbackSkipAd();
-			}
 			tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworkId]);
 			ad_cover.hide();
 			console.log("ad close button : click done");
+			if("1"!=Controll.current() && Controll.current() == Controll.total()) {
+				callbackSkipAd();
+			}
 		});
 		},3000);
 	};
