@@ -221,7 +221,8 @@ function $Controll() {
 	close_button.addClass("disable");
 	var self=this;
 	setTimeout(function(){
-		close_button.removeClass("disable").one('click',function(){
+		close_button.unbind("click");
+		close_button.removeClass("disable").bind('click',function(){
 			console.log("ad close button : click : " + Controll.current()  +"-"+ Controll.total());
 			tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworkId]);
 			ad_cover.hide();
