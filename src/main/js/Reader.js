@@ -70,7 +70,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v6.0.3");
+  console.log("v6.0.4");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -205,19 +205,24 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 
   var paintPageImageSpread = function(i0, i1){
 
-    var x0 = (width/2-i0.width);
-    var x1 = width/2;
-
-    var w0=i0.width;
-    var h0=i0.height;
-    var dx0= x0;
-    var dy0=(height - h0) / 2;
+    var w0 = 0;
+    var h0 = 0;
+    var dx0 = 0;
+    var dy0 = 0;
+    if(i0){
+        var x0 = (width/2-i0.width);
+        w0=i0.width;
+        h0=i0.height;
+        dx0= x0;
+        dy0=(height - h0) / 2;
+    }
 
     var w1 = 0;
     var h1 = 0;
     var dx1 = 0;
     var dy1 = 0;
     if(i1){
+      var x1 = width/2;
       w1=i1.width;
       h1=i1.height;
       dx1=x1;
@@ -226,9 +231,11 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 
     if (App.IE) {
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
-      i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
       var c = $("#canvas");
-      c.empty().append(i0);
+      if(i0){
+          i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
+          c.empty().append(i0);
+      }
       if(i1){
         i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
         c.append(i1);
@@ -249,8 +256,9 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
         var rate =  Math.sqrt(320/screen.width);
         context.scale(rate, rate);
       }
-
-      context.drawImage(i0, dx0, dy0);
+      if(i0){
+        context.drawImage(i0, dx0, dy0);
+      }
       if(i1){
         context.drawImage(i1, dx1, dy1);
       }
@@ -395,7 +403,12 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       return;
     }
     if(current_view === VIEW_PAGE){
-        paintPageImageSpread(i, pageImages[current_mode][currentPageIndex-1]);
+      if(currentPageIndex==0){
+          paintPageImageSpread(i,null);
+      }else{
+          paintPageImageSpread(pageImages[current_mode][currentPageIndex+1], i);
+      }
+
     }else{
       paintImage(i);
     }
@@ -419,7 +432,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     $("#errmsg_servererr").hide();
     $("#errmsg_expired").hide();
     $("#errmsg_forbidden").hide();
-	
+
 	(parent["Controll"]["hideAd"])();
 
     if(msg){
@@ -858,7 +871,11 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   var jumpPrev = function() {
     var prev;
     if(current_view === VIEW_PAGE){
-      prev = currentPageIndex - 1;
+        if(currentPageIndex==1){
+        	prev = 0;
+        }else{
+            prev = currentPageIndex - 2;
+        }
     }else{
       prev = currentSceneIndex - 1;
     }
@@ -1138,7 +1155,14 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     }
     var next;
     if(current_view === VIEW_PAGE){
-      next = currentPageIndex + 1;
+      if(currentPageIndex==0){
+    	  next = 1;
+      }else if(currentPageIndex==pages.length-2){
+    	  next = currentPageIndex + 1;
+      }else{
+          next = currentPageIndex + 2;
+      }
+
     }else{
       next = currentSceneIndex + 1;
     }
