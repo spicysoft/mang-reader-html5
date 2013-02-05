@@ -343,8 +343,9 @@ var startReader = function(storyId){
 		sync_iframe();
 	},1000);
     $('iframe:first').load(function(e){
-	  console.log("loaded iframe");
-	  sync_iframe();
+		if(controll_timer)return;
+		console.log("loaded iframe");
+		sync_iframe();
     });
 
     $("#menu_first").click(Controll.first);
