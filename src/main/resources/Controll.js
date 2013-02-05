@@ -204,7 +204,7 @@ function $Controll() {
 	});
 	var topPos = (ad_area.height()+13)/2;
 	ad_area.css({
-		marginTop:"-"+(topPos-40)+"px",
+		marginTop:"-"+(topPos-80)+"px",
 		marginLeft:"-"+(ad_area.width()+26)/2+"px",
 		opacity:0
 	});
