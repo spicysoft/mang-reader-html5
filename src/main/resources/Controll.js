@@ -159,10 +159,14 @@ function $Controll() {
     document.getElementById('reader_reader').contentWindow._ad_text = $('<div>').html(html).text();
   };
 
+  this.is_show_ad =false;
   this.hideAd = function(){
-  	$("#ad_cover").hide();;
+  	$("#ad_cover").hide();
+	this.is_show_ad=false;
   }
   this.showAd = function(storyId, adSpaceId, callbackSkipAd) {
+  	if(this.is_show_ad)return;
+	this.is_show_ad=true;
   	var event = "_trackEvent";
 	var category="/ad/";
 	var adNetworkId="default";
@@ -176,8 +180,6 @@ function $Controll() {
 		ad_cover.show();
 	}
 	
-	var close_button = $(".ad_button_area a");
-	close_button.addClass("disable");
 
 	if(Math.random()>0.5){
 		$("#top_button").show();
@@ -187,6 +189,7 @@ function $Controll() {
 		$("#bottom_button").show();
 	}
 	var ad_area=$("#ad_area");
+	var ad_animate_time=2000;
 	var ad = ad_area.children(".area");
 	ad.css("pointer-events","none");
 	var clickCover = $("#click_controll");
@@ -194,32 +197,42 @@ function $Controll() {
 	setTimeout(function(){
 		ad.css("pointer-events","auto");
 		clickCover.hide();
-		},1000);
+		},ad_animate_time);
 
 	$(".go_premium").unbind("click").one("click",function(){
 		tryPushAnalytics([event, category+adSpaceId, 'premium', adNetworkId]);
 	});
+	var topPos = (ad_area.height()+13)/2;
 	ad_area.css({
-		marginTop:"-"+(ad_area.height()+13)/2+"px",
-		marginLeft:"-"+(ad_area.width()+26)/2+"px"
+		marginTop:"-"+(topPos-80)+"px",
+		marginLeft:"-"+(ad_area.width()+26)/2+"px",
+		opacity:0
 	});
+	
+	ad_area.animate({
+		marginTop:"-"+topPos+"px",
+		opacity:1
+	},ad_animate_time);
 
 	var virtualUrl = category+adSpaceId+"/"+adNetworkId+"/"+storyId;
 	tryPushAnalytics(['_trackPageview', virtualUrl]);
 
-	var clickEvent = 'click';
+	var close_button = $(".ad_button_area a");
+	close_button.addClass("disable");
+	var self=this;
 	setTimeout(function(){
 		close_button.unbind("click");
-		close_button.removeClass("disable").one(clickEvent,function(){
+		close_button.removeClass("disable").bind('click',function(){
 			console.log("ad close button : click : " + Controll.current()  +"-"+ Controll.total());
 			tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworkId]);
 			ad_cover.hide();
+			self.is_show_ad=false;
+			console.log("ad close button : click done");
 			if("1"!=Controll.current() && Controll.current() == Controll.total()) {
 				callbackSkipAd();
-				console.log("finished comic!")
 			}
 		});
-		},3000);
+		},ad_animate_time+1000);
 	};
 };
 
@@ -330,8 +343,9 @@ var startReader = function(storyId){
 		sync_iframe();
 	},1000);
     $('iframe:first').load(function(e){
-	  console.log("loaded iframe");
-	  sync_iframe();
+		if(controll_timer)return;
+		console.log("loaded iframe");
+		sync_iframe();
     });
 
     $("#menu_first").click(Controll.first);

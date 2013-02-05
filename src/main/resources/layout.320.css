@@ -8,8 +8,8 @@
   margin: 4px 6px 4px 6px;
 }
 
-.sprite {background-image: url(ja.320.png?v=4); background-size: 500px 700px; background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
-.sprite2 {background-image: url(ja.320.png?v=4); background-size: 500px 700px; background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
+.sprite {background-image: url(ja.320.png?v=5); background-size: 500px 700px; background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
+.sprite2 {background-image: url(ja.320.png?v=5); background-size: 500px 700px; background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
 
 #vote {
     margin-right: 10px;
@@ -77,13 +77,13 @@
 #start                       {background-position: 0 -261px;width: 213px; height: 60px; cursor: pointer;}
 #start:hover, #start.active  {background-position: -215px -261x;width: 213px; height: 60px; cursor: pointer;}
 
-#close_ad                       	{background-position: -342px -96px;width: 48px;height: 23px; cursor:pointer;}
-#close_ad:hover, #close_ad.active   {background-position: -392px -96px;width: 48px;height: 23px; cursor:pointer;}
-#close_ad.disable				    {background-position: -442px -96px;width: 48px;height: 23px; cursor:pointer;}		
+#close_ad                       	{background-position: -342px -96px;width: 42px;height: 20px; cursor: pointer;}
+#close_ad:hover, #close_ad.active   {background-position: -386px -96px;width: 42px;height: 20px; cursor: pointer;}
+#close_ad.disable				    {background-position: -429px -96px;width: 42px;height: 20px; cursor: pointer;}		
 
-#close_ad_top                       		{background-position: -406px -64px;width: 23px;height: 23px; cursor:pointer;}
-#close_ad_top:hover, #close_ad_top.active   {background-position: -431px -64px;width: 23px;height: 23px; cursor:pointer;}
-#close_ad_top.disable				    	{background-position: -456px -64px;width: 23px;height: 23px; cursor:pointer;}		
+#close_ad_top                       		{background-position: -406px -64px;width: 20px;height: 20px; cursor: pointer;}
+#close_ad_top:hover, #close_ad_top.active   {background-position: -428px -64px;width: 20px;height: 20px; cursor: pointer;}
+#close_ad_top.disable				    	{background-position: -450px -64px;width: 20px;height: 20px; cursor: pointer;}			
 
 
 .large_msg_recommend_login {
