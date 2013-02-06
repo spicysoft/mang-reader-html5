@@ -876,7 +876,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
    */
   var jumpPrev = function() {
     var prev;
-    if(current_view === VIEW_PAGE){
+    if(current_view === VIEW_PAGE_W){
         if(currentPageIndex==1){
         	prev = 0;
         }else{
@@ -927,12 +927,14 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
    * @return void
    */
   var goPrev= function(e) {
+    console.log("go prev start");
     SceneAnimator.reverse = true;
     SceneAnimator.dirFwd = false;
     reverse = true;
 
     if((current_view === VIEW_PAGE || current_view === VIEW_PAGE_W) && 0 === currentPageIndex ||
       current_view === VIEW_SCENE && 0 === currentSceneIndex){
+      console.log("ignore goPrev");
       prevent_default(e);
       return;
     }
@@ -943,7 +945,8 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     }
     hideFinished();
 
-    if(current_view === VIEW_PAGE || current_view === VIEW_PAGE_W){
+    if(current_view === VIEW_PAGE){
+      console.log("go prev pagemode");
       if (pageX >= width) {
         console.log("*** alert prev ***");
         jumpPrev();
@@ -954,6 +957,8 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       } else {
         setTimeout(paint, 0);
       }
+    }else if(current_view === VIEW_PAGE_W){
+        jumpPrev();
     }else{
       if (SceneAnimator.isAtScrollStart()) {
         jumpPrev();
@@ -969,6 +974,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     if(e){
       e.preventDefault();
     }
+    console.log("go prev done");
   };
 
   var show_first_click = function(e){
@@ -1284,52 +1290,56 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     $("#dialog_error").hide();
   };
 
-  var pageX = 0;
+  var touch_pageX = 0;
 
-  var canvas_click = function(event) {
+  var canvas_click = function(e) {
       console.log("canvas_click");
-      if(event.clientX){
-          pageX = event.clientX;
+      if(e.clientX){
+    	  touch_pageX = e.clientX;
       }else if(event.changedTouches){
-    	  pageX = event.changedTouches[0].pageX;
+    	  touch_pageX = event.changedTouches[0].pageX;
       }else{
-    	  pageX = event.pageX;
+    	  touch_pageX = e.pageX;
       }
 
       if(!menu_click_lock && current_view !== VIEW_PAGE_W){
           goNext();
       }
-      prevent_default(event);
+      prevent_default(e);
   };
 
-  var canvas_move = function(event) {
-	  if(pageX!=0 && current_view == VIEW_PAGE_W){
+  var canvas_move = function(e) {
+	  if(touch_pageX!=0 && current_view == VIEW_PAGE_W){
 	      console.log("canvas_move");
 	      console.log(event);
 	      var newX = 0;
 	      if(event.clientX){
-	    	  newX = event.clientX;
+	    	  newX = e.clientX;
 	      }else if(event.changedTouches){
 	    	  newX = event.changedTouches[0].pageX;
 	      }else{
-	    	  newX = event.pageX;
+	    	  newX = e.pageX;
 	      }
-	      var dx = newX - pageX;
+	      var dx = newX - touch_pageX;
+	      $("#canvas").css("left", dx/2);
 	      if(dx > 100){
-	    	  pageX = 0;
+	    	  touch_pageX = 0;
 	          goNext();
+	          $("#canvas").css("left", 0);
 	      }else if(dx < -100){
-	    	  pageX = 0;
+	    	  touch_pageX = 0;
 	          goPrev();
+	          $("#canvas").css("left", 0);
 	      }
 	      console.log(dx);
 	  }
-      prevent_default(event);
+      prevent_default(e);
   };
 
-  var canvas_up = function(event) {
-	  pageX=0;
-      prevent_default(event);
+  var canvas_up = function(e) {
+	  touch_pageX=0;
+      $("#canvas").css("left", 0);
+      prevent_default(e);
   };
 
   /**
