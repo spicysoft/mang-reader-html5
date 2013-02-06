@@ -8,8 +8,20 @@
   margin: 4px 6px 4px 6px;
 }
 
-.sprite {background-image: url(ja.320.png?v=5); background-size: 500px 700px; background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
-.sprite2 {background-image: url(ja.320.png?v=5); background-size: 500px 700px; background-repeat: no-repeat; text-indent:-9999px; overflow: hidden; display:block;}
+.sprite {
+	border: 1px solid #999;
+	background: rgba(0,0,0,0.7);
+	border-radius: 5px;        /* CSS3草案 */  
+	-webkit-border-radius: 5px;    /* Safari,Google Chrome用 */  
+	-moz-border-radius: 5px;  
+	
+	background-image: url(ja.320.png?v=6);
+	background-size: 500px 700px;
+	background-repeat:no-repeat; 
+	text-indent:-9999px;
+	overflow:hidden;
+	display:block;
+}
 
 #vote {
     margin-right: 10px;
@@ -64,7 +76,7 @@
 #menu_tab:hover, #menu_tab.active {background-position: -342px -22px;width: 45px;height: 15px; cursor:pointer;}
 
 #menu_tab_close                       		  {background-position: -342px -39px;width: 45px;height: 23px; cursor:pointer;}
-#menu_tab_close:hover, #menu_tab_close.active {background-position: -342px -39px;width: 45px;height: 23px; cursor:pointer;}
+#menu_tab_close:hover, #menu_tab_close.active {background-position: -389px -39px;width: 45px;height: 23px; cursor:pointer;}
 
 #close                      {background-position: -342px -64px;width: 30px;height: 30px; cursor:pointer;}
 #close:hover, #close.active {background-position: -342px -64px;width: 30px;height: 30px; cursor:pointer;}
@@ -75,7 +87,7 @@
 #logo_reader    {background-position: -343px 0;width: 92px;height: 21px;position:absolute; right:12px; top:12px;}
 
 #start                       {background-position: 0 -261px;width: 213px; height: 60px; cursor: pointer;}
-#start:hover, #start.active  {background-position: -215px -261x;width: 213px; height: 60px; cursor: pointer;}
+#start:hover, #start.active  {background-position: -215px -261px;width: 213px; height: 60px; cursor: pointer;}
 
 #close_ad                       	{background-position: -342px -96px;width: 42px;height: 20px; cursor: pointer;}
 #close_ad:hover, #close_ad.active   {background-position: -386px -96px;width: 42px;height: 20px; cursor: pointer;}
