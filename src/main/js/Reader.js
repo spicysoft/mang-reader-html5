@@ -1309,7 +1309,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 	      var newX = 0;
 	      if(event.clientX){
 	    	  newX = event.clientX;
-	      }else{
+	      }else if(event.changedTouches){
 	    	  newX = event.changedTouches[0].pageX;
 	      }else{
 	    	  newX = event.pageX;
