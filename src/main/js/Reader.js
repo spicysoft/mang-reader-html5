@@ -737,12 +737,12 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   };
 
   var fetchPageImage = function (pageIndex){
-    var under = pageIndex - 1;
+    var under = pageIndex - 2;
     var max;
     if(current_mode  === MODE_READING){
       max = 3;
     }else{
-      max = 1;
+      max = 2;
     }
     var prefetch = pageIndex + max;
 
@@ -1288,18 +1288,40 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 
   var canvas_click = function(event) {
       console.log("canvas_click");
-      pageX = event.clientX;
-      if(!menu_click_lock){
+      if(event.clientX){
+          pageX = event.clientX;
+      }else if(event.changedTouches){
+    	  pageX = event.changedTouches[0].pageX;
+      }else{
+    	  pageX = event.pageX;
+      }
+
+      if(!menu_click_lock && current_view !== VIEW_PAGE_W){
           goNext();
       }
       prevent_default(event);
   };
 
   var canvas_move = function(event) {
-	  if(pageX!=0){
+	  if(pageX!=0 && current_view == VIEW_PAGE_W){
 	      console.log("canvas_move");
 	      console.log(event);
-	      var dx = event.clientX - pageX;
+	      var newX = 0;
+	      if(event.clientX){
+	    	  newX = event.clientX;
+	      }else{
+	    	  newX = event.changedTouches[0].pageX;
+	      }else{
+	    	  newX = event.pageX;
+	      }
+	      var dx = newX - pageX;
+	      if(dx > 100){
+	    	  pageX = 0;
+	          goNext();
+	      }else if(dx < -100){
+	    	  pageX = 0;
+	          goPrev();
+	      }
 	      console.log(dx);
 	  }
       prevent_default(event);
