@@ -60,8 +60,10 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   var is_back = false;
   var trackstart = false;
 
+
   //0..右開き
   var spread = 0;
+  var flick = 0;
   //var orientation = 'vertical';
   var orientation = 'horizontal';
 
@@ -71,7 +73,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v6.0.6");
+  console.log("v6.0.7");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -109,6 +111,8 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   }
 
   var act_start = App.isSmartPhone?"touchstart":"mousedown";
+  var act_end = App.isSmartPhone?"touchend":"mouseup";
+  var act_move = App.isSmartPhone?"touchmove":"mousemove";
   var act_button = App.isSmartPhone?"touchend":"mouseup";
 
   var prevent_default = function(event) {
@@ -894,6 +898,8 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     $("#finish_actions").hide();
     $("#canvas").unbind(act_start,canvas_click);
     $("#canvas").bind(act_start,canvas_click);
+    $("#canvas").bind(act_move,canvas_move);
+    $("#canvas").bind(act_end,canvas_up);
   };
 
   var activate_button = function(item, time){
@@ -1278,11 +1284,29 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     $("#dialog_error").hide();
   };
 
+  var pageX = 0;
+
   var canvas_click = function(event) {
       console.log("canvas_click");
+      pageX = event.clientX;
       if(!menu_click_lock){
           goNext();
       }
+      prevent_default(event);
+  };
+
+  var canvas_move = function(event) {
+	  if(pageX!=0){
+	      console.log("canvas_move");
+	      console.log(event);
+	      var dx = event.clientX - pageX;
+	      console.log(dx);
+	  }
+      prevent_default(event);
+  };
+
+  var canvas_up = function(event) {
+	  pageX=0;
       prevent_default(event);
   };
 
