@@ -16,6 +16,7 @@
 	-webkit-border-radius: 5px;    /* Safari,Google Chrome用 */  
 	-moz-border-radius: 5px; 
 	display:table;
+	box-sizing:border-box;
 }
 .sprite div {
 	display:table-cell;
@@ -150,7 +151,7 @@
 
 
 /*広告閉じる*/
-#close_ad　					{width: 44px;height: 22px; cursor: pointer;}
+#close_ad					{width: 44px;height: 22px; cursor: pointer;}
 #close_ad span              {background-position: -257px 0;width: 42px;height: 20px;}
 #close_ad:hover span, 
 #close_ad.active span 		{background-position: -299px 0;width: 42px;height: 20px;}

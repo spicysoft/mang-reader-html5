@@ -115,8 +115,8 @@
 				var parentURL = $(parent.document)[0]["URL"];
 				if(parentURL.indexOf("?next=")!=-1)parentURL = parentURL.substring(parentURL.indexOf("?next=")+6,parentURL.length);
 				$(this).attr("href",$(this).attr("href")+"?next="+parentURL);
-			})
-			$(".sprite").prepend("<div><span></span></div>")
+			});
+			$(".sprite").prepend("<div><span></span></div>");
 		</script>
       </div>
       <div id="story_title_insert" style="display:none;">

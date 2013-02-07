@@ -16,6 +16,7 @@
 	-webkit-border-radius: 10px;    /* Safari,Google Chrome用 */  
 	-moz-border-radius: 10px;  
 	display:table;
+	box-sizing:border-box;
 }
 .sprite div {
 	display:table-cell;
@@ -30,14 +31,7 @@
 	display:block;
 	margin:auto;
 }
-#vote {
-    margin-right: 15px;
-    margin-left: auto;
-}
-#bookmark {
-    margin-left: 15px;
-    margin-right: auto;
-}
+
 #dialog_error{
     position:absolute;
     top:195px;
