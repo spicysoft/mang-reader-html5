@@ -15,12 +15,21 @@
 	border-radius: 10px;        /* CSS3草案 */  
 	-webkit-border-radius: 10px;    /* Safari,Google Chrome用 */  
 	-moz-border-radius: 10px;  
-	
-	background-image: url(ja.480.png?v=9);
+	display:table;
+}
+.sprite div {
+	display:table-cell;
+	vertical-align:middle;
+}
+.sprite span {
+	background-image: url(ja.480.png?v=10);
+	background-size: 624px 570px;
 	background-repeat:no-repeat; 
 	text-indent:-9999px;
 	overflow:hidden;
 	display:block;
+	
+	margin:auto;
 }
 #vote {
     margin-right: 15px;
@@ -34,31 +43,113 @@
     position:absolute;
     top:195px;
     left:80px;
+	width: 320px;
+	height: 90px;
 }
 
-#next                     {background-position: 0 -321px;width: 450px;height: 134px;cursor: pointer;}
-#next:hover, #next.active {background-position: 0 -456px;width: 450px;height: 134px;cursor: pointer;}
-#next.disable             {background-position: 0 -591px;width: 450px;height: 134px;cursor: default;}
 
-#bookmark                         {background-position: 0 -230px;width: 218px;height: 90px;cursor: pointer;}
-#bookmark:hover, #bookmark.active {background-position: -219px -230px;width: 218px;height: 90px;cursor: pointer;}
-#bookmark.disable                 {background-position: -438px -230px;width: 218px;height: 90px;cursor: default;}
+/*読む*/
+#start						{width: 448px;height: 100px; cursor: pointer;}
+#start span					{background-position: 0 -449px;width: 159px;height: 61px;}
+#start:hover span, 
+#start.active span			{background-position: -159px -449px;width: 159px;height: 61px;}
+#start.disable span			{background-position: -318px -449px;width: 159px;height: 61px;}	
 
-#vote                      {background-position:      0 -139px; width: 218px;height: 90px;cursor: pointer;}
-#vote:hover, #vote.active  {background-position: -219px -139px; width: 218px;height: 90px;cursor: pointer;}
-#vote.disable              {background-position: -438px -139px; width: 218px;height: 90px;cursor: default;}
+/*前のコマへ*/
+#prev_scene					{width: 170px;height: 68px; cursor: pointer;}
+#prev_scene span			{background-position: 0 -88px;width: 142px;height: 52px;}
+#prev_scene:hover span, 
+#prev_scene.active span		{background-position: -142px -88px;width: 142px;height: 52px;}
+#prev_scene.disable span	{background-position: -284px -88px;width: 142px;height: 52px;}	
 
-#prev_scene                           {background-position: 0 0;width: 170px;height: 68px;cursor: pointer;}
-#prev_scene:hover, #prev_scene.active {background-position: -171px 1px;width: 170px;height: 68px;cursor: pointer;}
-#prev_scene.disable                   {background-position: -342px 0;width: 170px;height: 68px;cursor: default;}
+/*前のページへ*/
+#prev_page					{width: 170px;height: 68px; cursor: pointer;}
+#prev_page span				{background-position: 0 -140px;width: 165px;height: 52px;}
+#prev_page:hover span, 
+#prev_page.active span		{background-position: -165px -140px;width: 165px;height: 52px;}
+#prev_page.disable span		{background-position: -330px -140px;width: 165px;height: 52px;}	
 
-#prev_page                          {background-position: 0px -866px;     width: 171px;height: 69px;cursor: pointer;}
-#prev_page:hover, #prev_page.active {background-position:  -172px -866px; width: 171px;height: 69px;cursor: pointer;}
-#prev_page.disable                  {background-position: -343px -866px;  width: 171px;height: 69px;cursor: default;}
+/*最初から読む*/
+#first_scene				{width: 170px;height: 68px; cursor: pointer;}
+#first_scene span			{background-position: 0 -192px;width: 165px;height: 52px;}
+#first_scene:hover span, 
+#first_scene.active span	{background-position: -165px -192px;width: 165px;height: 52px;}
+#first_scene.disable span	{background-position: -330px -192px;width: 165px;height: 52px;}	
 
-#first_scene                            {background-position: 0 -69px;width: 170px;height: 68px;cursor: pointer;}
-#first_scene:hover, #first_scene.active {background-position: -171px -69px;width: 170px;height: 68px;cursor: pointer;}
-#first_scene.disable                    {background-position: -342px -69px;width: 170px;height: 68px;cursor: default;}
+/*次の話へ*/
+#next						{width: 448px;height: 100px; cursor: pointer;}
+#next span					{background-position: 0 -388px;width: 159px;height: 61px;}
+#next:hover span, 
+#next.active span			{background-position: -159px -388px;width: 159px;height: 61px;}
+#next.disable span			{background-position: -318px -388px;width: 159px;height: 61px;}	
+
+/*ブックマークして次へ*/
+#bookmark					{width: 216px;height: 88px; cursor: pointer;}
+#bookmark span				{background-position: 0 -244px;width: 208px;height: 72px;}
+#bookmark:hover span, 
+#bookmark.active span		{background-position: -208px -244px;width: 208px;height: 72px;}
+#bookmark.disable span		{background-position: -416px -244px;width: 208px;height: 72px;}	
+
+/*いいねして次へ*/
+#vote						{width: 216px;height: 88px; cursor: pointer;}
+#vote span					{background-position: 0 -316px;width: 208px;height: 72px;}
+#vote:hover span, 
+#vote.active span			{background-position: -208px -316px;width: 208px;height: 72px;}
+#vote.disable span			{background-position: -416px -316px;width: 208px;height: 72px;}	
+
+/*閉じる*/
+#close						{width: 44px;height: 44px; cursor: pointer;}
+#close span                 {background-position: -219px 0;width: 38px;height: 38px; cursor: pointer;}
+#close:hover span, 
+#close.active span			{background-position: -257px 0;width: 38px;height: 38px; cursor: pointer;}
+
+/*広告閉じる*/
+#close_ad					{width: 46px;height: 22px; cursor: pointer;}
+#close_ad span              {background-position: -295px 0;width: 36px;height: 20px; cursor: pointer;}
+#close_ad:hover span, 
+#close_ad.active span 		{background-position: -331px 0;width: 36px;height: 20px; cursor: pointer;}
+#close_ad.disable span      {background-position: -367px 0;width: 36px;height: 20px; cursor: pointer;}
+
+/*広告バツ*/
+#close_ad_top				{width: 44px;height: 44px; cursor: pointer;}
+#close_ad_top span			{background-position: -295px -20px;width: 36px;height: 36px; cursor: pointer;}
+#close_ad_top:hover span, 
+#close_ad_top.active span 	{background-position: -315px -20px;width: 36px;height: 36px; cursor: pointer;}
+#close_ad_top.disable span  {background-position: -335px -20px;width: 36px;height: 36px; cursor: pointer;}
+
+/*やじるし*/
+#arrow_left					{width: 58px;height: 100px; cursor: pointer;}
+#arrow_left span			{background-position: -477px -388px;width: 49px;height: 56px; cursor: pointer;}
+#arrow_left:hover span, 
+#arrow_left.active span 	{background-position: -526px -388px;width: 49px;height: 56px; cursor: pointer;}
+#arrow_left.disable span 	{background-position: -575px -388px;width: 49px;height: 56px; cursor: pointer;}
+
+#arrow_right				{width: 58px;height: 100px; cursor: pointer;}
+#arrow_right span			{background-position: -477px -444px;width: 49px;height: 56px; cursor: pointer;}
+#arrow_right:hover span, 
+#arrow_right.active span 	{background-position: -526px -444px;width: 49px;height: 56px; cursor: pointer;}
+#arrow_right.disable span 	{background-position: -575px -444px;width: 49px;height: 56px; cursor: pointer;}
+
+/*モード*/
+#mode_full_page span		{background-position: 0 -510px;width: 121px;height: 60px; cursor: pointer;}
+#mode_wade_page span		{background-position: -121px -510px;width: 121px;height: 60px; cursor: pointer;}
+#mode_roll_coma span		{background-position: -242px -510px;width: 121px;height: 60px; cursor: pointer;}
+#mode_anime_coma span		{background-position: -363px -510px;width: 121px;height: 60px; cursor: pointer;}
+
+/*設定*/
+#setting					{width: 170px;height: 48px; cursor: pointer;}
+#setting span				{background-position: 0 0;width: 73px;height: 44px;}
+#setting:hover span, 
+#setting.active span		{background-position: -73px 0;width: 73px;height: 44px;}
+#setting.disable span		{background-position: -146px 0;width: 73px;height: 44px;}		
+
+/*モード変更*/
+#change_mode				{width: 170px;height: 48px; cursor: pointer;}
+#change_mode span			{background-position: 0 -44px;width: 141px;height: 44px;}
+#change_mode:hover span, 
+#change_mode.active span	{background-position: -141px -44px;width: 141px;height: 44px;}
+#change_mode.disable span	{background-position: -282px -44px;width: 141px;height: 44px;}	
+
 
 #toggle_reading    {background-position: -451px -488px;width: 222px;height: 48px; cursor:pointer;}
 #toggle_original   {background-position: -451px -536px;width: 222px;height: 48px; cursor:pointer;}
@@ -73,18 +164,6 @@
 #close                      {background-position: -560px -74px;width: 46px;height: 46px; cursor: pointer;}
 #close:hover, #close.active {background-position: -513px -74px;width: 46px;height: 46px; cursor: pointer;}
 
-#dialog_error   {background-position: -451px -591px;width: 320px;height: 90px;}
 #dialog_loading {background-position: -451px -321px;width: 170px;height: 68px; cursor:wait;}
 #logo_reader    {background-position: -513px -1px;width: 153px;height: 36px;position:absolute; right:16px; top:16px;}
 
-#start                       {background-position: 0 -726px;      width: 320px; height: 90px;cursor: pointer;}
-#start:hover, #start.active  {background-position: -320px -726px; width: 320px; height: 90px;cursor: pointer;}
-
-#close_ad                  		  {background-position: -607px -74px;width: 74px;height: 36px; cursor: pointer;}
-#close_ad:hover, #close_ad.active {background-position: -683px -74px;width: 74px;height: 46px; cursor: pointer;}
-#close_ad.disable         		  {background-position: -683px -112px;width: 74px;height: 36px; cursor: pointer;}
-
-
-#close_ad_top							  {background-position: -683px -150px;width: 36px;height: 36px; cursor: pointer;}
-#close_ad_top:hover, #close_ad_top.active {background-position: -683px -188px;width: 36px;height: 36px; cursor: pointer;}
-#close_ad_top.disable         		  	  {background-position: -683px -226px;width: 36px;height: 36px; cursor: pointer;}

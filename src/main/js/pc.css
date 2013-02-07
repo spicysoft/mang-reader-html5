@@ -163,7 +163,6 @@ body {
 }
 #start {
     position: relative;
-    display: block;
     margin: auto;
 }
 
@@ -258,18 +257,20 @@ body {
     width:            100%;
 }
 
-#toggle_reading, #toggle_original {
+#setting {
     z-index:  12;
     position: relative;
     top:      0px;
     float:    left;
+	margin: 10px 8px 0px 8px;
 }
 
-#toggle_scene_view, #toggle_page_view {
+#change_mode {
     z-index:  12;
     position: relative;
     top:      0px;
     float:    right;
+	margin: 10px 8px 0px 8px;
 }
 
 #prev_scene {
@@ -277,7 +278,7 @@ body {
     position: relative;
     top:      0px;
     float:    left;
-    margin:   4px 8px 4px 8px;
+    margin: 10px 8px 10px 8px;
 }
 
 #prev_page {
@@ -285,7 +286,7 @@ body {
     position: relative;
     top:      0px;
     float:    left;
-    margin:   4px 8px 4px 8px;
+    margin: 10px 8px 10px 8px;
 }
 
 #first_scene {
@@ -293,7 +294,7 @@ body {
     position: relative;
     top:      0px;
     float:    right;
-    margin: 4px 8px 4px 8px;
+    margin: 10px 8px 10px 8px;
 }
 
 #menu_switch {
