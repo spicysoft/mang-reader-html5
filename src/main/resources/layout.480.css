@@ -28,7 +28,6 @@
 	text-indent:-9999px;
 	overflow:hidden;
 	display:block;
-	
 	margin:auto;
 }
 #vote {
@@ -130,18 +129,60 @@
 #arrow_right.active span 	{background-position: -526px -444px;width: 49px;height: 56px; cursor: pointer;}
 #arrow_right.disable span 	{background-position: -575px -444px;width: 49px;height: 56px; cursor: pointer;}
 
-/*モード*/
-#mode_full_page span		{background-position: 0 -510px;width: 121px;height: 60px; cursor: pointer;}
-#mode_wade_page span		{background-position: -121px -510px;width: 121px;height: 60px; cursor: pointer;}
-#mode_roll_coma span		{background-position: -242px -510px;width: 121px;height: 60px; cursor: pointer;}
-#mode_anime_coma span		{background-position: -363px -510px;width: 121px;height: 60px; cursor: pointer;}
-
 /*設定*/
 #setting					{width: 170px;height: 48px; cursor: pointer;}
 #setting span				{background-position: 0 0;width: 73px;height: 44px;}
 #setting:hover span, 
 #setting.active span		{background-position: -73px 0;width: 73px;height: 44px;}
 #setting.disable span		{background-position: -146px 0;width: 73px;height: 44px;}		
+
+/*モード*/
+#menu_mode {
+	width:100%;
+	height:100%;
+	position:absolute;
+	z-index:14;
+	display:none;
+}
+#menu_mode .sprite {
+	background:#ddd;
+	border:none;
+	border-bottom:1px solid #888;
+	border-radius: 0px;        /* CSS3草案 */  
+	-webkit-border-radius: 0px;    /* Safari,Google Chrome用 */  
+	-moz-border-radius: 0px;  
+	display:block;
+	clear:both;
+	box-sizing:content-box;
+	padding: 10px 20px;
+	width:400px;
+	height:80px;
+	margin: 0 auto;
+	color: #666;
+	text-decoration:none;
+}
+#mode_buttons {
+	position:relative;
+	top:50%;
+	margin-top:-202px;
+	z-index:6;
+}
+#menu_mode .sprite div {
+	float:left;
+	margin:10px 10px 0 0;
+}
+#menu_mode h3 {
+	margin:0 0 5px;
+	font-size: 14px;
+}
+#menu_mode p {
+	margin:0;
+	font-size: 12px;
+}
+#mode_full_page span		{background-position: 0 -510px;width: 121px;height: 60px; cursor: pointer;}
+#mode_wade_page span		{background-position: -121px -510px;width: 121px;height: 60px; cursor: pointer;}
+#mode_roll_coma span		{background-position: -242px -510px;width: 121px;height: 60px; cursor: pointer;}
+#mode_anime_coma span		{background-position: -363px -510px;width: 121px;height: 60px; cursor: pointer;}
 
 /*モード変更*/
 #change_mode				{width: 170px;height: 48px; cursor: pointer;}
@@ -150,13 +191,10 @@
 #change_mode.active span	{background-position: -141px -44px;width: 141px;height: 44px;}
 #change_mode.disable span	{background-position: -282px -44px;width: 141px;height: 44px;}	
 
+/*読込中*/
+#dialog_loading				{width: 168px;height: 66px; cursor:wait;}
+#dialog_loading span		{background-position: -426px -88px;width: 165px;height: 52px;}
 
-#toggle_reading    {background-position: -451px -488px;width: 222px;height: 48px; cursor:pointer;}
-#toggle_original   {background-position: -451px -536px;width: 222px;height: 48px; cursor:pointer;}
-#toggle_page_view  {background-position: -451px -439px;width: 222px;height: 48px; cursor:pointer;}
-#toggle_scene_view {background-position: -451px -390px;width: 222px;height: 48px; cursor:pointer;}
-#toggle_scene_view.disable  {background-position:0px -817px; width: 222px;height: 48px; cursor:default;}
-#toggle_reading.disable {background-position: -223px -817px; width: 222px;height: 48px; cursor:default;}
 
 #menu_tab_close {background-position: -513px -38px;width: 69px;height: 35px; cursor:pointer;}
 #menu_tab_close:hover, #menu_tab_close.active {background-position: -583px -38px;width: 69px;height: 35px; cursor:pointer;}
@@ -164,6 +202,5 @@
 #close                      {background-position: -560px -74px;width: 46px;height: 46px; cursor: pointer;}
 #close:hover, #close.active {background-position: -513px -74px;width: 46px;height: 46px; cursor: pointer;}
 
-#dialog_loading {background-position: -451px -321px;width: 170px;height: 68px; cursor:wait;}
 #logo_reader    {background-position: -513px -1px;width: 153px;height: 36px;position:absolute; right:16px; top:16px;}
 

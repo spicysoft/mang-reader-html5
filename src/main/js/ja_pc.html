@@ -71,6 +71,15 @@
       <div id="dialog">
         <div id="dialog_loading"  class="sprite" style="display:none;"></div>
       </div>
+	  <div id="menu_mode">
+	  	<div class="mask"></div>
+		<div id="mode_buttons">
+		  	<a href="javascript:void" id="mode_full_page" class="sprite"><h3>フルページモード</h3><p>ページ単位で表示する。タブレットでは見開き表示。横にフリックするとページが切り替わる。</p></a>
+			<a href="javascript:void" id="mode_wade_page" class="sprite"><h3>ワイドページモード</h3><p>ページを横幅いっぱいに表示する。下にスクロールして読み進める。</p></a>
+			<a href="javascript:void" id="mode_roll_coma" class="sprite"><h3>コマロールモード</h3><p>コマを横幅いっぱいに表示する。下にスクロールして読み進める。</p></a>
+			<a href="javascript:void" id="mode_anime_coma" class="sprite"><h3>コマアニメモード</h3><p>コマごろに表示する。マンガ作家がアニメーションを想定している場合は、動きを伴って表示される。</p></a>
+		</div>
+	  </div>
       <div id="error" class="stage">
         <div class="mask"></div>
         <div id="dialog_error" class="sprite">
@@ -78,11 +87,8 @@
           <span id="errmsg_servererr" class="msg" style="display:none;">アクセスが集中しています。暫く時間を開けてからページを再読み込みして下さい。</span>
           <span id="errmsg_expired" class="msg" style="display:none;">スーパーユーザーモードでの閲覧期限がタイムアウトしました。ページを再度読み込むと閲覧可能になります。</span>
           <span id="errmsg_friend_only" class="msg">マンガ作家の友だちのみ閲覧可能です。</span>
-          <!--span id="errmsg_friend_only_guest" class="msg">友だちかどうか確認するためログインしてください。</span-->
           <span id="errmsg_under18" class="msg">お客さまは閲覧対象年齢外のため閲覧できません。</span>
-          <!--span id="errmsg_under18_guest" class="msg">年齢確認のためログインしてください。</span-->
           <span id="errmsg_fan_only" class="msg">マンガ作家のファンのみが閲覧可能です。</span>
-          <!--span id="errmsg_fan_only_guest" class="msg">ファンかどうか確認するためログインしてください。</span-->
 		  <span id="errmsg_forbidden" class="msg">この漫画の閲覧権限がありません。</span>
         </div>
 		<div id="errmsg_friend_only_guest" class="large_msg_recommend_login">
@@ -110,7 +116,7 @@
 				if(parentURL.indexOf("?next=")!=-1)parentURL = parentURL.substring(parentURL.indexOf("?next=")+6,parentURL.length);
 				$(this).attr("href",$(this).attr("href")+"?next="+parentURL);
 			})
-			$(".sprite").html("<div><span></span></div>")
+			$(".sprite").prepend("<div><span></span></div>")
 		</script>
       </div>
       <div id="story_title_insert" style="display:none;">
