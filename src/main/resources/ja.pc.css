@@ -1,14 +1,14 @@
-@charset "utf-8";
-
 #reader_reader{
   margin:0;
   z-index:100;
 }
-#menu_bar_reader{
+
+.menu_bar_design {
 	width: 100%;
 	border-top: 2px solid #555;
 	height: 27px;
 	position:absolute;
+	background:#1F1F1F;
 	background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxIDEiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPgo8bGluZWFyR3JhZGllbnQgaWQ9Imc1MDQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iNTAlIiB5MT0iMCUiIHgyPSI1MCUiIHkyPSI2Ni4wNzE0Mjg1NzE0Mjg1NyUiPgo8c3RvcCBzdG9wLWNvbG9yPSIjM0IzQjNCIiBvZmZzZXQ9IjAiLz48c3RvcCBzdG9wLWNvbG9yPSIjMTcxNzE3IiBvZmZzZXQ9IjEiLz4KPC9saW5lYXJHcmFkaWVudD4KPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNnNTA0KSIgLz4KPC9zdmc+);
 }
 
