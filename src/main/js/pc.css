@@ -231,7 +231,9 @@ body {
 #finish_ui {
     z-index: 9;
     position: absolute;
-    width:100%;
+    width:480px;
+	left:50%;
+	margin-left: -240px;
     bottom:   10%;
 }
 
