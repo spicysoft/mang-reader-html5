@@ -1,4 +1,8 @@
 @charset "utf-8";
+#finish_ui {
+    width:320px !important;
+	margin-left: -160px !important;
+}
 
 #toggle_reading, #toggle_original {
   margin: 4px 6px 4px 6px;
