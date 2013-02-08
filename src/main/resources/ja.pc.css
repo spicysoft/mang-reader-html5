@@ -53,24 +53,6 @@
 
 
 
-#fullscreen_prev         {background-position:    0 -204px;width: 170px;height: 68px; cursor:pointer}
-#fullscreen_prev:hover   {background-position: -171px -204px;width: 170px;height: 68px; cursor:pointer}
-#fullscreen_prev.disable {background-position: -342px -204px;width: 170px;height: 68px; cursor:default}
-
-#fullscreen_next         {background-position: 0 -273px;width: 170px;height: 68px; cursor:pointer}
-#fullscreen_next:hover   {background-position: -171px -273px;width: 170px;height: 68px; cursor:pointer}
-#fullscreen_next.disable {background-position: -342px -273px;width: 170px;height: 68px; cursor:default}
-
-
-
-#fullscreen_page_prev         {background-position:    0   -342px; width: 170px;height: 68px; cursor:pointer}
-#fullscreen_page_prev:hover   {background-position: -171px -342px; width: 170px;height: 68px; cursor:pointer}
-#fullscreen_page_prev.disable {background-position: -342px -342px; width: 170px;height: 68px; cursor:default}
-
-#fullscreen_page_next         {background-position:      0 -411px; width: 170px;height: 68px; cursor:pointer}
-#fullscreen_page_next:hover   {background-position: -171px -411px; width: 170px;height: 68px; cursor:pointer}
-#fullscreen_page_next.disable {background-position: -342px -411px; width: 170px;height: 68px; cursor:default}
-
 
 #reader_container {
     padding:0;
@@ -121,10 +103,10 @@
     font-size: 160%;
     color:#ffffff;
 }
-#fullscreen_prev, #fullscreen_page_prev  {
+#arrow_left  {
     left:5%;top:45%;position:absolute;z-index:99;
 }
-#fullscreen_next, #fullscreen_page_next {
+#arrow_right {
     right:5%;top:45%;position:absolute;z-index:99;
 }
 
@@ -200,14 +182,14 @@
 #close_fullscreen.disable span	{background-position:-40px -80px; width: 20px; height: 20px;}	
 
 /*押下時のアクション*/
-#menu_first:active,#menu_prev:active,#menu_next:active,#menu_fullscreen:active,#close_fullscreen:active,#setting:active, #change_mode:active {
+#menu_first.active,#menu_prev.active,#menu_next.active,#menu_fullscreen.active,#close_fullscreen.active,#setting.active, #change_mode.active {
 	box-shadow:inset 5px 5px 10px rgba(0,0,0,0.7);
 }
-#menu_first:active,#menu_prev:active,#menu_next:active,#menu_fullscreen:active,#close_fullscreen:active {
+#menu_first.active,#menu_prev.active,#menu_next.active,#menu_fullscreen.active,#close_fullscreen.active {
 	padding:0 5px 0 7px;
 	margin: 1px 0 0;
 }
-#setting:active, #change_mode:active {
+#setting.active, #change_mode.active {
 	padding:0 9px 0 11px;
 	line-height:30px;
 }
