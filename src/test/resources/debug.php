@@ -25,24 +25,16 @@
 <div id="reader_container" style="padding:0;margin:0;position:relative;">
  <link href="/local-test/mr/target/dist-debug/ja.pc.css" rel="stylesheet" type="text/css">
  <div id="reader_wrapper" ></div>
- <div id="popup_reading" class="sprite" style="display:none;" ></div>
- <div id="popup_original" class="sprite" style="display:none;"></div>
- <div id="popup_scene" class="sprite" style="display:none;"></div>
- <div id="popup_page" class="sprite" style="display:none;"></div>
  <div id="menu_bar_reader" style="position:absolute;top:480px;padding:0;margin:0;">
-  <div id="menu_first" class="sprite menu disable"></div>
-  <div id="menu_prev" class="sprite menu disable"></div>
-  <div id="menu_bar" class="sprite menu" style="z-index:9;">
+  <div id="menu_first" class="sprite menu disable"><div><span></span></div></div>
+  <div id="menu_prev" class="sprite menu disable"><div><span></span></div></div>
+  <div id="menu_bar" class="menu" style="z-index:9;">
     <div id="progress">
       <span id="progress_current">--</span><span style="color:#808080;">/<span id="progress_total">--</span></span>
     </div>
   </div>
-  <div id="menu_next"          class="sprite menu"></div>
-  <div id="menu_mode_reading"  class="sprite menu disable"></div>
-  <div id="menu_mode_original" class="sprite menu" style="display:none;"></div>
-  <div id="menu_scene_view"    class="sprite menu disable"></div>
-  <div id="menu_page_view"     class="sprite menu" style="display:none;"></div>
-  <div id="menu_fullscreen"    class="sprite menu" ></div>
+  <div id="menu_next"          class="sprite menu"><div><span></span></div></div>
+  <div id="menu_fullscreen"    class="sprite menu" ><div><span></span></div></div>
  </div>
 </div>
 </body></html>
