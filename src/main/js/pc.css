@@ -375,13 +375,13 @@ body {
     z-index:  14;
     position: relative;
     float:    right;
-    margin:   8px 8px 8px 0px;
+    margin:   8px 16px 8px 0px;
 }
 #bookmark {
     z-index:  14;
     position: relative;
     float:    left;
-    margin:   8px 0px 8px 8px;
+    margin:   8px 0px 8px 16px;
 }
 
 #progress {
