@@ -192,6 +192,9 @@
 #bound_right span				{background-position: -60px -56px; width: 100px; height: 56px;}
 
 /*押下時のアクション*/
+#menu_first,#menu_prev,#menu_next,#menu_fullscreen,#close_fullscreen {
+	padding:0 6px 0 6px;
+}
 #menu_first:active,#menu_prev:active,#menu_next:active,#menu_fullscreen:active,#close_fullscreen:active,#setting:active, #change_mode:active {
 	box-shadow:inset 5px 5px 10px rgba(0,0,0,0.7);
 }
