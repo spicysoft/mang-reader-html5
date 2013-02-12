@@ -251,8 +251,20 @@ body {
 }
 
 #menu_upper {
-    position:         relative;
-    width:            100%;
+    position:relative;
+    width:100%;
+	margin-top: 8px;
+	z-index:2;
+}
+#menu_upper .no_border{
+	float:left;
+}
+#menu_upper .left {
+	float:left;
+}
+#menu_upper .right {
+	float:right;
+	margin-right: 8px;
 }
 #menu_lower {
     position:         relative;
@@ -313,6 +325,7 @@ body {
     text-align:center;
     top:0;
     left:0;
+	z-index:1;
 }
 #menu_tab_close {
     z-index:12;
@@ -359,11 +372,10 @@ body {
 #progress {
     z-index: 10;
     width: 100%;
-    height:100%;
     color:       white;
     font-size:   200%;
     font-weight: bold;
-    top: 40%;
+    top: 60%;
     left:0px;
     position: absolute;
 }
