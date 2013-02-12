@@ -73,7 +73,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v6.0.7");
+  console.log("v6.0.8");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -208,29 +208,40 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       }
   };
 
-  var paintPageImageSpread = function(i0, i1){
+  var paintPageImageSpread = function(i0, i1, i2, i3){
+    var d=0;
+    var nd = 0;
+    if(reverse){
+      d = -1 * pageX;
+      nd = width;
+    }else{
+      d = pageX;
+      nd = -1 * width;
+    }
+    console.log("d:" + d);
 
-    var w0 = 0;
-    var h0 = 0;
     var dx0 = 0;
     var dy0 = 0;
     if(i0){
+        var w0 = i0.width;
+        var h0 = i0.height;
         var x0 = (width/2-i0.width);
-        w0=i0.width;
-        h0=i0.height;
-        dx0= x0;
+        dx0= x0+d;
         dy0=(height - h0) / 2;
     }
 
-    var w1 = 0;
-    var h1 = 0;
     var dx1 = 0;
     var dy1 = 0;
     if(i1){
       var x1 = width/2;
-      w1=i1.width;
-      h1=i1.height;
-      dx1=x1;
+      var w1=i1.width;
+      var h1=i1.height;
+      dx1=x1+d;
+      dy1=(height - h1) / 2;
+    }else if(!i1 && i3){
+      var x1 = width/2;
+      var h1=i3.height;
+      dx1=x1+d;
       dy1=(height - h1) / 2;
     }
 
@@ -244,6 +255,14 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       if(i1){
         i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
         c.append(i1);
+      }
+      if(i2){
+          i1.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0+nd + "px;";
+          c.append(i2);
+      }
+      if(i3){
+          i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" +  (dx0+nd+i3.width) + "px;";
+          c.append(i3);
       }
       c.append(mask);
       c = null;
@@ -266,6 +285,12 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       }
       if(i1){
         context.drawImage(i1, dx1, dy1);
+      }
+      if(i2){
+        context.drawImage(i2, dx0+nd, dy0);
+      }
+      if(i3){
+        context.drawImage(i3, (dx0+nd+i3.width), dy1);
       }
       context.restore();
     }
@@ -408,13 +433,42 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       return;
     }
     if(current_view === VIEW_PAGE_W){
-      if(currentPageIndex==0){
-          paintPageImageSpread(i,null);
+      if(pageScroll){
+          if(reverse){
+              if(currentPageIndex==0){
+                  paintPageImageSpread(pageImages[current_mode][currentPageIndex],  null, pageImages[current_mode][currentPageIndex-1],  pageImages[current_mode][currentPageIndex-2]);
+              }else{
+                  paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], pageImages[current_mode][currentPageIndex-1],  pageImages[current_mode][currentPageIndex-2]);
+              }
+          }else{
+	          if(currentPageIndex==0){
+	              paintPageImageSpread(pageImages[current_mode][currentPageIndex],  null, pageImages[current_mode][currentPageIndex+2],  pageImages[current_mode][currentPageIndex+1]);
+	          }else{
+	              paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], pageImages[current_mode][currentPageIndex+3],  pageImages[current_mode][currentPageIndex+2]);
+	          }
+          }
       }else{
-          paintPageImageSpread(pageImages[current_mode][currentPageIndex+1], i);
+        if(currentPageIndex==0){
+          paintPageImageSpread(pageImages[current_mode][currentPageIndex], null, null, null);
+        }else{
+          paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], null, null);
+        }
       }
     }else if(current_view === VIEW_PAGE){
-        paintPageImageSpread(i, pageImages[current_mode][currentPageIndex-1]);
+      if(prev_image === undefined ||
+          reverse && currentPageIndex === 0 ||
+          !reverse && currentPageIndex === pages.length-1){
+        paintImage(i);
+        prev_image = i;
+      }else if(pageScroll){
+        if(reverse){
+          paintPageImage(i, pageImages[current_mode][currentPageIndex-1]);
+        }else{
+          paintPageImage(i, pageImages[current_mode][currentPageIndex+1]);
+        }
+      }else{
+        paintImage(i);
+      }
     }else{
       paintImage(i);
     }
@@ -737,12 +791,12 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   };
 
   var fetchPageImage = function (pageIndex){
-    var under = pageIndex - 2;
+    var under = pageIndex - 3;
     var max;
     if(current_mode  === MODE_READING){
-      max = 3;
+      max = 8;
     }else{
-      max = 2;
+      max = 4;
     }
     var prefetch = pageIndex + max;
 
@@ -958,7 +1012,17 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
         setTimeout(paint, 0);
       }
     }else if(current_view === VIEW_PAGE_W){
-        jumpPrev();
+        console.log("go prev w pagemode");
+        if (pageX >= width/2) {
+          console.log("*** alert prev ***");
+          jumpPrev();
+          pageX = 0;
+        }else if (!pageScroll) {
+          pageScroll = true;
+          animation();
+        } else {
+          setTimeout(paint, 0);
+        }
     }else{
       if (SceneAnimator.isAtScrollStart()) {
         jumpPrev();
@@ -1201,6 +1265,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
    * @private
    */
   var animation = function() {
+    console.log("animation");
     if(current_view === VIEW_PAGE){
       setTimeout(paint, 0);
       if(pageX >= width){
@@ -1225,6 +1290,52 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
             pageX = pageX + limitX;
         }
       }
+      requestAnimationFrame(animation);
+    }else if(current_view === VIEW_PAGE_W){
+        setTimeout(paint, 0);
+
+        var i;
+        if(reverse){
+            if(currentPageIndex==0){
+                i = pageImages[current_mode][currentPageIndex];
+            }else{
+                i = pageImages[current_mode][currentPageIndex-1];
+            }
+        }else{
+            if(currentPageIndex==0){
+                i = pageImages[current_mode][currentPageIndex];
+            }else{
+                i = pageImages[current_mode][currentPageIndex+1];
+            }
+        }
+        var padding = width/2;
+        var limit = width+padding;
+        if(currentPageIndex==1){
+        	limit = width/2+padding;
+        }
+        if(pageX >= limit){
+          pageScroll = false;
+          prev_image = undefined;
+          if(reverse){
+            goPrev();
+          }else{
+            goNext();
+          }
+          pageX = 0;
+          return;
+        }
+        console.log("limit:" + limit + " pagex:" + pageX + " w:" + width + " pad:"+padding + " i:"+i.width);
+        if(pageX <= 0){
+            limitX = limit/2.4;
+            pageX  = limitX;
+          }else{
+            if(limitX < 1){
+                pageX = pageX + 1;
+            }else{
+                limitX = (limit-pageX)/3.5;
+                pageX = pageX + limitX;
+            }
+          }
       requestAnimationFrame(animation);
     }else{
       if (SceneAnimator.isScrolling()) {
@@ -1251,8 +1362,18 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       jumpNext();
       return;
     }
-    if(current_view === VIEW_PAGE || current_view === VIEW_PAGE_W){
-      if (pageX >= width || current_view === VIEW_PAGE_W) {
+    if(current_view === VIEW_PAGE){
+      if (pageX >= width) {
+        console.log("*** alert next ***");
+        jumpNext();
+      }else if (!pageScroll) {
+        pageScroll = true;
+        animation();
+      } else {
+        setTimeout(paint, 0);
+      }
+    }else if(current_view === VIEW_PAGE_W){
+      if (pageX >= width/2) {
         console.log("*** alert next ***");
         jumpNext();
       }else if (!pageScroll) {
@@ -1292,34 +1413,29 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 
   var touch_pageX = 0;
 
-  var canvas_click = function(e) {
-      console.log("canvas_click");
-      if(e.clientX){
-    	  touch_pageX = e.clientX;
-      }else if(event.changedTouches){
-    	  touch_pageX = event.changedTouches[0].pageX;
-      }else{
-    	  touch_pageX = e.pageX;
-      }
+  var point_x = function(e){
+    if(e.clientX){
+      return e.clientX;
+    }else if(event.changedTouches){
+      return event.changedTouches[0].pageX;
+    }
+    return e.pageX;
+  };
 
-      if(!menu_click_lock && current_view !== VIEW_PAGE_W){
-          goNext();
-      }
-      prevent_default(e);
+  var canvas_click = function(e) {
+    console.log("canvas_click");
+    touch_pageX = point_x(e);
+    if(!menu_click_lock && current_view !== VIEW_PAGE_W){
+      goNext();
+    }
+    prevent_default(e);
   };
 
   var canvas_move = function(e) {
 	  if(touch_pageX!=0 && current_view == VIEW_PAGE_W){
 	      console.log("canvas_move");
 	      console.log(event);
-	      var newX = 0;
-	      if(event.clientX){
-	    	  newX = e.clientX;
-	      }else if(event.changedTouches){
-	    	  newX = event.changedTouches[0].pageX;
-	      }else{
-	    	  newX = e.pageX;
-	      }
+	      var newX = point_x(e);
 	      var dx = newX - touch_pageX;
 	      $("#canvas").css("left", dx/2);
 	      if(dx > 100){
