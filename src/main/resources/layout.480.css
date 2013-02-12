@@ -17,6 +17,7 @@
 	-moz-border-radius: 10px;  
 	display:table;
 	box-sizing:border-box;
+	padding:0 6px;
 }
 .sprite div {
 	display:table-cell;
