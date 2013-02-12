@@ -10,6 +10,7 @@
 
 .sprite {
 	border: 2px solid #999;
+	background:#000;
 	background: rgba(0,0,0,0.7);
 	border-radius: 10px;        /* CSS3草案 */  
 	-webkit-border-radius: 10px;    /* Safari,Google Chrome用 */  

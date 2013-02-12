@@ -1,4 +1,8 @@
 @charset "utf-8";
+#finish_ui {
+    width:320px !important;
+	margin-left: -160px !important;
+}
 
 #toggle_reading, #toggle_original {
   margin: 4px 6px 4px 6px;
@@ -10,6 +14,7 @@
 
 .sprite {
 	border: 1px solid #999;
+	background:#000;
 	background: rgba(0,0,0,0.7);
 	border-radius: 5px;        /* CSS3草案 */  
 	-webkit-border-radius: 5px;    /* Safari,Google Chrome用 */  

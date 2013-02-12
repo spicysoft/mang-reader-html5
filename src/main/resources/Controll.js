@@ -232,7 +232,7 @@ function $Controll() {
 				callbackSkipAd();
 			}
 		});
-		},ad_animate_time+1000);
+		},ad_animate_time+((adSpaceId=="afterReadingInReader")?0:1000));
 	};
 };
 

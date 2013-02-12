@@ -28,25 +28,18 @@
         <img id="thumbnail" class="ui" title="クリックするとマンガ閲覧をスタートします"/>
         <div id="preview_ui" class="vhcenter">
           <span id="start_ui">
-            <span id="start" class="sprite" title="マンガを読む"></span>
+            <a href="javascript:void" id="start" class="sprite" title="マンガを読む"></a>
           </span>
         </div>
       </div>
-	  <div id="ad_cover">
-		  <div id="ad_area" class="">
-		  		<a class="go_premium" target="_blank" href="/premium/appeal">この広告は非表示にできます</a>
-				<div class="area"></div>
-				<span id="close_ad" class="sprite disable">閉じる</span>
-		  </div>
-		 </div>
       <div id="reader" class="stage">
         <canvas id="canvas"></canvas>
       </div>
       <div id="menu" style="display:none;">
         <div id="menu_lower">
-          <span id="prev_scene"   class="sprite disable" title="前のコマへ"></span>
-          <span id="prev_page"   class="sprite disable"  style="display:none;" title="前のページへ"></span>
-          <span id="first_scene"  class="sprite disable" title="最初から読む"></span>
+          <a href="javascript:void" id="prev_scene"   class="sprite disable" title="前のコマへ"></a>
+          <a href="javascript:void" id="prev_page"   class="sprite disable"  style="display:none;" title="前のページへ"></a>
+          <a href="javascript:void" id="first_scene"  class="sprite disable" title="最初から読む"></a>
         </div>
         <div id="menu_center">
           <span id="progress" ><span id="progress_current">--</span>/<span id="progress_total">--</span></span>
@@ -61,10 +54,10 @@
         <div id="finish_ui" >
           <div id="finish_actions">
             <div id="finish_social_actions">
-              <span id="bookmark"  class="sprite disable" title="ブックマークを押して次へ"></span>
-              <span id="vote"      class="sprite disable" title="イイネを押して次へ"></span>
+              <a href="javascript:void" id="bookmark"  class="sprite disable" title="ブックマークを押して次へ"></a>
+              <a href="javascript:void" id="vote"      class="sprite disable" title="イイネを押して次へ"></a>
             </div>
-            <span id="next"  class="sprite disable" title="次の話へ"></span>
+            <a href="javascript:void" id="next"  class="sprite disable" title="次の話へ"></a>
           </div>
         </div>
       </div>
