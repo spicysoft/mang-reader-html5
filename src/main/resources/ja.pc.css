@@ -141,16 +141,14 @@
 	vertical-align:middle;
 }
 .sprite span {
-	background-image: url(ja.pc.png?v=5);
-	background-size: 60px 100px;
+	background-image: url(ja.pc.png?v=6);
+	background-size: 160px 112px; 
 	background-repeat:no-repeat; 
 	text-indent:-9999px;
 	overflow:hidden;
 	display:block;
 	margin:auto;
 }
-#menu_first,#menu_prev,#menu_next,#menu_fullscreen,#close_fullscreen {padding:0 6px;}
-
 #menu_first      		  		{width: 27px;height: 26px; cursor: pointer;}
 #menu_first span				{background-position: 0 0; width: 20px; height: 20px;}
 #menu_first:hover span, 
@@ -180,6 +178,18 @@
 #close_fullscreen:hover span, 
 #close_fullscreen.active span  	{background-position:-20px -80px; width: 20px; height: 20px;}
 #close_fullscreen.disable span	{background-position:-40px -80px; width: 20px; height: 20px;}	
+
+#bound {
+	position:absolute;
+	width:100%;
+	top:50%;
+	display:none;
+}
+#bound_left     		  		{width: 138px;height: 88px; cursor: pointer;float:left;}
+#bound_left span				{background-position: -60px 0; width: 100px; height: 56px;}
+
+#bound_right     		  		{width: 138px;height: 88px; cursor: pointer;float:right;}
+#bound_right span				{background-position: -60px -56px; width: 100px; height: 56px;}
 
 /*押下時のアクション*/
 #menu_first:active,#menu_prev:active,#menu_next:active,#menu_fullscreen:active,#close_fullscreen:active,#setting:active, #change_mode:active {

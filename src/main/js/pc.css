@@ -237,6 +237,12 @@ body {
     bottom:   10%;
 }
 
+.left {
+	float:left;
+}
+.right {
+	float:right;
+}
 #menu {
     position:         absolute;
     z-index:          10;
@@ -260,15 +266,24 @@ body {
 	float:left;
 }
 #menu_upper .left {
-	float:left;
+	
 }
 #menu_upper .right {
-	float:right;
 	margin-right: 8px;
 }
 #menu_lower {
     position:         relative;
     width:            100%;
+}
+#swipe {
+	position:absolute;
+	z-index:2;
+	width:100%;
+	max-width:480px;
+	bottom: 5%;
+}
+#swipe .left, #swipe .right {
+	display:none;
 }
 
 #setting {

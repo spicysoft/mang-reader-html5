@@ -177,7 +177,7 @@
 #swipe_right span			{background-position: 0 -410px;width: 94px;height: 138px;}
 #swipe_left span			{background-position: -94px -410px;width: 94px;height: 138px;}
 
-/*ダイアログ・モード*/
+/*モード・メニュー/*/
 #menu_mode {
 	width:100%;
 	height:100%;
