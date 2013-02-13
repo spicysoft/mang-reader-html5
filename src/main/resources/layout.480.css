@@ -175,21 +175,18 @@
 #swipe_right span			{background-position: 0 -610px;width: 126px;height: 185px;}
 #swipe_left span			{background-position: -126px -610px;width: 126px;height: 185px;}
 
-/*モード・メニュー/*/
-#menu_mode {
+/*モード/設定・メニュー/*/
+.menu_base {
 	width:100%;
 	height:100%;
 	position:absolute;
 	z-index:14;
 	display:none;
 }
-#menu_mode .sprite {
+.menu_base a {
 	background:#ddd;
 	border:none;
 	border-bottom:1px solid #888;
-	border-radius: 0px;        /* CSS3草案 */  
-	-webkit-border-radius: 0px;    /* Safari,Google Chrome用 */  
-	-moz-border-radius: 0px;  
 	display:block;
 	clear:both;
 	box-sizing:content-box;
@@ -200,23 +197,33 @@
 	color: #666;
 	text-decoration:none;
 }
-#mode_buttons {
+.menu_base .buttons {
 	position:relative;
 	top:50%;
-	margin-top:-202px;
 	z-index:6;
+}
+.menu_base h3 {
+	margin:0 0 5px;
+	font-size: 14px;
+}
+.menu_base p {
+	margin:0;
+	font-size: 12px;
+}
+#menu_mode .sprite {
+	border-radius: 0px;
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;  
+}
+#menu_mode .buttons {
+	margin-top:-202px;
 }
 #menu_mode .sprite div {
 	float:left;
 	margin:10px 10px 0 0;
 }
-#menu_mode h3 {
-	margin:0 0 5px;
-	font-size: 14px;
-}
-#menu_mode p {
-	margin:0;
-	font-size: 12px;
+#menu_setting .buttons {
+	margin-top:-101px;
 }
 
 /*ロゴ*/
