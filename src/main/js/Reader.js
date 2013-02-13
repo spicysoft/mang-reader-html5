@@ -115,11 +115,11 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   var act_move = App.isSmartPhone?"touchmove":"mousemove";
   var act_button = App.isSmartPhone?"touchend":"mouseup";
 
-  var prevent_default = function(event) {
+  var prevent_default = function(e) {
     if (App.IE) {
-      event.returnValue = false;
+      e.returnValue = false;
     }else{
-      event.preventDefault();
+      e.preventDefault();
     }
   };
 
@@ -219,50 +219,43 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       nd = -1 * width;
     }
     console.log("d:" + d);
-
-    var dx0 = 0;
-    var dy0 = 0;
+    var dx0=0,dx1=0,dx2=0,dx3=0;
+    var dy0=0,dy1=0,dy2=0,dy3=0;
     if(i0){
-        var w0 = i0.width;
-        var h0 = i0.height;
-        var x0 = (width/2-i0.width);
-        dx0= x0+d;
-        dy0=(height - h0) / 2;
+      dy0=(height-i0.height)/2;
+      dx0=((width/2-i0.width)+d);
     }
-
-    var dx1 = 0;
-    var dy1 = 0;
     if(i1){
-      var x1 = width/2;
-      var w1=i1.width;
-      var h1=i1.height;
-      dx1=x1+d;
-      dy1=(height - h1) / 2;
-    }else if(!i1 && i3){
-      var x1 = width/2;
-      var h1=i3.height;
-      dx1=x1+d;
-      dy1=(height - h1) / 2;
+      dy1=(height-i1.height)/2;
+      dx1=width/2+d;
+    }
+    if(i2){
+      dy2= (height-i2.height)/2;
+      dx2= (width/2-i2.width)+d+nd;
+    }
+    if(i3){
+      dy3= (height-i3.height)/2;
+      dx3= (width/2+d)+nd;
     }
 
     if (App.IE) {
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
       var c = $("#canvas");
       if(i0){
-          i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
-          c.empty().append(i0);
+        i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
+        c.empty().append(i0);
       }
       if(i1){
         i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
         c.append(i1);
       }
       if(i2){
-          i1.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0+nd + "px;";
-          c.append(i2);
+        i1.style.cssText = "position: absolute; top: " + dy2 + "px; left:" + dx2 + "px;";
+        c.append(i2);
       }
       if(i3){
-          i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" +  (dx0+nd+i3.width) + "px;";
-          c.append(i3);
+        i1.style.cssText = "position: absolute; top: " + dy3+ "px; left:" + dx3 + "px;";
+        c.append(i3);
       }
       c.append(mask);
       c = null;
@@ -287,10 +280,10 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
         context.drawImage(i1, dx1, dy1);
       }
       if(i2){
-        context.drawImage(i2, dx0+nd, dy0);
+        context.drawImage(i2, dx2, dy2);
       }
       if(i3){
-        context.drawImage(i3, (dx0+nd+i3.width), dy1);
+        context.drawImage(i3, dx3, dy3);
       }
       context.restore();
     }
@@ -436,14 +429,18 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       if(pageScroll){
           if(reverse){
               if(currentPageIndex==0){
+            	  console.log("type 1");
                   paintPageImageSpread(pageImages[current_mode][currentPageIndex],  null, pageImages[current_mode][currentPageIndex-1],  pageImages[current_mode][currentPageIndex-2]);
               }else{
+            	  console.log("type 2");
                   paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], pageImages[current_mode][currentPageIndex-1],  pageImages[current_mode][currentPageIndex-2]);
               }
           }else{
 	          if(currentPageIndex==0){
+            	  console.log("type 3");
 	              paintPageImageSpread(pageImages[current_mode][currentPageIndex],  null, pageImages[current_mode][currentPageIndex+2],  pageImages[current_mode][currentPageIndex+1]);
 	          }else{
+            	  console.log("type 4");
 	              paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], pageImages[current_mode][currentPageIndex+3],  pageImages[current_mode][currentPageIndex+2]);
 	          }
           }
@@ -1219,6 +1216,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
    * 次のシーンへ進める
    */
   var jumpNext = function() {
+    console.log("jump next");
     if(isLoading){
       return;
     }
@@ -1265,7 +1263,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
    * @private
    */
   var animation = function() {
-    console.log("animation");
+    console.log("animation scroll:" + pageScroll);
     if(current_view === VIEW_PAGE){
       setTimeout(paint, 0);
       if(pageX >= width){
@@ -1293,7 +1291,6 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       requestAnimationFrame(animation);
     }else if(current_view === VIEW_PAGE_W){
         setTimeout(paint, 0);
-
         var i;
         if(reverse){
             if(currentPageIndex==0){
@@ -1308,34 +1305,37 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
                 i = pageImages[current_mode][currentPageIndex+1];
             }
         }
-        var padding = width/2;
-        var limit = width+padding;
-        if(currentPageIndex==1){
-        	limit = width/2+padding;
+
+        var padding = 0;
+        if(i){
+          padding = width/2-i.width;
         }
-        if(pageX >= limit){
+
+        var limit = width;
+
+        if(!i || pageX >= limit){
           pageScroll = false;
           prev_image = undefined;
           if(reverse){
-            goPrev();
+            jumpPrev();
           }else{
-            goNext();
+            jumpNext();
           }
           pageX = 0;
           return;
         }
         console.log("limit:" + limit + " pagex:" + pageX + " w:" + width + " pad:"+padding + " i:"+i.width);
         if(pageX <= 0){
-            limitX = limit/2.4;
-            pageX  = limitX;
+          limitX = limit/2.4;
+          pageX  = limitX;
+        }else{
+          if(limitX < 1){
+            pageX = pageX + 1;
           }else{
-            if(limitX < 1){
-                pageX = pageX + 1;
-            }else{
-                limitX = (limit-pageX)/3.5;
-                pageX = pageX + limitX;
-            }
+            limitX = (limit-pageX)/3.5;
+            pageX = pageX + limitX;
           }
+        }
       requestAnimationFrame(animation);
     }else{
       if (SceneAnimator.isScrolling()) {
@@ -1439,10 +1439,12 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 	      var dx = newX - touch_pageX;
 	      $("#canvas").css("left", dx/2);
 	      if(dx > 100){
+	          pagex = Math.abs(touch_pageX)*-1;
 	    	  touch_pageX = 0;
 	          goNext();
 	          $("#canvas").css("left", 0);
 	      }else if(dx < -100){
+	          pagex = Math.abs(touch_pageX);
 	    	  touch_pageX = 0;
 	          goPrev();
 	          $("#canvas").css("left", 0);
