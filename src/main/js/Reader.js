@@ -20,6 +20,8 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 
   var VIEW_SCENE   = 0;
   var VIEW_PAGE    = 1;
+  var VIEW_PAGE_W  = 2;
+
   var current_view = VIEW_SCENE;
 
   var storyId;
@@ -58,13 +60,20 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   var is_back = false;
   var trackstart = false;
 
+
+  //0..右開き
+  var spread = 0;
+  var flick = 0;
+  //var orientation = 'vertical';
+  var orientation = 'horizontal';
+
   var ad_src = false;
 
   //Andoridでmenu_switchをクリックした際に、下のcanvasも同時にクリックされる不具合があるため
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v5.0.0");
+  console.log("v6.0.8");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -102,13 +111,15 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   }
 
   var act_start = App.isSmartPhone?"touchstart":"mousedown";
+  var act_end = App.isSmartPhone?"touchend":"mouseup";
+  var act_move = App.isSmartPhone?"touchmove":"mousemove";
   var act_button = App.isSmartPhone?"touchend":"mouseup";
 
-  var prevent_default = function(event) {
+  var prevent_default = function(e) {
     if (App.IE) {
-      event.returnValue = false;
+      e.returnValue = false;
     }else{
-      event.preventDefault();
+      e.preventDefault();
     }
   };
 
@@ -149,9 +160,9 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       canvas.style.height = height + "px";
     }
     if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
-      dpi = resolveDpi(Math.max(width, height));
+      dpi = resolveDpi(height);
     }else{
-      dpi = resolveDpi(Math.max(canvas.width, canvas.height));
+      dpi = resolveDpi(canvas.height);
     }
     console.log(width + "x" + height + " dpi:" + dpi);
   };
@@ -160,7 +171,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   var SceneAnimator = new $SceneAnimator(width, height, FPS);
 
   var updateIndex = function(nindex){
-    if(current_view === VIEW_PAGE){
+    if(current_view === VIEW_PAGE || current_view === VIEW_PAGE_W){
       currentPageIndex = nindex;
       var sceneIndex = 0;
       for(var i=0; i<scenes.length; i++){
@@ -195,6 +206,87 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
         var context = canvas.getContext("2d");
         context.drawImage(i, dx, dy, w, h);
       }
+  };
+
+  var paintPageImageSpread = function(i0, i1, i2, i3){
+    var d=0;
+    var nd = 0;
+    if(reverse){
+      d = -1 * pageX;
+      nd = width;
+    }else{
+      d = pageX;
+      nd = -1 * width;
+    }
+    console.log("d:" + d);
+    var dx0=0,dx1=0,dx2=0,dx3=0;
+    var dy0=0,dy1=0,dy2=0,dy3=0;
+    if(i0){
+      dy0=(height-i0.height)/2;
+      dx0=((width/2-i0.width)+d);
+    }
+    if(i1){
+      dy1=(height-i1.height)/2;
+      dx1=width/2+d;
+    }
+    if(i2){
+      dy2= (height-i2.height)/2;
+      dx2= (width/2-i2.width)+d+nd;
+    }
+    if(i3){
+      dy3= (height-i3.height)/2;
+      dx3= (width/2+d)+nd;
+    }
+
+    if (App.IE) {
+      var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
+      var c = $("#canvas");
+      if(i0){
+        i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
+        c.empty().append(i0);
+      }
+      if(i1){
+        i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
+        c.append(i1);
+      }
+      if(i2){
+        i1.style.cssText = "position: absolute; top: " + dy2 + "px; left:" + dx2 + "px;";
+        c.append(i2);
+      }
+      if(i3){
+        i1.style.cssText = "position: absolute; top: " + dy3+ "px; left:" + dx3 + "px;";
+        c.append(i3);
+      }
+      c.append(mask);
+      c = null;
+    } else {
+      var context = canvas.getContext("2d");
+      context.save();
+      context.fillStyle = canvas.style.background;
+      context.fillRect(0, 0, width, height);
+
+      //Android2.1以下のCanvas drawImageバグ対応
+      //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
+      //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
+      if(App.ANDROID21){
+        context.save();
+        var rate =  Math.sqrt(320/screen.width);
+        context.scale(rate, rate);
+      }
+      if(i0){
+        context.drawImage(i0, dx0, dy0);
+      }
+      if(i1){
+        context.drawImage(i1, dx1, dy1);
+      }
+      if(i2){
+        context.drawImage(i2, dx2, dy2);
+      }
+      if(i3){
+        context.drawImage(i3, dx3, dy3);
+      }
+      context.restore();
+    }
   };
 
   var paintPageImage = function(i0, i1){
@@ -265,7 +357,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   var paintImage = function(i){
       var x;
       var y;
-      if(current_view === VIEW_PAGE){
+      if(current_view === VIEW_PAGE || current_view === VIEW_PAGE_W){
         x=0;
         y=0;
       }else{
@@ -324,7 +416,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       return;
     }else{
       $("#story_title_insert").hide();
-      if(current_view === VIEW_PAGE){
+      if(current_view === VIEW_PAGE || current_view === VIEW_PAGE_W){
         i = pageImages[current_mode][currentPageIndex];
       }else{
         i = sceneImages[current_mode][currentSceneIndex];
@@ -333,7 +425,33 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     if (i === undefined || !i.hasLoaded()) {
       return;
     }
-    if(current_view === VIEW_PAGE){
+    if(current_view === VIEW_PAGE_W){
+      if(pageScroll){
+          if(reverse){
+              if(currentPageIndex==0){
+            	  console.log("type 1");
+                  paintPageImageSpread(pageImages[current_mode][currentPageIndex],  null, pageImages[current_mode][currentPageIndex-1],  pageImages[current_mode][currentPageIndex-2]);
+              }else{
+            	  console.log("type 2");
+                  paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], pageImages[current_mode][currentPageIndex-1],  pageImages[current_mode][currentPageIndex-2]);
+              }
+          }else{
+	          if(currentPageIndex==0){
+            	  console.log("type 3");
+	              paintPageImageSpread(pageImages[current_mode][currentPageIndex],  null, pageImages[current_mode][currentPageIndex+2],  pageImages[current_mode][currentPageIndex+1]);
+	          }else{
+            	  console.log("type 4");
+	              paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], pageImages[current_mode][currentPageIndex+3],  pageImages[current_mode][currentPageIndex+2]);
+	          }
+          }
+      }else{
+        if(currentPageIndex==0){
+          paintPageImageSpread(pageImages[current_mode][currentPageIndex], null, null, null);
+        }else{
+          paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], null, null);
+        }
+      }
+    }else if(current_view === VIEW_PAGE){
       if(prev_image === undefined ||
           reverse && currentPageIndex === 0 ||
           !reverse && currentPageIndex === pages.length-1){
@@ -371,7 +489,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     $("#errmsg_servererr").hide();
     $("#errmsg_expired").hide();
     $("#errmsg_forbidden").hide();
-	
+
 	(parent["Controll"]["hideAd"])();
 
     if(msg){
@@ -503,7 +621,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   };
 
   var updateProgress = function(){
-    if(current_view === VIEW_PAGE){
+    if(current_view === VIEW_PAGE || current_view === VIEW_PAGE_W){
       $("#progress_total").text(pages.length);
       $("#progress_current").text(currentPageIndex+1);
     }else{
@@ -670,12 +788,12 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   };
 
   var fetchPageImage = function (pageIndex){
-    var under = pageIndex - 1;
+    var under = pageIndex - 3;
     var max;
     if(current_mode  === MODE_READING){
-      max = 3;
+      max = 8;
     }else{
-      max = 1;
+      max = 4;
     }
     var prefetch = pageIndex + max;
 
@@ -728,7 +846,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     console.log("jumpTo:" + newIndex);
     hideMenu(500);
     hideFinished();
-    if(current_view === VIEW_PAGE){
+    if(current_view === VIEW_PAGE || current_view === VIEW_PAGE_W){
         fetchPageImage(newIndex);
     }else{
         fetchSceneImage(newIndex);
@@ -751,7 +869,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     updateProgress();
 
     var i;
-    if(current_view === VIEW_PAGE){
+    if(current_view === VIEW_PAGE || current_view === VIEW_PAGE_W){
       i = pageImages[current_mode][newIndex];
     }else{
       i = sceneImages[current_mode][newIndex];
@@ -809,7 +927,13 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
    */
   var jumpPrev = function() {
     var prev;
-    if(current_view === VIEW_PAGE){
+    if(current_view === VIEW_PAGE_W){
+        if(currentPageIndex==1){
+        	prev = 0;
+        }else{
+            prev = currentPageIndex - 2;
+        }
+    }else if(current_view === VIEW_PAGE){
       prev = currentPageIndex - 1;
     }else{
       prev = currentSceneIndex - 1;
@@ -825,6 +949,8 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     $("#finish_actions").hide();
     $("#canvas").unbind(act_start,canvas_click);
     $("#canvas").bind(act_start,canvas_click);
+    $("#canvas").bind(act_move,canvas_move);
+    $("#canvas").bind(act_end,canvas_up);
   };
 
   var activate_button = function(item, time){
@@ -852,16 +978,18 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
    * @return void
    */
   var goPrev= function(e) {
+    console.log("go prev start");
     SceneAnimator.reverse = true;
     SceneAnimator.dirFwd = false;
     reverse = true;
 
-    if(current_view === VIEW_PAGE && 0 === currentPageIndex ||
+    if((current_view === VIEW_PAGE || current_view === VIEW_PAGE_W) && 0 === currentPageIndex ||
       current_view === VIEW_SCENE && 0 === currentSceneIndex){
+      console.log("ignore goPrev");
       prevent_default(e);
       return;
     }
-    if(current_view === VIEW_PAGE){
+    if(current_view === VIEW_PAGE || current_view === VIEW_PAGE_W){
       activate_button($("#prev_page"), 500);
     }else{
       activate_button($("#prev_scene"), 500);
@@ -869,6 +997,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     hideFinished();
 
     if(current_view === VIEW_PAGE){
+      console.log("go prev pagemode");
       if (pageX >= width) {
         console.log("*** alert prev ***");
         jumpPrev();
@@ -879,6 +1008,18 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       } else {
         setTimeout(paint, 0);
       }
+    }else if(current_view === VIEW_PAGE_W){
+        console.log("go prev w pagemode");
+        if (pageX >= width/2) {
+          console.log("*** alert prev ***");
+          jumpPrev();
+          pageX = 0;
+        }else if (!pageScroll) {
+          pageScroll = true;
+          animation();
+        } else {
+          setTimeout(paint, 0);
+        }
     }else{
       if (SceneAnimator.isAtScrollStart()) {
         jumpPrev();
@@ -894,6 +1035,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     if(e){
       e.preventDefault();
     }
+    console.log("go prev done");
   };
 
   var show_first_click = function(e){
@@ -1074,6 +1216,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
    * 次のシーンへ進める
    */
   var jumpNext = function() {
+    console.log("jump next");
     if(isLoading){
       return;
     }
@@ -1088,15 +1231,23 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       return;
     }
     var next;
-    if(current_view === VIEW_PAGE){
+    if(current_view === VIEW_PAGE_W){
+      if(currentPageIndex==0){
+    	  next = 1;
+      }else if(currentPageIndex==pages.length-2){
+    	  next = currentPageIndex + 1;
+      }else{
+          next = currentPageIndex + 2;
+      }
+    }else if(current_view === VIEW_PAGE){
       next = currentPageIndex + 1;
     }else{
       next = currentSceneIndex + 1;
     }
-    if (current_view === VIEW_PAGE && next >= pages.length ||
+    if ((current_view === VIEW_PAGE || current_view === VIEW_PAGE_W) && next >= pages.length ||
         current_view === VIEW_SCENE && next >= scenes.length) {
       if (should_show_ad &&
-    		  (current_view === VIEW_PAGE && 1 < pages.length || current_view === VIEW_SCENE && 1 < scenes.length) ) {
+    		  ((current_view === VIEW_PAGE || current_view === VIEW_PAGE_W) && 1 < pages.length || current_view === VIEW_SCENE && 1 < scenes.length) ) {
         (parent["Controll"]["showAd"])(storyId, "afterReadingInReader", showFinished);
 	  } else {
 	  	showFinished();
@@ -1112,6 +1263,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
    * @private
    */
   var animation = function() {
+    console.log("animation scroll:" + pageScroll);
     if(current_view === VIEW_PAGE){
       setTimeout(paint, 0);
       if(pageX >= width){
@@ -1136,6 +1288,54 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
             pageX = pageX + limitX;
         }
       }
+      requestAnimationFrame(animation);
+    }else if(current_view === VIEW_PAGE_W){
+        setTimeout(paint, 0);
+        var i;
+        if(reverse){
+            if(currentPageIndex==0){
+                i = pageImages[current_mode][currentPageIndex];
+            }else{
+                i = pageImages[current_mode][currentPageIndex-1];
+            }
+        }else{
+            if(currentPageIndex==0){
+                i = pageImages[current_mode][currentPageIndex];
+            }else{
+                i = pageImages[current_mode][currentPageIndex+1];
+            }
+        }
+
+        var padding = 0;
+        if(i){
+          padding = width/2-i.width;
+        }
+
+        var limit = width;
+
+        if(!i || pageX >= limit){
+          pageScroll = false;
+          prev_image = undefined;
+          if(reverse){
+            jumpPrev();
+          }else{
+            jumpNext();
+          }
+          pageX = 0;
+          return;
+        }
+        console.log("limit:" + limit + " pagex:" + pageX + " w:" + width + " pad:"+padding + " i:"+i.width);
+        if(pageX <= 0){
+          limitX = limit/2.4;
+          pageX  = limitX;
+        }else{
+          if(limitX < 1){
+            pageX = pageX + 1;
+          }else{
+            limitX = (limit-pageX)/3.5;
+            pageX = pageX + limitX;
+          }
+        }
       requestAnimationFrame(animation);
     }else{
       if (SceneAnimator.isScrolling()) {
@@ -1164,6 +1364,16 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     }
     if(current_view === VIEW_PAGE){
       if (pageX >= width) {
+        console.log("*** alert next ***");
+        jumpNext();
+      }else if (!pageScroll) {
+        pageScroll = true;
+        animation();
+      } else {
+        setTimeout(paint, 0);
+      }
+    }else if(current_view === VIEW_PAGE_W){
+      if (pageX >= width/2) {
         console.log("*** alert next ***");
         jumpNext();
       }else if (!pageScroll) {
@@ -1201,12 +1411,53 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     $("#dialog_error").hide();
   };
 
-  var canvas_click = function(event) {
-      console.log("canvas_click");
-      if(!menu_click_lock){
-          goNext();
-      }
-      prevent_default(event);
+  var touch_pageX = 0;
+
+  var point_x = function(e){
+    if(e.clientX){
+      return e.clientX;
+    }else if(event.changedTouches){
+      return event.changedTouches[0].pageX;
+    }
+    return e.pageX;
+  };
+
+  var canvas_click = function(e) {
+    console.log("canvas_click");
+    touch_pageX = point_x(e);
+    if(!menu_click_lock && current_view !== VIEW_PAGE_W){
+      goNext();
+    }
+    prevent_default(e);
+  };
+
+  var canvas_move = function(e) {
+	  if(touch_pageX!=0 && current_view == VIEW_PAGE_W){
+	      console.log("canvas_move");
+	      console.log(event);
+	      var newX = point_x(e);
+	      var dx = newX - touch_pageX;
+	      $("#canvas").css("left", dx/2);
+	      if(dx > 100){
+	          pagex = Math.abs(touch_pageX)*-1;
+	    	  touch_pageX = 0;
+	          goNext();
+	          $("#canvas").css("left", 0);
+	      }else if(dx < -100){
+	          pagex = Math.abs(touch_pageX);
+	    	  touch_pageX = 0;
+	          goPrev();
+	          $("#canvas").css("left", 0);
+	      }
+	      console.log(dx);
+	  }
+      prevent_default(e);
+  };
+
+  var canvas_up = function(e) {
+	  touch_pageX=0;
+      $("#canvas").css("left", 0);
+      prevent_default(e);
   };
 
   /**
@@ -1280,7 +1531,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     if(storyMetaFile['enable_original_mode']){
         current_mode  = MODE_ORIGINAL;
         if(hasAllTitleShown){
-          if(current_view === VIEW_PAGE){
+          if(current_view === VIEW_PAGE || current_view === VIEW_PAGE_W){
             jumpTo(currentPageIndex);
           }else{
             jumpTo(currentSceneIndex);
@@ -1296,7 +1547,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     is_back = false;
     current_mode  = MODE_READING;
     if(hasAllTitleShown){
-      if(current_view === VIEW_PAGE){
+      if(current_view === VIEW_PAGE || current_view === VIEW_PAGE_W){
         jumpTo(currentPageIndex);
       }else{
         jumpTo(currentSceneIndex);
@@ -1416,7 +1667,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 
       cdn_host = storyMetaFile["cdn_host"];
       updateProgress();
-//
+
 //      if(storyMetaFile['enable_original_mode']){
 //        enable_button($("#toggle_reading"));
 //        $("#toggle_reading").bind(act_button, change_mode_original);
@@ -1441,8 +1692,19 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       if(comicTitleInsert || storyTitleInsert){
           hasAllTitleShown = false;
       }
- //     loadConfig();
+//      loadConfig();
       saveConfig();
+
+      if(storyMetaFile['enable_page_mode'] && width > height){
+    	  current_view = VIEW_PAGE_W;
+          if(hasAllTitleShown){
+            jumpTo(currentPageIndex);
+          }
+          $("#toggle_scene_view").hide();
+          $("#toggle_page_view").show();
+          $("#prev_scene").hide();
+          $("#prev_page").show();
+      }
       trackstart = true;
 
       $("#prev_scene").bind(act_button, goPrev);
@@ -1516,11 +1778,10 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
 
 	setTimeout(function(){
 		close_button.removeClass("disable").one(act_button,function(){
-			if(current_view === VIEW_PAGE && currentPageIndex + 1 >= pages.length ||
+			if((current_view === VIEW_PAGE || current_view==VIEW_PAGE_W) && currentPageIndex + 1 >= pages.length ||
 			        current_view === VIEW_SCENE && currentSceneIndex + 1 >= scenes.length) {
 			      showFinished();
 			}
-			//tryPushAnalytics([event, category+adSpaceId, 'skip', adNetworkId]);
 			ad_cover.hide();
 			clearInterval(frame_timer);
 		});
@@ -1541,7 +1802,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       clearSceneImages();
       clearPageImages();
       var cur;
-      if(current_view === VIEW_PAGE){
+      if(current_view === VIEW_PAGE || current_view === VIEW_PAGE_W){
         cur = currentPageIndex;
       }else{
         cur = currentSceneIndex;
