@@ -76,7 +76,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v6.0.9");
+  console.log("v6.0.10");
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -1076,7 +1076,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       return;
     }
     $("#menu").animate(
-      {top: "-136px"},
+      {top: "-144px"},
       fadeout,'swing',
       function(){
         $("#menu_switch").bind('click', menu_click);
@@ -1820,7 +1820,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   };
 
   var prepareMenu = function(){
-    $("#menu").css("top", -1 * 136 + "px");
+    $("#menu").css("top", -1 * 144 + "px");
     $("#menu").show();
     $("#menu_tab_close").bind('click', menu_hide_click);
     disable_button($("#toggle_reading"));
