@@ -1416,7 +1416,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
   var point_x = function(e){
     if(e.clientX){
       return e.clientX;
-    }else if(event.changedTouches){
+    }else if(event && event.changedTouches){
       return event.changedTouches[0].pageX;
     }
     return e.pageX;
