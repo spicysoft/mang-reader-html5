@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
+<!DOCTYPE html><html><head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="edge" />
     <meta name="viewport" content="target-densitydpi=high-dpi, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
@@ -46,18 +44,24 @@
 				<a href="javascript:void" id="change_coma_anime"   class="change_mode sprite" title="表示変更"></a>
 			</div>
 			<script>
-				$("#img_quality").click(function(){
-					$("#menu_setting").show();
-				})
-				$("#display_mode").click(function(){
-					$("#menu_mode").show();
-				})
+				$("#change_reading").click(function(){
+					$("#menu_setting").fadeIn(300);
+					$("#menu_setting .mask").one("click",function(){
+						$("#menu_setting").fadeOut(300);
+					});
+				});
+				$("#change_coma_anime").click(function(){
+					$("#menu_mode").fadeIn(300);
+					$("#menu_mode .mask").one("click",function(){
+						$("#menu_mode").fadeOut(300);
+					});
+				});
 			</script>
         </div>
         <div id="menu_lower">
-          <a href="javascript:void" id="prev_scene"   class="sprite disable" title="前のコマへ"></a>
-          <a href="javascript:void" id="prev_page"   class="sprite disable"  style="display:none;" title="前のページへ"></a>
-          <a href="javascript:void" id="first_scene"  class="sprite disable" title="最初から読む"></a>
+          <a href="javascript:void(0);" id="prev_scene"   class="sprite disable" title="前のコマへ"></a>
+          <a href="javascript:void(0);" id="prev_page"   class="sprite disable"  style="display:none;" title="前のページへ"></a>
+          <a href="javascript:void(0);" id="first_scene"  class="sprite disable" title="最初から読む"></a>
         </div>
         <div id="menu_center">
           <span id="progress" ><span id="progress_current">--</span>/<span id="progress_total">--</span></span>
@@ -76,10 +80,10 @@
         <div id="finish_ui" >
           <div id="finish_actions">
             <div id="finish_social_actions">
-              <a href="javascript:void" id="bookmark"  class="sprite disable" title="ブックマークを押して次へ"></a>
-              <a href="javascript:void" id="vote"      class="sprite disable" title="イイネを押して次へ"></a>
+              <a href="javascript:void(0);" id="bookmark"  class="sprite disable" title="ブックマークを押して次へ"></a>
+              <a href="javascript:void(0);" id="vote"      class="sprite disable" title="イイネを押して次へ"></a>
             </div>
-            <a href="javascript:void" id="next"  class="sprite disable" title="次の話へ"></a>
+            <a href="javascript:void(0);" id="next"  class="sprite disable" title="次の話へ"></a>
           </div>
         </div>
       </div>
@@ -89,17 +93,17 @@
 	  <div id="menu_mode" class="menu_base">
 	  	<div class="mask"></div>
 		<div class="buttons">
-		  	<a href="javascript:void" id="mode_full_page" class="sprite"><h3>フルページモード</h3><p>ページ単位で表示する。タブレットでは見開き表示。横にフリックするとページが切り替わる。</p></a>
-			<a href="javascript:void" id="mode_wade_page" class="sprite"><h3>ワイドページモード</h3><p>ページを横幅いっぱいに表示する。下にスクロールして読み進める。</p></a>
-			<a href="javascript:void" id="mode_roll_coma" class="sprite"><h3>コマロールモード</h3><p>コマを横幅いっぱいに表示する。下にスクロールして読み進める。</p></a>
-			<a href="javascript:void" id="mode_anime_coma" class="sprite"><h3>コマアニメモード</h3><p>コマごろに表示する。マンガ作家がアニメーションを想定している場合は、動きを伴って表示される。</p></a>
+		  	<a href="javascript:void(0);" id="mode_full_page" class="sprite"><h3>フルページモード</h3><p>ページ単位で表示する。タブレットでは見開き表示。横にフリックするとページが切り替わる。</p></a>
+			<a href="javascript:void(0);" id="mode_wade_page" class="sprite"><h3>ワイドページモード</h3><p>ページを横幅いっぱいに表示する。下にスクロールして読み進める。</p></a>
+			<a href="javascript:void(0);" id="mode_roll_coma" class="sprite"><h3>コマロールモード</h3><p>コマを横幅いっぱいに表示する。下にスクロールして読み進める。</p></a>
+			<a href="javascript:void(0);" id="mode_anime_coma" class="sprite"><h3>コマアニメモード</h3><p>コマごろに表示する。マンガ作家がアニメーションを想定している場合は、動きを伴って表示される。</p></a>
 		</div>
 	  </div>
 	  <div id="menu_setting" class="menu_base">
 	  	<div class="mask"></div>
 		<div class="buttons">
-		  	<a href="javascript:void" id="set_reading"><h3>読書モード</h3><p>携帯電話のネットワークでも快適に読むことができます。<br>また、色調や線の太さなどが読みやすいように調整されます。</p></a>
-			<a href="javascript:void" id="set_original"><h3>原画モード</h3><p>調整を行なわないため、マンガ作家が書いたグラデーションやトーンなど細かな表現がきれいに表示されます。</p></a>
+		  	<a href="javascript:void(0);" id="set_reading"><h3>読書モード</h3><p>携帯電話のネットワークでも快適に読むことができます。<br>また、色調や線の太さなどが読みやすいように調整されます。</p></a>
+			<a href="javascript:void(0);" id="set_original"><h3>原画モード</h3><p>調整を行なわないため、マンガ作家が書いたグラデーションやトーンなど細かな表現がきれいに表示されます。</p></a>
 		</div>
 	  </div>
       <div id="error" class="stage">
