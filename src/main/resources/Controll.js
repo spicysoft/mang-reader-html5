@@ -154,11 +154,6 @@ function $Controll() {
     document.getElementById('reader_reader').contentWindow._gaq =  _gaq;
   };
 
-  this.injectAd = function(html){
-    console.log(html);
-    document.getElementById('reader_reader').contentWindow._ad_text = $('<div>').html(html).text();
-  };
-
   this.is_show_ad =false;
   this.hideAd = function(){
   	$("#ad_cover").hide();
@@ -170,7 +165,7 @@ function $Controll() {
   	var event = "_trackEvent";
 	var category="/ad/";
 	var adNetworkId="default";
-	
+
 	var ad_cover=$("#ad_cover");
 	if(window.showInterstitial != undefined){
 		console.log(this);
@@ -179,7 +174,6 @@ function $Controll() {
 	}else{
 		ad_cover.show();
 	}
-	
 
 	if(Math.random()>0.5){
 		$("#top_button").show();
@@ -208,7 +202,7 @@ function $Controll() {
 		marginLeft:"-"+(ad_area.width()+26)/2+"px",
 		opacity:0
 	});
-	
+
 	ad_area.animate({
 		marginTop:"-"+topPos+"px",
 		opacity:1
