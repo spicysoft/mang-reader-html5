@@ -247,6 +247,7 @@ $(function() {
     real.superuser = in_array('superuser', raw);
     real.nomenu = in_array('nomenu', raw);
     real.ad = in_array('ad', raw);
+    real.premium = in_array('premium', raw);
     real.time = 0;
     for(var i=1;i<raw.length;i++){
       if(isNumeric(raw[i])){
@@ -262,7 +263,7 @@ $(function() {
 
   App = new $App();
   var params = getRealParameters();
-  Reader = new $Reader(params.member, params.superuser, params.time, params.nomenu, params.ad, 50/App.speed);
+  Reader = new $Reader(params, 50/App.speed);
 
   $(window).resize(function(){
     console.log("window resize : " + $(window).width() + " " + $(window).height());
