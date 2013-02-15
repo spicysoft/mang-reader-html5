@@ -3,15 +3,17 @@
 /**
  * マンガを読み込み中のUI処理を行う MVCのコンポーネントに相当する処理を行う。
  */
-function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
-  var member = _member;
-  var su = _superuser;
-  var nomenu = _nomenu;
+function $Reader(params, _fps) {
+  var member = params.member;
+  var su = params.superuser;
+  var nomenu = params.nomenu;
+  var premium = params.premium;
+  var should_show_ad = params.ad;
+
   var FPS = _fps;
   var API_ROOT = '/api';
   var width = 0;
   var height = 0;
-  var should_show_ad = _ad;
   var canvas;
 
   var MODE_ORIGINAL = 'original';
@@ -1619,7 +1621,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
     var url = '/comicreading/'+creatorId+'/'+comicId+'/'+storyId+'/'+action;
      try{
         if(typeof(_gaq) !== 'undefined') {
-		  if(!should_show_ad){
+		  if(premium){
 		  	_gaq.push(['_setCustomVar', 1, 'IsMember', 'YES', 1]);
 			_gaq.push(['_setCustomVar', 3, 'MemberType', 'Premium', 1]);
 		  } else if(member) {
@@ -1672,7 +1674,7 @@ function $Reader(_member, _superuser, _t, _nomenu, _ad, _fps) {
       cdn_host = storyMetaFile["cdn_host"];
       updateProgress();
 
-      if(storyMetaFile['enable_original_mode']){
+      if(storyMetaFile['enable_original_mode'] && premium){
         enable_button($("#toggle_reading"));
         $("#toggle_reading").bind(act_button, change_mode_original);
         $("#toggle_original").bind(act_button, change_mode_reading);
