@@ -6,9 +6,9 @@
 	border: 1px solid #999;
 	background:#000;
 	background: rgba(0,0,0,0.7);
-	border-radius: 5px;        /* CSS3草案 */  
-	-webkit-border-radius: 5px;    /* Safari,Google Chrome用 */  
-	-moz-border-radius: 5px;  
+	border-radius: 5px;        /* CSS3草案 */
+	-webkit-border-radius: 5px;    /* Safari,Google Chrome用 */
+	-moz-border-radius: 5px;
 	display:table;
 	box-sizing:border-box;
 }
@@ -19,7 +19,7 @@
 .sprite2 span {
 	background-image: url(/files/viewer/html5/ja.480.png);
 	background-size: 624px 795px;
-	background-repeat:no-repeat; 
+	background-repeat:no-repeat;
 	text-indent:-9999px;
 	overflow:hidden;
 	display:block;
@@ -79,14 +79,14 @@
 /*広告閉じる*/
 #close_ad					{width: 42px;height: 22px; cursor: pointer;}
 #close_ad span              {background-position: -222px 0;width: 36px;height: 20px; cursor: pointer;}
-#close_ad:hover span, 
+#close_ad:hover span,
 #close_ad.active span 		{background-position: -258px 0;width: 36px;height: 20px; cursor: pointer;}
 #close_ad.disable span      {background-position: -294px 0;width: 36px;height: 20px; cursor: pointer;}
 
 /*広告バツ*/
 #close_ad_top				{width: 22px;height: 22px; cursor: pointer;}
 #close_ad_top span			{background-position: -222px -20px;width: 20px;height: 20px; cursor: pointer;}
-#close_ad_top:hover span, 
+#close_ad_top:hover span,
 #close_ad_top.active span 	{background-position: -242px -20px;width: 20px;height: 20px; cursor: pointer;}
 #close_ad_top.disable span  {background-position: -262px -20px;width: 20px;height: 20px; cursor: pointer;}
 
@@ -113,7 +113,7 @@
 <div>Development</div>
 <h2>member 480</h2>
 <script type="text/javascript" >
-  var storyId = 27960;
+  var storyId = 26761;
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" ></script>
 <script src="/local-test/mr/target/dist-debug/Controll.js" type="text/javascript" ></script>
@@ -140,7 +140,7 @@
 	   <div class="loading"><img src="/img/ja_smartphone/loading32.gif" height="32" width="32" >
 </div>
        <div class="area">
-       
+
        </div>
        <div class="ad_button_area" id="bottom_button"><a class="go_premium" target="_blank" href="/premium/appeal">この広告は非表示にできます</a><a href="javascript:void(0);" id="close_ad" class="sprite2 disable"><div><span></span></div></a></div>
      </div>
@@ -155,15 +155,15 @@
       <span id="progress_current">--</span><span style="color:#808080;">/<span id="progress_total">--</span></span>
     </div>
   </div>
-  
+
   <div id="menu_next"          class="sprite menu_left disable tooltipss" title="次へ進む&#13;&#10;(キーボード[→][↓][Enter][Space]も有効です)"><div><span></span></div></div>
-  
+
   <div id="menu_fullscreen"    class="sprite menu_right tooltip" title="フルスクリーン表示する"><div><span></span></div></div>
   <div id="close_fullscreen" class="sprite menu_right tooltip" style="display:none;" title="通常サイズで表示する"><div><span></span></div></div>
   <div id="change_mode" title="読書モードを変更します" class="menu_right menu_font disable tooltipss">モード変更</div>
   <div id="setting" title="設定を変更します" class="menu_right menu_font disable tooltipss">設定</div>
-  
-  
+
+
  </div>
 </div>
 </body></html>
