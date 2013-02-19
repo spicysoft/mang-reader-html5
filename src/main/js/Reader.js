@@ -50,7 +50,7 @@ function $Reader(params, _fps) {
 
   var su_key = "";
   var su_expire = 0;
-  var t = _t;
+  var t = params.time;
   var dpi = 240;
   var cdn_host;
 
