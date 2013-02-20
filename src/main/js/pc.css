@@ -234,7 +234,7 @@ body {
     width:480px;
 	left:50%;
 	margin-left: -240px;
-    bottom:   10%;
+    bottom:   7%;
 }
 
 .left {
@@ -255,7 +255,27 @@ body {
     background-color: rgba(0,0,0,0.75);
     filter:           alpha(opacity = 75);
 }
-
+#menu_top {
+	text-align:left;
+	margin:8px 8px 0;
+}
+#menu_top h1,#menu_top h2 {
+	padding:0;
+	margin:0;
+	font-weight:normal;
+}
+#menu_top h1 {
+	margin-bottom:8px;
+}
+#story_title {
+	margin-left:8px;
+}
+#menu_top #close {
+	position:absolute;
+	top: 8px;
+	right:8px;
+	z-index:4;
+}
 #menu_upper {
     position:relative;
     width:100%;
@@ -390,7 +410,7 @@ body {
     color:       white;
     font-size:   200%;
     font-weight: bold;
-    top: 60%;
+    top: 70%;
     left:0px;
     position: absolute;
 }
