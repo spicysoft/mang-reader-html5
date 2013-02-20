@@ -206,6 +206,55 @@ function $App() {
     return hash;
   };
 
+  this.getUrlVars = function(){
+    var vars = [], hash;
+    var url_param = window.location.href.slice(window.location.href.indexOf('?') + 1);
+    if(!url_param){
+      return vars;
+    }
+    var hashes = url_param.split('&');
+    for(var i = 0; i < hashes.length; i++) {
+      if(hashes[i].indexOf('=') < 0){
+        continue;
+      }
+      hash = hashes[i].split('=');
+      vars.push(hash[0]);
+      vars[hash[0]] = hash[1].split('#')[0];
+    }
+    return vars;
+  };
+
+  this.preventDefault = function(e){
+    if (App.IE) {
+       e.returnValue = false;
+    }else{
+       e.preventDefault();
+    }
+  };
+
+  var ajax = function(url, datatype, fnSuccess, fnError, method, cache){
+    var settings = {
+      'url' : url,
+      'type' : method,
+      'async' : true,
+      'cache' : cache,
+      'dataType' : datatype,
+      'success' : function(json) {
+        fnSuccess(json);
+      },
+      'error' : fnError
+    };
+    $.ajax(settings);
+  };
+
+  this.ajaxGet = function(url, datatype, fnSuccess, fnError, cache){
+    ajax(url, datatype, fnSuccess, fnError, 'get', cache);
+  };
+
+  this.ajaxPost = function(url, datatype, fnSuccess, fnError){
+    ajax(url, datatype, fnSuccess, fnError, 'post', false);
+  };
+
   this.constructor();
 }
 

@@ -27,6 +27,7 @@ function $Reader(params, _fps) {
   var VIEW_SCENE_R = 4;//コマロールモード
 
   var current_view = VIEW_SCENE;
+  //var current_view = VIEW_SCENE_R;
   //var current_view = VIEW_PAGE_W;
 
   var storyId;
@@ -53,18 +54,19 @@ function $Reader(params, _fps) {
   var t = params.time;
   var dpi = 240;
   var cdn_host;
+  var image_host = "";
 
   var error = 0;
   var started = false;
   var prev_image;
 
   var pageX = 0;
+  var pageY = 0;
   var reverse = false;
   var pageScroll = false;
   var limitX = 0;
   var is_back = false;
   var trackstart = false;
-
 
   //0..右開き
   var spread = 0;
@@ -78,7 +80,11 @@ function $Reader(params, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v6.0.10");
+  console.log("v6.0.11");
+
+  var replaceCanvasForRollMode = function(){
+     $("#canvas").replaceWith('<div id="canvas" style="background: #000;"></div>');
+  }
 
   if (App.IE) {
     // canvasが実装されていないのでdivに置換
@@ -91,32 +97,14 @@ function $Reader(params, _fps) {
     t = parseInt((new Date())/1000, 10);
   }
 
-  var isPageMode = function(){
-	  return current_view === VIEW_PAGE_FP || current_view === VIEW_PAGE_FL || current_view === VIEW_PAGE_W;
-  };
-
-  var getUrlVars = function(){
-    var vars = [], hash;
-    var param = window.location.href.slice(window.location.href.indexOf('?') + 1);
-    if(!param){
-      return vars;
-    }
-    var hashes = param.split('&');
-    for(var i = 0; i < hashes.length; i++) {
-      if(hashes[i].indexOf('=') < 0){
-        continue;
-      }
-      hash = hashes[i].split('=');
-      vars.push(hash[0]);
-      vars[hash[0]] = hash[1].split('#')[0];
-    }
-    return vars;
-  };
-
-  var get_vars = getUrlVars();
+  var get_params = App.getUrlVars();
   if(su){
-    su_key = get_vars["k"];
-    su_expire = get_vars["expire"];
+    su_key = get_params["k"];
+    su_expire = get_params["expire"];
+  }
+
+  if(nomenu){
+    $("#menu_switch").hide();
   }
 
   var act_start = App.isSmartPhone?"touchstart":"mousedown";
@@ -124,17 +112,13 @@ function $Reader(params, _fps) {
   var act_move = App.isSmartPhone?"touchmove":"mousemove";
   var act_button = App.isSmartPhone?"touchend":"mouseup";
 
-  var prevent_default = function(e) {
-    if (App.IE) {
-      e.returnValue = false;
-    }else{
-      e.preventDefault();
-    }
+  var isPageMode = function(){
+	  return current_view === VIEW_PAGE_FP || current_view === VIEW_PAGE_FL || current_view === VIEW_PAGE_W;
   };
 
-  if(nomenu){
-    $("#menu_switch").hide();
-  }
+  var isRollMode = function(){
+	  return current_view === VIEW_SCENE_R || current_view === VIEW_PAGE_W;
+  };
 
   var resolveDpi = function(w){
     console.log("resolve src:" + w);
@@ -299,6 +283,7 @@ function $Reader(params, _fps) {
     }
   };
 
+  //フルページモード
   var paintPageImage = function(i0, i1){
     var d=0;
     if(reverse){
@@ -405,6 +390,28 @@ function $Reader(params, _fps) {
         context.restore();
       }
     };
+
+  var paintRollImages = function(){
+    var objects = [];
+    var key = null;
+    if(isPageMode()){
+      objects = pages;
+      key = "page_id";
+    }else{
+      objects = scenes;
+      key = "scene_id";
+    }
+    var param = "";
+    if(t > 0){
+      param = "/"+t;
+    }
+    var c = $("#canvas");
+    for(var i=0; i<objects.length; i++){
+      var url = urlSceneImage(image_host, objects[i][key], current_mode, dpi, param);
+      console.log(url);
+      c.append("<p><img src='"+url+"' width='"+dpi+"px'/></p>");
+    }
+  };
 
   /**
    * 画面描画
@@ -522,63 +529,43 @@ function $Reader(params, _fps) {
     img.attr("src",cdn_host+"/icon/story_image/"+rect+"x"+rect+"/" + storyId + "/"+t);
   }
 
-  var ajax = function(url, datatype, fnSuccess, fnError, method, cache){
-    var settings = {
-      'url' : url,
-      'type' : method,
-      'async' : true,
-      'cache' : cache,
-      'dataType' : datatype,
-      'success' : function(json) {
-        fnSuccess(json);
-      },
-      'error' : function(req, status, error) {
-        console.log(this);
-        console.log(status);
-        console.log(error);
-        if(error === "Not Authoriezed"){
-          showError("#errmsg_expired");
-        }else if(error === "Fan Only"){
-          if(member){
-            showError("#errmsg_fan_only");
-          }else{
-            showError("#errmsg_fan_only_guest");
-          }
-        }else if(error === "Friend Only"){
-          if(member){
-            showError("#errmsg_friend_only");
-          }else{
-            showError("#errmsg_friend_only_guest");
-          }
-        }else if(error === "Under 18"){
-          if(member){
-            showError("#errmsg_under18");
-          }else{
-            showError("#errmsg_under18_guest");
-          }
-        }else if(error === "Forbidden"){
-          showError("#errmsg_forbidden");
-        }else if(error === "Closed Story"){
-          showError("#errmsg_default");
+  var apiError = function(req, status, error) {
+      console.log(this);
+      console.log(status);
+      console.log(error);
+      if(error === "Not Authoriezed"){
+        showError("#errmsg_expired");
+      }else if(error === "Fan Only"){
+        if(member){
+          showError("#errmsg_fan_only");
         }else{
-          if(error){
-            showError("#errmsg_servererr");
-          }else{
-            console.log("unhandled error:" + status);
-          }
+          showError("#errmsg_fan_only_guest");
+        }
+      }else if(error === "Friend Only"){
+        if(member){
+          showError("#errmsg_friend_only");
+        }else{
+          showError("#errmsg_friend_only_guest");
+        }
+      }else if(error === "Under 18"){
+        if(member){
+          showError("#errmsg_under18");
+        }else{
+          showError("#errmsg_under18_guest");
+        }
+      }else if(error === "Forbidden"){
+        showError("#errmsg_forbidden");
+      }else if(error === "Closed Story"){
+        showError("#errmsg_default");
+      }else{
+        if(error){
+          showError("#errmsg_servererr");
+        }else{
+          console.log("unhandled error:" + status);
         }
       }
-    };
-    $.ajax(settings);
   };
 
-  var ajax_get = function(url, datatype, fnSuccess, fnError, cache){
-    ajax(url, datatype, fnSuccess, fnError, 'get', cache);
-  };
-
-  var ajax_post = function(url, datatype, fnSuccess, fnError){
-    ajax(url, datatype, fnSuccess, fnError, 'post', false);
-  };
 
   /**
    * [サーバーAPIとの通信メソッド]
@@ -602,7 +589,7 @@ function $Reader(params, _fps) {
         param = "/"+t;
       }
     }
-    ajax_get(API_ROOT + '/storyMetaFile/' + storyId+param, 'json', fnSuccess, fnError, cache);
+    App.ajaxGet(API_ROOT + '/storyMetaFile/' + storyId+param, 'json', fnSuccess, fnError, cache);
   };
 
   /**
@@ -610,7 +597,7 @@ function $Reader(params, _fps) {
    * イイネ投票する
    */
   var apiVoteStory = function(comicId, storyId, value, fnSuccess, fnError){
-    ajax_post('/api/voteStory/'+comicId + '/' + storyId + '/' + value ,
+    App.ajaxPost('/api/voteStory/'+comicId + '/' + storyId + '/' + value ,
      'json', fnSuccess, fnError);
   };
 
@@ -619,11 +606,11 @@ function $Reader(params, _fps) {
    * ブックマークする
    */
   var apiBookmark = function(comicId, fnSuccess, fnError){
-    ajax_post('/api/bookmark/'+comicId, 'json', fnSuccess, fnError);
+    App.ajaxPost('/api/bookmark/'+comicId, 'json', fnSuccess, fnError);
   };
 
   var apiRead = function(storyId, fnSuccess, fnError){
-    ajax_post('/api/read/'+storyId, 'json', fnSuccess, fnError);
+	App.ajaxPost('/api/read/'+storyId, 'json', fnSuccess, fnError);
   };
 
   var updateProgress = function(){
@@ -692,14 +679,17 @@ function $Reader(params, _fps) {
     if(isRefetch){
       param += "?r="+error;
     }
-    var host = "";
-    if(t > 0){
-      host = cdn_host;
-    }
-    i.src = urlmaker(host, id, mode,  dpi,  param);
+    i.src = urlmaker(image_host, id, mode,  dpi,  param);
     return i;
   };
 
+  var urlSceneImage = function(host, sceneId, mode, dpi, param){
+    return host+API_ROOT + '/sceneImage/' + sceneId + '/' + mode + '/' + dpi + param;
+  };
+
+  var urlPageImage = function(host, pageId, mode, dpi, param){
+    return host+API_ROOT + '/pageImage/' + pageId + '/' + mode + '/' + dpi + param;
+  };
 
   /**
    * [サーバーAPIとの通信メソッド] サーバーからシーン画像を取得する
@@ -709,9 +699,7 @@ function $Reader(params, _fps) {
    */
   var apiSceneImage = function(sceneId, mode, dpi, refetch) {
     return apiImage(sceneId, mode, dpi, refetch,
-        function(host, sceneId, mode, dpi, param){
-          return host+API_ROOT + '/sceneImage/' + sceneId + '/' + mode + '/' + dpi + param;
-        },
+    	urlSceneImage,
         function(sceneId, mode, dpi, prev){
           console.log("refetch scene:" + sceneId);
           for(var i=0;i<scenes.length;i++){
@@ -729,9 +717,7 @@ function $Reader(params, _fps) {
 
   var apiPageImage = function(pageId, mode, dpi) {
       return apiImage(pageId, mode, dpi, false,
-          function(host, pageId, mode, dpi, param){
-            return host+API_ROOT + '/pageImage/' + pageId + '/' + mode + '/' + dpi + param;
-          },
+    	  urlPageImage,
           function(pageId, mode, dpi, prev){
             console.log("refetch page:" + pageId);
             for(var i=0;i<pages.length;i++){
@@ -874,6 +860,10 @@ function $Reader(params, _fps) {
     updateIndex(newIndex);
     updateProgress();
 
+    if(isRollMode()){
+    	paintRollImages();
+    	return;
+    }
     var i;
     if(isPageMode()){
       i = pageImages[current_mode][newIndex];
@@ -897,7 +887,7 @@ function $Reader(params, _fps) {
         return;
       }
       var quality = '/';
-      if(current_mode==MODE_READING){
+      if(current_mode===MODE_READING){
         quality = '/compressed';
       }else{
         quality = '/original';
@@ -934,7 +924,7 @@ function $Reader(params, _fps) {
   var jumpPrev = function() {
     var prev;
     if(current_view === VIEW_PAGE_FL){
-        if(currentPageIndex==1){
+        if(currentPageIndex===1){
         	prev = 0;
         }else{
             prev = currentPageIndex - 2;
@@ -992,7 +982,7 @@ function $Reader(params, _fps) {
     if((isPageMode()) && 0 === currentPageIndex ||
       current_view === VIEW_SCENE && 0 === currentSceneIndex){
       console.log("ignore goPrev");
-      prevent_default(e);
+      App.preventDefault(e);
       return;
     }
     if(isPageMode()){
@@ -1039,7 +1029,7 @@ function $Reader(params, _fps) {
       }
     }
     if(e){
-      e.preventDefault();
+      App.preventDefault(e);
     }
     console.log("go prev done");
   };
@@ -1047,14 +1037,14 @@ function $Reader(params, _fps) {
   var show_first_click = function(e){
     if(isPageMode() && 0 === currentPageIndex ||
       current_view === VIEW_SCENE && 0 === currentSceneIndex){
-      prevent_default(e);
+        App.preventDefault(e);
       return;
     }
     is_back = false;
     activate_button($("#first_scene"), 500);
     hideFinished();
     jumpTo(0);
-    prevent_default(e);
+    App.preventDefault(e);
   };
 
   var menuIsVisible = function(){
@@ -1066,7 +1056,7 @@ function $Reader(params, _fps) {
     menu_click_lock = true;
     is_back = false;
     showMenu(500, 500);
-    e.preventDefault();
+    App.preventDefault(e);
   };
 
   var hideMenu = function(fadeout){
@@ -1088,7 +1078,7 @@ function $Reader(params, _fps) {
   var menu_hide_click = function(e){
     is_back = false;
     hideMenu(500);
-    e.preventDefault();
+    App.preventDefault(e);
   };
 
   /**
@@ -1161,10 +1151,10 @@ function $Reader(params, _fps) {
               setTimeout(function(){
                 apiVoteStory(comicId, storyId, 1, function(){
                   goToNextStory(next_story_id, comicId, "vote");
-                },function(){showError();});
+                },apiError);
                 hideAll();
               },0);
-              prevent_default(e);
+              App.preventDefault(e);
             });
            $("#bookmark").bind(act_start,
              function(e) {
@@ -1176,10 +1166,10 @@ function $Reader(params, _fps) {
                setTimeout(function(){
                  apiBookmark(comicId, function(){
                    goToNextStory(next_story_id, comicId, "bookmark");
-                 },function(){showError();});
+                 },apiError);
                hideAll();
              },0);
-             prevent_default(e);
+             App.preventDefault(e);
            });
            enable_button($("#vote"));
            enable_button($("#bookmark"));
@@ -1201,7 +1191,7 @@ function $Reader(params, _fps) {
                   goToNextStory(next_story_id, comicId, "none");
                 },0);
                 hideAll();
-                prevent_default(e);
+                App.preventDefault(e);
             });
             enable_button($("#next"));
           }
@@ -1418,6 +1408,7 @@ function $Reader(params, _fps) {
   };
 
   var touch_pageX = 0;
+  var touch_pageY = 0;
 
   var point_x = function(e){
     if(e.clientX){
@@ -1428,13 +1419,23 @@ function $Reader(params, _fps) {
     return e.pageX;
   };
 
+  var point_y = function(e){
+    if(e.clientY){
+      return e.clientY;
+    }else if(event && event.changedTouches){
+      return event.changedTouches[0].pageY;
+    }
+    return e.pageY;
+  };
+
   var canvas_click = function(e) {
     console.log("canvas_click");
     touch_pageX = point_x(e);
+    touch_pageY = point_y(e);
     if(!menu_click_lock && current_view !== VIEW_PAGE_FL){
       goNext();
     }
-    prevent_default(e);
+    App.preventDefault(e);
   };
 
   var canvas_move = function(e) {
@@ -1456,14 +1457,20 @@ function $Reader(params, _fps) {
 	          $("#canvas").css("left", 0);
 	      }
 	      console.log(dx);
+	  }else if(touch_pageY!=0 && isRollMode()){
+	      var newY = point_y(e);
+	      var dy = newY - touch_pageY;
+	      $("#canvas").css("top", dy + parseInt($("#canvas").css("top")));
+	      console.log(dy);
 	  }
-      prevent_default(e);
+	  App.preventDefault(e);
   };
 
   var canvas_up = function(e) {
 	  touch_pageX=0;
-      $("#canvas").css("left", 0);
-      prevent_default(e);
+	  touch_pageY=0;
+	  $("#canvas").css("left", 0);
+      App.preventDefault(e);
   };
 
   /**
@@ -1672,6 +1679,9 @@ function $Reader(params, _fps) {
       pages = storyMetaFile["pages"];
 
       cdn_host = storyMetaFile["cdn_host"];
+      if(t > 0){
+    	  image_host = cdn_host;
+      }
       updateProgress();
 
       if(storyMetaFile['enable_original_mode'] && premium){
@@ -1702,6 +1712,7 @@ function $Reader(params, _fps) {
       saveConfig();
 
       //fixme
+      //forced w page mode if medias w
       if(storyMetaFile['enable_page_mode'] && width > height){
     	  current_view = VIEW_PAGE_FL;
           if(hasAllTitleShown){
@@ -1712,8 +1723,12 @@ function $Reader(params, _fps) {
           $("#prev_scene").hide();
           $("#prev_page").show();
       }
+      console.log("view: " + current_view);
       trackstart = true;
 
+      if(isRollMode()){
+    	  replaceCanvasForRollMode();
+      }
       $("#prev_scene").bind(act_button, goPrev);
       $("#prev_page").bind(act_button, goPrev);
       $("#first_scene").bind(act_button, show_first_click);
@@ -1728,12 +1743,9 @@ function $Reader(params, _fps) {
       if(!su){
         apiRead(storyId, function(json){console.log(json);});
       }
-    }, function() {
-      showError();
-    });
+    }, apiError);
 
   };
-
 
   var showAd = function(adSpaceId) {
 	//var event = "_trackEvent";
@@ -1854,7 +1866,7 @@ function $Reader(params, _fps) {
     $("#preview > *").click(function(event) {
       openStory(_storyId);
       $("#preview").hide();
-      prevent_default(event);
+      App.preventDefault(event);
     });
   };
 
