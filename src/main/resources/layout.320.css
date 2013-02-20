@@ -212,6 +212,7 @@
 .menu_base p {
 	margin:0;
 	font-size: 11px;
+	line-height: 12px;
 }
 #menu_mode .sprite {
 	border-radius: 0px;
