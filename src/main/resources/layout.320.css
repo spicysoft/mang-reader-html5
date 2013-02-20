@@ -165,8 +165,8 @@
 
 /*モード*/
 #mode_full_page span		{background-position: 0 -370px;width: 81px;height: 40px;}
-#mode_wade_page span		{background-position: -81px -370px;width: 81px;height: 40px;}
-#mode_roll_coma span		{background-position: -162px -370px;width: 81px;height: 40px;}
+#mode_wade_page span		{background-position: -80px -370px;width: 81px;height: 40px;}
+#mode_roll_coma span		{background-position: -161px -370px;width: 81px;height: 40px;}
 #mode_anime_coma span		{background-position: -243px -370px;width: 81px;height: 40px;}
 
 /*読込中*/
