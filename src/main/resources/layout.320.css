@@ -62,7 +62,7 @@
 #change_original.active span	{background-position: -103px -50px;width: 70px;height: 21px;}
 
 /*モード変更*/
-#menu_upper .right{width:164px;}
+#menu_upper .right{width:166px;}
 .change_mode					{width: 115px;height: 36px; cursor: pointer;float:left;}
 #display_mode span				{background-position: 0px 0;width: 49px;height: 29px;margin-top: 4px;}
 
