@@ -151,6 +151,7 @@ function $Reader(params, _fps) {
       canvas.style.width = width + "px";
       canvas.height = height;
       canvas.style.height = height + "px";
+      canvas.fillStyle = canvas.style.background;
     }
     if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
       dpi = resolveDpi(height);
@@ -201,6 +202,15 @@ function $Reader(params, _fps) {
       }
   };
 
+  var getCanvas = function(){
+    if(App.IE){
+      return  $("#canvas");
+    }
+    var context = canvas.getContext("2d");
+    context.fillRect(0, 0, width, height);
+    return context;
+  };
+
   //refactor me
   var paintPageImageSpread = function(i0, i1, i2, i3){
     var d=0;
@@ -232,9 +242,9 @@ function $Reader(params, _fps) {
       dx3= (width/2+d)+nd;
     }
 
+    var c = getCanvas();
     if (App.IE) {
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
-      var c = $("#canvas");
       if(i0){
         i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
         c.empty().append(i0);
@@ -254,32 +264,25 @@ function $Reader(params, _fps) {
       c.append(mask);
       c = null;
     } else {
-      var context = canvas.getContext("2d");
-      context.save();
-      context.fillStyle = canvas.style.background;
-      context.fillRect(0, 0, width, height);
-
       //Android2.1以下のCanvas drawImageバグ対応
       //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
       //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
       if(App.ANDROID21){
-        context.save();
         var rate =  Math.sqrt(320/screen.width);
-        context.scale(rate, rate);
+        c.scale(rate, rate);
       }
       if(i0){
-        context.drawImage(i0, dx0, dy0);
+        c.drawImage(i0, dx0, dy0);
       }
       if(i1){
-        context.drawImage(i1, dx1, dy1);
+        c.drawImage(i1, dx1, dy1);
       }
       if(i2){
-        context.drawImage(i2, dx2, dy2);
+        c.drawImage(i2, dx2, dy2);
       }
       if(i3){
-        context.drawImage(i3, dx3, dy3);
+        c.drawImage(i3, dx3, dy3);
       }
-      context.restore();
     }
   };
 
@@ -315,10 +318,10 @@ function $Reader(params, _fps) {
       dy1=(height - h1) / 2;
     }
 
+    var c = getCanvas();
     if (App.IE) {
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
       i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
-      var c = $("#canvas");
       c.empty().append(i0);
       if(i1){
         i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
@@ -327,25 +330,18 @@ function $Reader(params, _fps) {
       c.append(mask);
       c = null;
     } else {
-      var context = canvas.getContext("2d");
-      context.save();
-      context.fillStyle = canvas.style.background;
-      context.fillRect(0, 0, width, height);
-
       //Android2.1以下のCanvas drawImageバグ対応
       //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
       //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
       if(App.ANDROID21){
-        context.save();
         var rate =  Math.sqrt(320/screen.width);
-        context.scale(rate, rate);
+        c.scale(rate, rate);
       }
 
-      context.drawImage(i0, dx0, dy0);
+      c.drawImage(i0, dx0, dy0);
       if(i1){
-        context.drawImage(i1, dx1, dy1);
+        c.drawImage(i1, dx1, dy1);
       }
-      context.restore();
     }
   };
 
@@ -363,31 +359,27 @@ function $Reader(params, _fps) {
       var h=i.scaledHeight();
       var dx=(width - w) / 2 + x;
       var dy=(height - h) / 2 + y;
+
+      var c = getCanvas();
       if (App.IE) {
         if(App.IE_VER==8 || document.documentMode==8){
-          $("#canvas").css({zoom:i.scale});
+          c.css({zoom:i.scale});
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
         }else{
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:"+i.scale+";";
         }
         var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
-        var c = $("#canvas");
         c.empty().append(i).append(mask);
         c = null;
       } else {
-        var context = canvas.getContext("2d");
-        context.save();
-        context.fillStyle = canvas.style.background;
-        context.fillRect(0, 0, width, height);
         //Android2.1以下のCanvas drawImageバグ対応
         //  画像が勝手にscreen.width/320でスケールされるので、描画前にこの比率に合わせてcanvasをスケールしておく
         //@see http://d.hatena.ne.jp/koba04/20110605/1307205438
         if(App.ANDROID21){
           var rate =  Math.sqrt(320/screen.width);
-          context.scale(rate, rate);
+          c.scale(rate, rate);
         }
-        context.drawImage(i, dx, dy, i.scaledWidth(), i.scaledHeight());
-        context.restore();
+        c.drawImage(i, dx, dy, i.scaledWidth(), i.scaledHeight());
       }
     };
 
@@ -405,7 +397,7 @@ function $Reader(params, _fps) {
     if(t > 0){
       param = "/"+t;
     }
-    var c = $("#canvas");
+    var c = getCanvas();
     for(var i=0; i<objects.length; i++){
       var url = urlSceneImage(image_host, objects[i][key], current_mode, dpi, param);
       console.log(url);
