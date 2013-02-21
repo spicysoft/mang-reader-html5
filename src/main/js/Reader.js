@@ -80,7 +80,7 @@ function $Reader(params, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v6.0.11");
+  console.log("v6.0.12");
 
   var replaceCanvasForRollMode = function(){
      $("#canvas").replaceWith('<div id="canvas" style="background: #000;"></div>');
@@ -1060,7 +1060,7 @@ function $Reader(params, _fps) {
       return;
     }
     $("#menu").animate(
-      {top: "-144px"},
+      {top: "-208px"},
       fadeout,'swing',
       function(){
         $("#menu_switch").bind('click', menu_click);
@@ -1078,6 +1078,7 @@ function $Reader(params, _fps) {
    */
   var showMenu = function (lifetime, fadeout){
     if(menuIsVisible() || nomenu){
+      console.log("menu is disbaled");
       menu_click_lock = false;
       return;
     }
@@ -1090,7 +1091,7 @@ function $Reader(params, _fps) {
           menu_click_lock = false;
         });
 
-    if(current_view === VIEW_SCENE){
+    if(current_view != isPageMode()){
       if(currentSceneIndex === 0){
         disable_button($("#prev_scene"));
         disable_button($("#first_scene"));
@@ -1399,6 +1400,8 @@ function $Reader(params, _fps) {
     $("#dialog_error").hide();
   };
 
+  var touch_start_x = 0;
+  var touch_start_y = 0;
   var touch_pageX = 0;
   var touch_pageY = 0;
 
@@ -1422,47 +1425,49 @@ function $Reader(params, _fps) {
 
   var canvas_click = function(e) {
     console.log("canvas_click");
-    touch_pageX = point_x(e);
-    touch_pageY = point_y(e);
-    if(!menu_click_lock && current_view !== VIEW_PAGE_FL){
-      goNext();
-    }
+    touch_start_x = point_x(e);
+    touch_start_y = point_y(e);
     App.preventDefault(e);
   };
 
   var canvas_move = function(e) {
-	  if(touch_pageX!=0 && current_view == VIEW_PAGE_FL){
-	      console.log("canvas_move");
-	      console.log(event);
-	      var newX = point_x(e);
-	      var dx = newX - touch_pageX;
-	      $("#canvas").css("left", dx/2);
-	      if(dx > 100){
-	          pagex = Math.abs(touch_pageX)*-1;
-	    	  touch_pageX = 0;
-	          goNext();
-	          $("#canvas").css("left", 0);
-	      }else if(dx < -100){
-	          pagex = Math.abs(touch_pageX);
-	    	  touch_pageX = 0;
-	          goPrev();
-	          $("#canvas").css("left", 0);
-	      }
-	      console.log(dx);
-	  }else if(touch_pageY!=0 && isRollMode()){
-	      var newY = point_y(e);
-	      var dy = newY - touch_pageY;
-	      $("#canvas").css("top", dy + parseInt($("#canvas").css("top")));
-	      console.log(dy);
-	  }
-	  App.preventDefault(e);
+    touch_pageX=point_x(e);
+    touch_pageY=point_y(e);
+    App.preventDefault(e);
   };
 
   var canvas_up = function(e) {
-	  touch_pageX=0;
-	  touch_pageY=0;
-	  $("#canvas").css("left", 0);
-      App.preventDefault(e);
+    console.log("canvas_up");
+    if(touch_start_x!=0 && !isRollMode()){
+      var dx = touch_pageX - touch_start_x;
+      $("#canvas").css("left", dx/2);
+      if(dx > 100){
+        pagex = Math.abs(touch_pageX)*-1;
+        goNext();
+      }else if(dx < -100){
+        pagex = Math.abs(touch_pageX);
+        goPrev();
+      }else{
+        menu_click(e);
+      }
+      console.log(dx);
+    }else if(touch_start_y!=0 && isRollMode()){
+      var dy = touch_pageY - touch_start_y;
+      if(dy > 100 || dy < -100){
+        $("#canvas").css("top", dy + parseInt($("#canvas").css("top")));
+      }else{
+        menu_click(e);
+      }
+      console.log(dy);
+    }else{
+      goNext();
+    }
+    touch_start_x=0;
+    touch_start_y=0;
+    touch_pageX=0;
+    touch_pageY=0;
+    $("#canvas").css("left", 0);
+    App.preventDefault(e);
   };
 
   /**
@@ -1669,6 +1674,13 @@ function $Reader(params, _fps) {
       creatorId = storyMetaFile["creator_id"];
       scenes = storyMetaFile["scenes"];
       pages = storyMetaFile["pages"];
+      var comic_title = storyMetaFile["comic_title"];
+      var story_title = storyMetaFile["story_title"];
+      var story_number = storyMetaFile["story_number"];
+      $("#comic_title_menu").text(comic_title);
+      $("#story_title_menu").text(story_title);
+      $("#current_story").text(story_number);
+      $("#total_story").text(storyMetaFile["story_count"]);
 
       cdn_host = storyMetaFile["cdn_host"];
       if(t > 0){
@@ -1693,8 +1705,8 @@ function $Reader(params, _fps) {
       }
       storyTitleInsert = storyMetaFile['story_title_insert']==='1';
       if(storyTitleInsert){
-        $("#story_title").text(storyMetaFile['story_title']);
-        $("#story_number_num").text(storyMetaFile['story_number']);
+        $("#story_title").text(story_title);
+        $("#story_number_num").text(story_number);
         $("#story_title_insert").bind(act_start, goNext);
       }
       if(comicTitleInsert || storyTitleInsert){
@@ -1826,7 +1838,7 @@ function $Reader(params, _fps) {
   };
 
   var prepareMenu = function(){
-    $("#menu").css("top", -1 * 144 + "px");
+    $("#menu").css("top", -1 * 208 + "px");
     $("#menu").show();
     $("#menu_tab_close").bind('click', menu_hide_click);
     disable_button($("#toggle_reading"));

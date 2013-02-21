@@ -123,12 +123,9 @@
   var t = <?=time()?>;
 
   $(document).ready(function(){
-    var html = '<iframe id="reader_reader" src="/local-test/mr/target/dist-debug/ja_pc.html#'+storyId+',nomember,nomenu,ad,'+t+'" width="'+ size +'px" height="' + size +'px" frameborder="0" allowfullscreen="true"></iframe>';
+    var html = '<iframe id="reader_reader" src="/local-test/mr/target/dist-debug/ja_pc.html#'+storyId+',nomember,ad,'+t+'" width="'+ size +'px" height="' + size +'px" frameborder="0" allowfullscreen="true"></iframe>';
     $("#reader_wrapper").append(html);
     startReader(storyId);
-    $('iframe:first').ready(function(){
-    	Controll.injectAd("<div style='width:250px;height:250px;'>test</div>");
-    });
   });
 </script>
 <div id="reader_container" style="width:480px;padding:0;margin:0;position:relative;">
