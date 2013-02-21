@@ -1433,6 +1433,16 @@ function $Reader(params, _fps) {
   var canvas_move = function(e) {
     touch_pageX=point_x(e);
     touch_pageY=point_y(e);
+    if(touch_start_x!=0 && !isRollMode()){
+      var dx = touch_pageX - touch_start_x;
+      $("#canvas").css("left", dx/2);
+    }else if(touch_start_y!=0 && isRollMode()){
+      var dy = touch_pageY - touch_start_y;
+      if(dy > 100 || dy < -100){
+        $("#canvas").css("top", dy + parseInt($("#canvas").css("top")));
+      }
+      console.log(dy);
+    }
     App.preventDefault(e);
   };
 
@@ -1440,7 +1450,6 @@ function $Reader(params, _fps) {
     console.log("canvas_up");
     if(touch_start_x!=0 && !isRollMode()){
       var dx = touch_pageX - touch_start_x;
-      $("#canvas").css("left", dx/2);
       if(dx > 100){
         pagex = Math.abs(touch_pageX)*-1;
         goNext();
@@ -1454,7 +1463,7 @@ function $Reader(params, _fps) {
     }else if(touch_start_y!=0 && isRollMode()){
       var dy = touch_pageY - touch_start_y;
       if(dy > 100 || dy < -100){
-        $("#canvas").css("top", dy + parseInt($("#canvas").css("top")));
+    	  //
       }else{
         menu_click(e);
       }
@@ -1551,6 +1560,7 @@ function $Reader(params, _fps) {
         $("#toggle_original").show();
         saveConfig();
     }
+    $("#menu_setting").fadeOut(300);
   };
 
   var change_mode_reading = function(){
@@ -1563,25 +1573,37 @@ function $Reader(params, _fps) {
         jumpTo(currentSceneIndex);
       }
     }
-
-    $("#toggle_original").hide();
-    $("#toggle_reading").show();
     saveConfig();
+    $("#menu_setting").fadeOut(300);
   };
 
   var change_view_page = function(){
     is_back = false;
     if(storyMetaFile['enable_page_mode']){
+      //fixme
       current_view = VIEW_PAGE_FP;
       if(hasAllTitleShown){
         jumpTo(currentPageIndex);
       }
-      $("#toggle_scene_view").hide();
-      $("#toggle_page_view").show();
       $("#prev_scene").hide();
       $("#prev_page").show();
       saveConfig();
     }
+    $("#menu_mode").fadeOut(300);
+  };
+
+  var change_view_page_wide = function(){
+    is_back = false;
+    if(storyMetaFile['enable_page_mode']){
+      current_view = VIEW_PAGE_W;
+      if(hasAllTitleShown){
+        jumpTo(currentPageIndex);
+      }
+      $("#prev_scene").hide();
+      $("#prev_page").show();
+      saveConfig();
+    }
+    $("#menu_mode").fadeOut(300);
   };
 
   var change_view_scene = function(){
@@ -1590,11 +1612,22 @@ function $Reader(params, _fps) {
       if(hasAllTitleShown){
         jumpTo(currentSceneIndex);
       }
-      $("#toggle_page_view").hide();
-      $("#toggle_scene_view").show();
       $("#prev_page").hide();
       $("#prev_scene").show();
       saveConfig();
+      $("#menu_mode").fadeOut(300);
+  };
+
+  var change_view_scene_roll = function(){
+      is_back = false;
+      current_view = VIEW_SCENE_R;
+      if(hasAllTitleShown){
+        jumpTo(currentSceneIndex);
+      }
+      $("#prev_page").hide();
+      $("#prev_scene").show();
+      saveConfig();
+      $("#menu_mode").fadeOut(300);
   };
 
   var loadConfig = function(){
@@ -1689,14 +1722,16 @@ function $Reader(params, _fps) {
       updateProgress();
 
       if(storyMetaFile['enable_original_mode'] && premium){
-        enable_button($("#toggle_reading"));
-        $("#toggle_reading").bind(act_button, change_mode_original);
-        $("#toggle_original").bind(act_button, change_mode_reading);
+        enable_button($("#change_reading"));
+        $("#set_reading").bind(act_button, change_mode_original);
+        $("#set_original").bind(act_button, change_mode_reading);
       }
       if(storyMetaFile['enable_page_mode']){
-        enable_button($("#toggle_scene_view"));
-        $("#toggle_scene_view").bind(act_button, change_view_page);
-        $("#toggle_page_view").bind(act_button, change_view_scene);
+        enable_button($("#change_coma_anime"));
+        $("#mode_anime_coma").bind(act_button, change_view_scene);
+        $("#mode_full_page").bind(act_button, change_view_page);
+        $("#mode_roll_coma").bind(act_button, change_view_scene_roll);
+        $("#mode_full_page").bind(act_button, change_view_page_wide);
       }
 
       comicTitleInsert = storyMetaFile['comic_title_insert']==='1';
@@ -1722,8 +1757,6 @@ function $Reader(params, _fps) {
           if(hasAllTitleShown){
             jumpTo(currentPageIndex);
           }
-          $("#toggle_scene_view").hide();
-          $("#toggle_page_view").show();
           $("#prev_scene").hide();
           $("#prev_page").show();
       }
@@ -1733,9 +1766,21 @@ function $Reader(params, _fps) {
       if(isRollMode()){
     	  replaceCanvasForRollMode();
       }
+
+      $("#change_reading").click(function(){
+        $("#menu_setting").fadeIn(300);
+      });
+
+      $("#change_coma_anime").click(function(){
+        $("#menu_mode").fadeIn(300);
+      });
+
       $("#prev_scene").bind(act_button, goPrev);
       $("#prev_page").bind(act_button, goPrev);
       $("#first_scene").bind(act_button, show_first_click);
+      $("#close").bind(act_button, function(){
+    	  (parent["closeReader"])();
+      });
       trackPageView('cover');
 
       if (scenes.length === 0) {
@@ -1841,8 +1886,8 @@ function $Reader(params, _fps) {
     $("#menu").css("top", -1 * 208 + "px");
     $("#menu").show();
     $("#menu_tab_close").bind('click', menu_hide_click);
-    disable_button($("#toggle_reading"));
-    disable_button($("#toggle_scene_view"));
+    disable_button($("#change_reading"));
+    disable_button($("#change_coma_anime"));
    };
 
   /**

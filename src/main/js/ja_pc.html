@@ -48,20 +48,6 @@
 				<div id="display_mode" class="sprite no_border"></div>
 				<a href="javascript:void(0);" id="change_coma_anime"   class="change_mode sprite" title="表示変更"></a>
 			</div>
-			<script>
-				$("#change_reading").click(function(){
-					$("#menu_setting").fadeIn(300);
-					$("#menu_setting").one("click",function(){
-						$("#menu_setting").fadeOut(300);
-					});
-				});
-				$("#change_coma_anime").click(function(){
-					$("#menu_mode").fadeIn(300);
-					$("#menu_mode").one("click",function(){
-						$("#menu_mode").fadeOut(300);
-					});
-				});
-			</script>
         </div>
         <div id="menu_lower">
           <a href="javascript:void(0);" id="prev_scene"   class="sprite disable" title="前のコマへ"></a>
@@ -99,7 +85,7 @@
 	  	<div class="mask"></div>
 		<div class="buttons">
 		  	<a href="javascript:void(0);" id="mode_full_page" class="sprite"><h3>フルページモード</h3><p>ページ単位で表示する。タブレットでは見開き表示。横にフリックするとページが切り替わる。</p></a>
-			<a href="javascript:void(0);" id="mode_wade_page" class="sprite"><h3>ワイドページモード</h3><p>ページを横幅いっぱいに表示する。下にスクロールして読み進める。</p></a>
+			<a href="javascript:void(0);" id="mode_wide_page" class="sprite"><h3>ワイドページモード</h3><p>ページを横幅いっぱいに表示する。下にスクロールして読み進める。</p></a>
 			<a href="javascript:void(0);" id="mode_roll_coma" class="sprite"><h3>コマロールモード</h3><p>コマを横幅いっぱいに表示する。下にスクロールして読み進める。</p></a>
 			<a href="javascript:void(0);" id="mode_anime_coma" class="sprite"><h3>コマアニメモード</h3><p>コマごろに表示する。マンガ作家がアニメーションを想定している場合は、動きを伴って表示される。</p></a>
 		</div>
