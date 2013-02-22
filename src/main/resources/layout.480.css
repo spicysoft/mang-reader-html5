@@ -207,6 +207,7 @@
 }
 .menu_base .buttons a.disable {
 	background:#888 !important;
+	cursor:default;
 }
 .menu_base .buttons a:hover, .menu_base .buttons a:active, .menu_base .buttons a.active {
 	background:#FFF;
