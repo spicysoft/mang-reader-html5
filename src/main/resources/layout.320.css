@@ -210,6 +210,12 @@
 	top:50%;
 	z-index:6;
 }
+.menu_base .buttons a.disable {
+	background:#888 !important;
+}
+.menu_base .buttons a:hover, .menu_base .buttons a:active, .menu_base .buttons a.active {
+	background:#FFF;
+}
 .menu_base h3 {
 	margin:0 0 1px;
 	font-size: 12px;

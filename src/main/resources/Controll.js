@@ -82,7 +82,7 @@ function $Controll() {
        elem("#start").click();
     }
 
-  this.page = function(){
+  /*this.page = function(){
     elem("#toggle_scene_view").trigger('mouseup');
   }
 
@@ -96,7 +96,7 @@ function $Controll() {
 
   this.original = function(){
     elem("#toggle_reading").trigger('mouseup');
-  }
+  }*/
 
   this.total = function(){
     return elem("#progress_total").text();
@@ -105,7 +105,24 @@ function $Controll() {
   this.current = function(){
     return elem("#progress_current").text();
   }
-
+  
+  this.change_mode = function(){
+  	if(elem("#menu_mode").css("display") == 'none'){
+      elem(".change_mode").trigger('click');
+    } else {
+      elem("#menu_mode").hide();
+    }
+  	
+  }
+  
+  this.change_setting = function(){
+	if(elem("#menu_setting").css("display") == 'none'){
+      elem(".change_setting").trigger('click');
+    } else {
+      elem("#menu_setting").hide();
+    }
+  }
+  
   this.mode = function(){
     if(elem("#toggle_reading").css("display") == 'none'){
       return 'original';
@@ -244,7 +261,7 @@ var tryPushAnalytics = function(data){
 var isVisible = function(elem){
   return elem.css("display") != 'none';
 };
-
+/*
 var popUpChangeMode = function(){
   if(!Controll.supportOriginalMode()){
     return;
@@ -304,28 +321,8 @@ var toggleView = function(){
     $("#popup_scene").hide();
     $("#popup_page").hide();
   },500);
-}
+}*/
 
-var popUpChangeView = function(){
-  if(!Controll.supportPageView()){
-    return;
-  }
-  if(Controll.view() == "scene"){
-    if(isVisible($("#popup_scene"))){
-      $("#popup_scene").hide();
-    }else{
-      $("#popup_scene").show();
-    }
-  }else{
-    if(isVisible($("#popup_page"))){
-      $("#popup_page").hide();
-    }else{
-       $("#popup_page").show();
-    }
-  }
-  $("#popup_reading").hide();
-  $("#popup_original").hide();
-};
 
 var controll_timer;
 var startReader = function(storyId){
@@ -345,15 +342,17 @@ var startReader = function(storyId){
     $("#menu_first").click(Controll.first);
     $("#menu_prev").click(Controll.prev);
     $("#menu_next").click(Controll.next);
-    $("#menu_mode_reading").click(popUpChangeMode);
+    /*$("#menu_mode_reading").click(popUpChangeMode);
     $("#menu_mode_original").click(popUpChangeMode);
     $("#menu_scene_view").click(popUpChangeView);
-    $("#menu_page_view").click(popUpChangeView);
+    $("#menu_page_view").click(popUpChangeView);*/
 
-    $("#popup_reading").click(toggleMode);
+    /*$("#popup_reading").click(toggleMode);
     $("#popup_original").click(toggleMode);
     $("#popup_scene").click(toggleView);
-    $("#popup_page").click(toggleView);
+    $("#popup_page").click(toggleView);*/
+	$("#change_mode").click(Controll.change_mode);
+	$("#change_setting").click(Controll.change_setting);
 	var sync_iframe = function(){
 	  Controll.enableGA();
       controll_timer =  setInterval(function(){
@@ -361,12 +360,16 @@ var startReader = function(storyId){
 			console.log("error:",Controll.ready());
           return;
         }
-        if(Controll.supportOriginalMode()){
+        /*if(Controll.supportOriginalMode()){
           $("#menu_mode_reading").removeClass("disable");
         }
         if(Controll.supportPageView()){
           $("#menu_scene_view").removeClass("disable");
-        }
+        }*/
+        /*上記のような分岐がここにも必要と思われる*/
+		$("#change_mode").removeClass("disable");
+		$("#change_setting").removeClass("disable");
+		
         var cur = Controll.current();
         var total = Controll.total();
         if(cur == '1' || cur == '--'){
@@ -399,19 +402,19 @@ var startReader = function(storyId){
             $("#fullscreen_prev").hide();
             $("#fullscreen_page_next").show();
             $("#fullscreen_page_prev").show();
-            $("#menu_scene_view").hide();
-            $("#menu_page_view").show();
+            /*$("#menu_scene_view").hide();
+            $("#menu_page_view").show();*/
           }else{
             $("#fullscreen_page_next").hide();
             $("#fullscreen_page_prev").hide();
             $("#fullscreen_next").show();
             $("#fullscreen_prev").show();
-            $("#menu_page_view").hide();
-            $("#menu_scene_view").show();
+            /*$("#menu_page_view").hide();
+            $("#menu_scene_view").show();*/
           }
           current_view = Controll.view();
         }
-        if(current_mode !=  Controll.mode()){
+        /*if(current_mode !=  Controll.mode()){
           if(Controll.mode() == "reading"){
             $("#menu_mode_original").hide();
             $("#menu_mode_reading").show();
@@ -420,7 +423,7 @@ var startReader = function(storyId){
             $("#menu_mode_original").show();
           }
           current_mode = Controll.mode();
-        }
+        }*/
       }, 100);
     }
 }

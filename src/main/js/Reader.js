@@ -1722,12 +1722,12 @@ function $Reader(params, _fps) {
       updateProgress();
 
       if(storyMetaFile['enable_original_mode'] && premium){
-        enable_button($("#change_reading"));
+        enable_button($(".change_setting"));
         $("#set_reading").bind(act_button, change_mode_original);
         $("#set_original").bind(act_button, change_mode_reading);
       }
       if(storyMetaFile['enable_page_mode']){
-        enable_button($("#change_coma_anime"));
+        enable_button($(".change_mode"));
         $("#mode_anime_coma").bind(act_button, change_view_scene);
         $("#mode_full_page").bind(act_button, change_view_page);
         $("#mode_roll_coma").bind(act_button, change_view_scene_roll);
@@ -1767,11 +1767,11 @@ function $Reader(params, _fps) {
     	  replaceCanvasForRollMode();
       }
 
-      $("#change_reading").click(function(){
+      $(".change_setting").click(function(){
         $("#menu_setting").fadeIn(300);
       });
 
-      $("#change_coma_anime").click(function(){
+      $(".change_mode").click(function(){
         $("#menu_mode").fadeIn(300);
       });
 
@@ -1886,8 +1886,8 @@ function $Reader(params, _fps) {
     $("#menu").css("top", -1 * 208 + "px");
     $("#menu").show();
     $("#menu_tab_close").bind('click', menu_hide_click);
-    disable_button($("#change_reading"));
-    disable_button($("#change_coma_anime"));
+    disable_button($(".change_setting"));
+    disable_button($(".change_mode"));
    };
 
   /**
