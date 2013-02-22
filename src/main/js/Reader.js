@@ -82,7 +82,7 @@ function $Reader(params, _fps) {
 
   console.log("v6.0.12");
 
-  var replaceCanvasForRollMode = function(){
+  var replaceCanvas = function(){
      if(isRollMode() || App.IE){
          $("#canvas").replaceWith('<div id="canvas" style="background: #000;"></div>');
      }else{
@@ -286,6 +286,7 @@ function $Reader(params, _fps) {
 
   //フルページモード
   var paintPageImage = function(i0, i1){
+	  console.log("paintPageImage");
     var d=0;
     if(reverse){
       d = pageX;
@@ -344,6 +345,8 @@ function $Reader(params, _fps) {
   };
 
   var paintImage = function(i){
+	  console.log("paintImage");
+	  console.log(i);
       var x;
       var y;
       if(isPageMode()){
@@ -377,11 +380,13 @@ function $Reader(params, _fps) {
           var rate =  Math.sqrt(320/screen.width);
           c.scale(rate, rate);
         }
+        console.log( i.scaledWidth() + "-" + i.scaledHeight());
         c.drawImage(i, dx, dy, i.scaledWidth(), i.scaledHeight());
       }
     };
 
   var paintRollImages = function(){
+    console.log("paintRollImages");
     var objects = [];
     var key = null;
     if(isPageMode()){
@@ -665,6 +670,7 @@ function $Reader(params, _fps) {
       if(isPageMode()&&!isRollMode()){
         if(this.width < this.height){
           var w = this.width * (height/dpi) * this.scale;
+          console.log("w:" + w);
           if(w < width){
             return w;
           }
@@ -1606,7 +1612,7 @@ function $Reader(params, _fps) {
       }else{
         current_view = VIEW_PAGE_FP;
       }
-      replaceCanvasForRollMode();
+      replaceCanvas();
       if(hasAllTitleShown){
         jumpTo(currentPageIndex);
       }
@@ -1622,7 +1628,7 @@ function $Reader(params, _fps) {
     is_back = false;
     if(storyMetaFile['enable_page_mode']){
       current_view = VIEW_PAGE_W;
-      replaceCanvasForRollMode();
+      replaceCanvas();
       if(hasAllTitleShown){
         jumpTo(currentPageIndex);
       }
@@ -1637,7 +1643,7 @@ function $Reader(params, _fps) {
       console.log("change_view_scene");
       is_back = false;
       current_view = VIEW_SCENE;
-      replaceCanvasForRollMode();
+      replaceCanvas();
       if(hasAllTitleShown){
         jumpTo(currentSceneIndex);
       }
@@ -1651,7 +1657,7 @@ function $Reader(params, _fps) {
       console.log("change_view_scene_roll");
       is_back = false;
       current_view = VIEW_SCENE_R;
-      replaceCanvasForRollMode();
+      replaceCanvas();
       if(hasAllTitleShown){
         jumpTo(currentSceneIndex);
       }
@@ -1673,7 +1679,7 @@ function $Reader(params, _fps) {
     if(storyMetaFile['enable_page_mode']){
       m = $.cookie('mang.reader.config.view');
       if(m && parseInt(m,10) === VIEW_PAGE_FP){
-          current_view = VIEW_PAGE_FP;
+    	  current_view = VIEW_PAGE_FP;
       }
     }
 
@@ -1752,6 +1758,10 @@ function $Reader(params, _fps) {
       }
       updateProgress();
 
+      if(isRollMode()){
+    	  replaceCanvas();
+      }
+
       if(storyMetaFile['enable_original_mode'] && premium){
         enable_button($(".change_setting"));
         $("#set_reading").bind(act_button, change_mode_original);
@@ -1783,10 +1793,6 @@ function $Reader(params, _fps) {
 
       console.log("view: " + current_view);
       trackstart = true;
-
-      if(isRollMode()){
-    	  replaceCanvasForRollMode();
-      }
 
       $(".change_setting").click(function(){
         $("#menu_setting").fadeIn(300);
