@@ -37,17 +37,17 @@
 	height: 27px;
 }
 
-#setting, #change_mode {
+#change_setting, #change_mode {
 	color:#999;
 	padding:0 10px;
 	height:27px;
 }
-#setting:hover, #change_mode:hover,
-#setting.active, #change_mode.active {
+#change_setting:hover, #change_mode:hover,
+#change_setting.active, #change_mode.active {
 	color:#FFF;
 	cursor:pointer;
 }
-#setting.disable, #change_mode.disable {
+#change_setting.disable, #change_mode.disable {
 	color:#555;
 }
 
@@ -195,14 +195,14 @@
 #menu_first,#menu_prev,#menu_next,#menu_fullscreen,#close_fullscreen {
 	padding:0 6px 0 6px;
 }
-#menu_first:active,#menu_prev:active,#menu_next:active,#menu_fullscreen:active,#close_fullscreen:active,#setting:active, #change_mode:active {
+#menu_first:active,#menu_prev:active,#menu_next:active,#menu_fullscreen:active,#close_fullscreen:active,#change_setting:active, #change_mode:active {
 	box-shadow:inset 5px 5px 10px rgba(0,0,0,0.7);
 }
 #menu_first:active,#menu_prev:active,#menu_next:active,#menu_fullscreen:active,#close_fullscreen:active {
 	padding:0 5px 0 7px;
 	margin: 1px 0 0;
 }
-#setting:active, #change_mode:active {
+#change_setting:active, #change_mode:active {
 	padding:0 9px 0 11px;
 	line-height:30px;
 }

@@ -306,7 +306,7 @@ body {
 	display:none;
 }
 
-#setting {
+#change_setting {
     z-index:  12;
     position: relative;
     top:      0px;
