@@ -225,6 +225,9 @@ function $App() {
   };
 
   this.preventDefault = function(e){
+    if(!e){
+      return;
+    }
     if (App.IE) {
        e.returnValue = false;
     }else{
