@@ -49,6 +49,7 @@
 }
 #change_setting.disable, #change_mode.disable {
 	color:#555;
+	cursor:default;
 }
 
 

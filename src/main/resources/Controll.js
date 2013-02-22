@@ -107,8 +107,9 @@ function $Controll() {
   }
   
   this.change_mode = function(){
-  	if(elem("#menu_mode").css("display") == 'none'){
+  	if(!isVisible("#menu_mode")){
       elem(".change_mode").trigger('click');
+	  if(isVisible("#menu_setting"))elem("#menu_setting").hide();
     } else {
       elem("#menu_mode").hide();
     }
@@ -116,8 +117,9 @@ function $Controll() {
   }
   
   this.change_setting = function(){
-	if(elem("#menu_setting").css("display") == 'none'){
+	if(!isVisible("#menu_setting")){
       elem(".change_setting").trigger('click');
+	  if(isVisible("#menu_mode")) elem("#menu_mode").hide();
     } else {
       elem("#menu_setting").hide();
     }
@@ -169,6 +171,10 @@ function $Controll() {
 
   this.enableGA = function(){
     document.getElementById('reader_reader').contentWindow._gaq =  _gaq;
+  };
+  
+  var isVisible = function(hash){
+ 	 return elem(hash).css("display") != 'none';
   };
 
   this.is_show_ad =false;
