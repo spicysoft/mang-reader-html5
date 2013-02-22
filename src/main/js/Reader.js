@@ -1575,11 +1575,9 @@ function $Reader(params, _fps) {
             jumpTo(currentSceneIndex);
           }
         }
-        $("#toggle_reading").hide();
-        $("#toggle_original").show();
         saveConfig();
     }
-    $("#menu_setting").fadeOut(300);
+    change_mode_uiview();
   };
 
   var change_mode_reading = function(){
@@ -1593,8 +1591,26 @@ function $Reader(params, _fps) {
       }
     }
     saveConfig();
-    $("#menu_setting").fadeOut(300);
+    change_mode_uiview();
   };
+  var change_mode_uiview = function(){
+  	console.log("changed_mode_ui");
+  	if(!storyMetaFile['enable_original_mode']){
+		$("#set_reading").addClass("active");
+		$("#set_original").removeClass("active");
+		$("#set_original").addClass("disable");
+	} else if(current_mode===MODE_ORIGINAL){
+		$("#set_reading").removeClass("active");
+		$("#set_original").addClass("active");
+		$(".change_setting").attr("id","change_original");
+	} else {
+		$("#set_reading").addClass("active");
+		$("#set_original").removeClass("active");
+		$(".change_setting").attr("id","change_reading");
+	}
+	
+	$("#menu_setting").fadeOut(300);
+  }
 
   var change_view_page = function(){
     console.log("change_view_page");
@@ -1614,7 +1630,7 @@ function $Reader(params, _fps) {
       $("#prev_page").show();
       saveConfig();
     }
-    $("#menu_mode").fadeOut(300);
+    change_view_uiview();
   };
 
   var change_view_page_wide = function(){
@@ -1630,7 +1646,7 @@ function $Reader(params, _fps) {
       $("#prev_page").show();
       saveConfig();
     }
-    $("#menu_mode").fadeOut(300);
+    change_view_uiview();
   };
 
   var change_view_scene = function(){
@@ -1644,9 +1660,9 @@ function $Reader(params, _fps) {
       $("#prev_page").hide();
       $("#prev_scene").show();
       saveConfig();
-      $("#menu_mode").fadeOut(300);
+      change_view_uiview();
   };
-
+  
   var change_view_scene_roll = function(){
       console.log("change_view_scene_roll");
       is_back = false;
@@ -1658,8 +1674,36 @@ function $Reader(params, _fps) {
       $("#prev_page").hide();
       $("#prev_scene").show();
       saveConfig();
-      $("#menu_mode").fadeOut(300);
+      change_view_uiview();
   };
+  
+  var change_view_uiview = function(){
+  	if (!storyMetaFile['enable_page_mode']) {
+		$("#mode_full_page").addClass("disable");
+		$("#mode_wide_page").addClass("disable");
+	}
+  	$("#menu_mode a").removeClass("active");
+  	switch(current_view){
+		case VIEW_PAGE_FL:
+		case VIEW_PAGE_FP:
+		$("#mode_full_page").addClass("active");
+		$(".change_mode").attr("id","change_full_page");
+		break;
+		case VIEW_PAGE_W:
+		$("#mode_wide_page").addClass("active");
+		$(".change_mode").attr("id","change_wide_page");
+		break;
+		case VIEW_SCENE:
+		$("#mode_anime_coma").addClass("active");
+		$(".change_mode").attr("id","change_coma_anime");
+		break;
+		case VIEW_SCENE_R:
+		$("#mode_roll_coma").addClass("active");
+		$(".change_mode").attr("id","change_coma_roll");
+		break;
+	}
+  	$("#menu_mode").fadeOut(300);
+  }
 
   var loadConfig = function(){
     var m = false;
@@ -1754,9 +1798,10 @@ function $Reader(params, _fps) {
 
       if(storyMetaFile['enable_original_mode'] && premium){
         enable_button($(".change_setting"));
-        $("#set_reading").bind(act_button, change_mode_original);
-        $("#set_original").bind(act_button, change_mode_reading);
+        $("#set_original").bind(act_button, change_mode_original);
+        $("#set_reading").bind(act_button, change_mode_reading);
       }
+	  
       if(storyMetaFile['enable_page_mode']){
         enable_button($(".change_mode"));
         $("#mode_anime_coma").bind(act_button, change_view_scene);
@@ -1764,7 +1809,8 @@ function $Reader(params, _fps) {
         $("#mode_roll_coma").bind(act_button, change_view_scene_roll);
         $("#mode_wide_page").bind(act_button, change_view_page_wide);
       }
-
+      change_mode_uiview();
+	  change_view_uiview();
       comicTitleInsert = storyMetaFile['comic_title_insert']==='1';
       if(comicTitleInsert)	{
         comicTitleImage = apiComicTitleImage(storyMetaFile['comic_id']);
