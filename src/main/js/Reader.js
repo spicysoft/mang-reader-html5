@@ -203,7 +203,7 @@ function $Reader(params, _fps) {
   };
 
   var getCanvas = function(){
-    if(App.IE){
+    if(App.IE || isRollMode()){
       return  $("#canvas");
     }
     var context = canvas.getContext("2d");
@@ -659,9 +659,25 @@ function $Reader(params, _fps) {
        refetch(id, mode, dpi, i);
     };
     i.scaledWidth = function(){
+      if(isPageMode()&&isRollMode()){
+        if(this.width < this.height){
+          var w = this.width * (height/dpi) * this.scale;
+          if(w < width){
+            return w;
+          }
+        }
+      }
       return this.width * this.scale;
     };
     i.scaledHeight = function(){
+      if(isPageMode()&&isRollMode()){
+        if(this.width < this.height){
+          var w = this.width * (height/dpi) * this.scale;
+          if(w < width){
+            return this.height * (height/dpi) * this.scale;
+          }
+        }
+      }
       return this.height * this.scale;
     };
     var param = "";
@@ -1581,7 +1597,12 @@ function $Reader(params, _fps) {
     is_back = false;
     if(storyMetaFile['enable_page_mode']){
       //fixme
-      current_view = VIEW_PAGE_FP;
+      if(width > height){
+        current_view = VIEW_PAGE_FL;
+      }else{
+        current_view = VIEW_PAGE_FP;
+      }
+
       if(hasAllTitleShown){
         jumpTo(currentPageIndex);
       }
@@ -1750,16 +1771,6 @@ function $Reader(params, _fps) {
       loadConfig();
       saveConfig();
 
-      //fixme
-      //forced w page mode if medias w
-      if(storyMetaFile['enable_page_mode'] && width > height){
-    	  current_view = VIEW_PAGE_FL;
-          if(hasAllTitleShown){
-            jumpTo(currentPageIndex);
-          }
-          $("#prev_scene").hide();
-          $("#prev_page").show();
-      }
       console.log("view: " + current_view);
       trackstart = true;
 
