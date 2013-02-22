@@ -83,14 +83,12 @@ function $Reader(params, _fps) {
   console.log("v6.0.12");
 
   var replaceCanvasForRollMode = function(){
-     $("#canvas").replaceWith('<div id="canvas" style="background: #000;"></div>');
-  }
+     if(isRollMode() || App.IE){
+         $("#canvas").replaceWith('<div id="canvas" style="background: #000;"></div>');
+     }else{
+         $("#canvas").replaceWith('<canvas id="canvas"></canvas>');
+     }
 
-  if (App.IE) {
-    // canvasが実装されていないのでdivに置換
-    // style="background: #000;"を定義しないとクリッカブルにならない
-    $("#canvas").replaceWith(
-        '<div id="canvas" style="background: #000;"></div>');
   }
 
   if(!t){
@@ -398,6 +396,7 @@ function $Reader(params, _fps) {
       param = "/"+t;
     }
     var c = getCanvas();
+    c.empty();
     for(var i=0; i<objects.length; i++){
       var url = urlSceneImage(image_host, objects[i][key], current_mode, dpi, param);
       console.log(url);
@@ -410,7 +409,11 @@ function $Reader(params, _fps) {
    * @return void
    */
   var paint = function() {
-    var i;
+     if(isRollMode()){
+       paintRollImages();
+       return;
+     }
+     var i;
     if(comicTitleInsert && !hasComicTitleShown){
       i = comicTitleImage;
       if (i === undefined || !i.hasLoaded()) {
@@ -659,7 +662,7 @@ function $Reader(params, _fps) {
        refetch(id, mode, dpi, i);
     };
     i.scaledWidth = function(){
-      if(isPageMode()&&isRollMode()){
+      if(isPageMode()&&!isRollMode()){
         if(this.width < this.height){
           var w = this.width * (height/dpi) * this.scale;
           if(w < width){
@@ -670,7 +673,7 @@ function $Reader(params, _fps) {
       return this.width * this.scale;
     };
     i.scaledHeight = function(){
-      if(isPageMode()&&isRollMode()){
+      if(isPageMode()&&!isRollMode()){
         if(this.width < this.height){
           var w = this.width * (height/dpi) * this.scale;
           if(w < width){
@@ -843,7 +846,7 @@ function $Reader(params, _fps) {
    * @return void
    */
   var jumpTo = function(newIndex) {
-    console.log("jumpTo:" + newIndex);
+    console.log("jumpTo:" + newIndex + " view:" + current_view);
     hideMenu(500);
     hideFinished();
     if(isPageMode()){
@@ -1594,6 +1597,7 @@ function $Reader(params, _fps) {
   };
 
   var change_view_page = function(){
+    console.log("change_view_page");
     is_back = false;
     if(storyMetaFile['enable_page_mode']){
       //fixme
@@ -1602,7 +1606,7 @@ function $Reader(params, _fps) {
       }else{
         current_view = VIEW_PAGE_FP;
       }
-
+      replaceCanvasForRollMode();
       if(hasAllTitleShown){
         jumpTo(currentPageIndex);
       }
@@ -1614,9 +1618,11 @@ function $Reader(params, _fps) {
   };
 
   var change_view_page_wide = function(){
+    console.log("change_view_page_wide");
     is_back = false;
     if(storyMetaFile['enable_page_mode']){
       current_view = VIEW_PAGE_W;
+      replaceCanvasForRollMode();
       if(hasAllTitleShown){
         jumpTo(currentPageIndex);
       }
@@ -1628,8 +1634,10 @@ function $Reader(params, _fps) {
   };
 
   var change_view_scene = function(){
+      console.log("change_view_scene");
       is_back = false;
       current_view = VIEW_SCENE;
+      replaceCanvasForRollMode();
       if(hasAllTitleShown){
         jumpTo(currentSceneIndex);
       }
@@ -1640,8 +1648,10 @@ function $Reader(params, _fps) {
   };
 
   var change_view_scene_roll = function(){
+      console.log("change_view_scene_roll");
       is_back = false;
       current_view = VIEW_SCENE_R;
+      replaceCanvasForRollMode();
       if(hasAllTitleShown){
         jumpTo(currentSceneIndex);
       }
@@ -1752,7 +1762,7 @@ function $Reader(params, _fps) {
         $("#mode_anime_coma").bind(act_button, change_view_scene);
         $("#mode_full_page").bind(act_button, change_view_page);
         $("#mode_roll_coma").bind(act_button, change_view_scene_roll);
-        $("#mode_full_page").bind(act_button, change_view_page_wide);
+        $("#mode_wide_page").bind(act_button, change_view_page_wide);
       }
 
       comicTitleInsert = storyMetaFile['comic_title_insert']==='1';
@@ -1858,7 +1868,7 @@ function $Reader(params, _fps) {
 	setTimeout(function(){
 		close_button.removeClass("disable").one(act_button,function(){
 			if(isPageMode() && currentPageIndex + 1 >= pages.length ||
-			        current_view === VIEW_SCENE && currentSceneIndex + 1 >= scenes.length) {
+					!isPageMode() && currentSceneIndex + 1 >= scenes.length) {
 			      showFinished();
 			}
 			ad_cover.hide();
