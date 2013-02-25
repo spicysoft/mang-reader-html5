@@ -88,7 +88,7 @@ function $Reader(params, _fps) {
      }else{
          $("#canvas").replaceWith('<canvas id="canvas"></canvas>');
      }
-
+     setWidthAndHeight();
   }
 
   if(!t){
@@ -301,8 +301,8 @@ function $Reader(params, _fps) {
       x1=d+width;
     }
 
-    var w0=i0.width;
-    var h0=i0.height;
+    var w0=i0.scaledWidth();
+    var h0=i0.scaledHeight();
     var dx0=(width - w0) / 2 + x0;
     var dy0=(height - h0) / 2;
 
@@ -311,8 +311,8 @@ function $Reader(params, _fps) {
     var dx1 = 0;
     var dy1 = 0;
     if(i1){
-      w1=i1.width;
-      h1=i1.height;
+      w1=i1.scaledWidth();
+      h1=i1.scaledHeight();
       dx1=(width - w1) / 2 + x1;
       dy1=(height - h1) / 2;
     }
@@ -337,9 +337,9 @@ function $Reader(params, _fps) {
         c.scale(rate, rate);
       }
 
-      c.drawImage(i0, dx0, dy0);
+      c.drawImage(i0, dx0, dy0, w0, h0);
       if(i1){
-        c.drawImage(i1, dx1, dy1);
+        c.drawImage(i1, dx1, dy1, w1, h1);
       }
     }
   };
@@ -403,7 +403,11 @@ function $Reader(params, _fps) {
     var c = getCanvas();
     c.empty();
     for(var i=0; i<objects.length; i++){
-      var url = urlSceneImage(image_host, objects[i][key], current_mode, dpi, param);
+      if(isPageMode()){
+          var url = urlPageImage(image_host, objects[i][key], current_mode, dpi, param);
+      }else{
+          var url = urlSceneImage(image_host, objects[i][key], current_mode, dpi, param);
+      }
       console.log(url);
       c.append("<p><img src='"+url+"' width='"+dpi+"px'/></p>");
     }
@@ -1463,9 +1467,9 @@ function $Reader(params, _fps) {
       $("#canvas").css("left", dx/2);
     }else if(touch_start_y!=0 && isRollMode()){
       var dy = touch_pageY - touch_start_y;
-      if(dy > 100 || dy < -100){
-        $("#canvas").css("top", dy + parseInt($("#canvas").css("top")));
-      }
+      $("#canvas").css("top", (dy) + parseInt($("#canvas").css("top")));
+      touch_start_x = touch_pageX;
+      touch_start_y = touch_pageY;
       console.log(dy);
     }
     App.preventDefault(e);
@@ -1488,8 +1492,6 @@ function $Reader(params, _fps) {
     }else if(touch_start_y!=0 && isRollMode()){
       var dy = touch_pageY - touch_start_y;
       if(dy > 100 || dy < -100){
-    	  //
-      }else{
         menu_click(e);
       }
       console.log(dy);
@@ -1614,7 +1616,7 @@ function $Reader(params, _fps) {
 		$("#set_original").removeClass("active");
 		$(".change_setting").attr("id","change_reading");
 	}
-	
+
 	$("#menu_setting").fadeOut(300);
   }
 
@@ -1668,7 +1670,7 @@ function $Reader(params, _fps) {
       saveConfig();
       change_view_uiview();
   };
-  
+
   var change_view_scene_roll = function(){
       console.log("change_view_scene_roll");
       is_back = false;
@@ -1682,7 +1684,7 @@ function $Reader(params, _fps) {
       saveConfig();
       change_view_uiview();
   };
-  
+
   var change_view_uiview = function(){
   	if (!storyMetaFile['enable_page_mode']) {
 		$("#mode_full_page").addClass("disable");
@@ -1811,7 +1813,7 @@ function $Reader(params, _fps) {
         $("#set_original").bind(act_button, change_mode_original);
         $("#set_reading").bind(act_button, change_mode_reading);
       }
-	  
+
       if(storyMetaFile['enable_page_mode']){
         enable_button($(".change_mode"));
         $("#mode_anime_coma").bind(act_button, change_view_scene);
