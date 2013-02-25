@@ -337,9 +337,9 @@ function $Reader(params, _fps) {
         c.scale(rate, rate);
       }
 
-      c.drawImage(i0, dx0, dy0);
+      c.drawImage(i0, dx0, dy0, w0, h0);
       if(i1){
-        c.drawImage(i1, dx1, dy1);
+        c.drawImage(i1, dx1, dy1, w1, h1);
       }
     }
   };

@@ -79,24 +79,8 @@ function $Controll() {
   }
 
   this.start = function(){
-       elem("#start").click();
-    }
-
-  /*this.page = function(){
-    elem("#toggle_scene_view").trigger('mouseup');
+    elem("#start").click();
   }
-
-  this.scene = function(){
-    elem("#toggle_page_view").trigger('mouseup');
-  }
-
-  this.reading = function(){
-    elem("#toggle_original").trigger('mouseup');
-  }
-
-  this.original = function(){
-    elem("#toggle_reading").trigger('mouseup');
-  }*/
 
   this.total = function(){
     return elem("#progress_total").text();
@@ -105,7 +89,7 @@ function $Controll() {
   this.current = function(){
     return elem("#progress_current").text();
   }
-  
+
   this.change_mode = function(){
   	if(!isVisible("#menu_mode")){
       elem(".change_mode").trigger('click');
@@ -113,9 +97,9 @@ function $Controll() {
     } else {
       elem("#menu_mode").hide();
     }
-  	
+
   }
-  
+
   this.change_setting = function(){
 	if(!isVisible("#menu_setting")){
       elem(".change_setting").trigger('click');
@@ -124,20 +108,20 @@ function $Controll() {
       elem("#menu_setting").hide();
     }
   }
-  
+
   this.mode = function(){
-    if(elem("#toggle_reading").css("display") == 'none'){
-      return 'original';
-    } else {
+    if(elem(".change_setting").attr('id') == 'change_reading'){
       return 'reading';
+    } else {
+      return 'original';
     }
   }
 
   this.view = function(){
-    if(elem("#toggle_scene_view").css("display") == 'none'){
-      return  'page';
-    } else {
+    if(elem(".change_mode").attr('id') == 'change_coma_anime'){
       return  'scene';
+    } else {
+      return  'page';
     }
   }
 
@@ -172,7 +156,7 @@ function $Controll() {
   this.enableGA = function(){
     document.getElementById('reader_reader').contentWindow._gaq =  _gaq;
   };
-  
+
   var isVisible = function(hash){
  	 return elem(hash).css("display") != 'none';
   };
@@ -375,7 +359,7 @@ var startReader = function(storyId){
         /*上記のような分岐がここにも必要と思われる*/
 		$("#change_mode").removeClass("disable");
 		$("#change_setting").removeClass("disable");
-		
+
         var cur = Controll.current();
         var total = Controll.total();
         if(cur == '1' || cur == '--'){
