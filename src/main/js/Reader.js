@@ -301,8 +301,8 @@ function $Reader(params, _fps) {
       x1=d+width;
     }
 
-    var w0=i0.width;
-    var h0=i0.height;
+    var w0=i0.scaledWidth();
+    var h0=i0.scaledHeight();
     var dx0=(width - w0) / 2 + x0;
     var dy0=(height - h0) / 2;
 
@@ -311,8 +311,8 @@ function $Reader(params, _fps) {
     var dx1 = 0;
     var dy1 = 0;
     if(i1){
-      w1=i1.width;
-      h1=i1.height;
+      w1=i1.scaledWidth();
+      h1=i1.scaledHeight();
       dx1=(width - w1) / 2 + x1;
       dy1=(height - h1) / 2;
     }
