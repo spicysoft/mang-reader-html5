@@ -113,7 +113,7 @@
 <div>Development</div>
 <h2>member 480</h2>
 <script type="text/javascript" >
-  var storyId = 26761;
+  var storyId = 20724;
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" ></script>
 <script src="/local-test/mr/target/dist-debug/Controll.js" type="text/javascript" ></script>
