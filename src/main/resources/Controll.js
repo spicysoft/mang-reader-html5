@@ -101,6 +101,10 @@ function $Controll() {
   }
 
   this.change_setting = function(){
+  	if(!Controll.supportOriginalMode()){
+		create_unlock_dialog("selectOriginalMode");
+		return;
+	}
 	if(!isVisible("#menu_setting")){
       elem(".change_setting").trigger('click');
 	  if(isVisible("#menu_mode")) elem("#menu_mode").hide();
