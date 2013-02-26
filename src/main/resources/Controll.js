@@ -130,11 +130,11 @@ function $Controll() {
   }
 
   this.supportOriginalMode = function(){
-    return !elem("#toggle_reading").hasClass("disable");
+    return !elem(".change_setting").hasClass("disable");
   }
 
   this.supportPageView = function(){
-    return !elem("#toggle_scene_view").hasClass("disable");
+    return !elem(".change_mode").hasClass("disable");
   }
 
   this.ready = function(){
@@ -350,16 +350,13 @@ var startReader = function(storyId){
 			console.log("error:",Controll.ready());
           return;
         }
-        /*if(Controll.supportOriginalMode()){
-          $("#menu_mode_reading").removeClass("disable");
+        if(Controll.supportOriginalMode()){
+          $("#change_setting").removeClass("disable");
         }
         if(Controll.supportPageView()){
-          $("#menu_scene_view").removeClass("disable");
-        }*/
-        /*上記のような分岐がここにも必要と思われる*/
-		$("#change_mode").removeClass("disable");
-		$("#change_setting").removeClass("disable");
-
+          $("#change_mode").removeClass("disable");
+        }
+		
         var cur = Controll.current();
         var total = Controll.total();
         if(cur == '1' || cur == '--'){
