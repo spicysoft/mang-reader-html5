@@ -674,8 +674,8 @@ function $Reader(params, _fps) {
       if(isPageMode()&&!isRollMode()){
         if(this.width < this.height){
           var w = this.width * (height/dpi) * this.scale;
-          console.log("w:" + w);
           if(w < width){
+            console.log("scaled w:" + w);
             return w;
           }
         }
@@ -687,7 +687,9 @@ function $Reader(params, _fps) {
         if(this.width < this.height){
           var w = this.width * (height/dpi) * this.scale;
           if(w < width){
-            return this.height * (height/dpi) * this.scale;
+        	var h = this.height * (height/dpi) * this.scale;
+            console.log("scaled h:" + h);
+            return h;
           }
         }
       }
