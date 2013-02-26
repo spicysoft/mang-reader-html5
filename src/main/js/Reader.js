@@ -1573,6 +1573,7 @@ function $Reader(params, _fps) {
   };
 
   var change_mode_original = function(){
+  	console.log("select original mode");
     is_back = false;
     if(storyMetaFile['enable_original_mode']){
         current_mode  = MODE_ORIGINAL;
@@ -1602,7 +1603,6 @@ function $Reader(params, _fps) {
     change_mode_uiview();
   };
   var change_mode_uiview = function(){
-  	console.log("changed_mode_ui");
   	if(!storyMetaFile['enable_original_mode']){
 		$("#set_reading").addClass("active");
 		$("#set_original").removeClass("active");
@@ -1810,12 +1810,18 @@ function $Reader(params, _fps) {
 
       if(storyMetaFile['enable_original_mode'] && premium){
         enable_button($(".change_setting"));
+		$(".change_setting").click(function(){
+	      $("#menu_setting").fadeIn(300);
+	    });
         $("#set_original").bind(act_button, change_mode_original);
         $("#set_reading").bind(act_button, change_mode_reading);
       }
 
       if(storyMetaFile['enable_page_mode']){
         enable_button($(".change_mode"));
+		$(".change_mode").click(function(){
+          $("#menu_mode").fadeIn(300);
+        });
         $("#mode_anime_coma").bind(act_button, change_view_scene);
         $("#mode_full_page").bind(act_button, change_view_page);
         $("#mode_roll_coma").bind(act_button, change_view_scene_roll);
@@ -1841,14 +1847,6 @@ function $Reader(params, _fps) {
 
       console.log("view: " + current_view);
       trackstart = true;
-
-      $(".change_setting").click(function(){
-        $("#menu_setting").fadeIn(300);
-      });
-
-      $(".change_mode").click(function(){
-        $("#menu_mode").fadeIn(300);
-      });
 
       $("#prev_scene").bind(act_button, goPrev);
       $("#prev_page").bind(act_button, goPrev);
