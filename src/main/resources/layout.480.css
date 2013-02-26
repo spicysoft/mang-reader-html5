@@ -50,6 +50,7 @@
 #img_quality span				{background-position: 0 0;width: 73px;height: 44px;margin-top: 2px;}
 
 #change_reading span			{background-position: 0 -44px;width: 138px;height: 28px;}
+#change_reading.disable span			{opacity: 0.5;}
 #change_reading:hover span,
 #change_reading.active span	{background-position: -138px -44px;width: 138px;height: 28px;}
 
