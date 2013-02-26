@@ -143,7 +143,6 @@
 }
 .sprite span {
 	background-image: url(ja.pc.png?v=7);
-	background-size: 272px 112px; 
 	background-repeat:no-repeat; 
 	text-indent:-9999px;
 	overflow:hidden;
