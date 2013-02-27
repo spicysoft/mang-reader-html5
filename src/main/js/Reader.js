@@ -69,6 +69,8 @@ function $Reader(params, _fps) {
   var trackstart = false;
 
   //0..右開き
+  var SPREAD_RIGHT = 0;
+  var SPREAD_LEFT = 1;
   var spread = 0;
   var flick = 0;
   //var orientation = 'vertical';
@@ -80,7 +82,7 @@ function $Reader(params, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v6.0.12");
+  console.log("v6.0.13");
 
   var replaceCanvas = function(){
      if(isRollMode() || App.IE){
@@ -220,44 +222,56 @@ function $Reader(params, _fps) {
       d = pageX;
       nd = -1 * width;
     }
+
+    if(spread===SPREAD_RIGHT){
+      var l0 = i0;
+      var r0 = i1;
+      var l1 = i2;
+      var r1 = i3;
+    }else{
+      var r0 = i0;
+      var l0 = i1;
+      var r1 = i2;
+      var l1 = i3;
+    }
     console.log("d:" + d);
     var dx0=0,dx1=0,dx2=0,dx3=0;
     var dy0=0,dy1=0,dy2=0,dy3=0;
-    if(i0){
-      dy0=(height-i0.height)/2;
-      dx0=((width/2-i0.width)+d);
+    if(l0){
+      dy0=(height-l0.scaledHeight())/2;
+      dx0=((width/2-l0.scaledWidth())+d);
     }
-    if(i1){
-      dy1=(height-i1.height)/2;
+    if(r0){
+      dy1=(height-r0.scaledHeight())/2;
       dx1=width/2+d;
     }
-    if(i2){
-      dy2= (height-i2.height)/2;
-      dx2= (width/2-i2.width)+d+nd;
+    if(l1){
+      dy2= (height-l1.scaledHeight())/2;
+      dx2= (width/2-l1.scaledWidth())+d+nd;
     }
-    if(i3){
-      dy3= (height-i3.height)/2;
+    if(r1){
+      dy3= (height-r1.scaledHeight())/2;
       dx3= (width/2+d)+nd;
     }
 
     var c = getCanvas();
     if (App.IE) {
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
-      if(i0){
+      if(l0){
         i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
-        c.empty().append(i0);
+        c.empty().append(l0);
       }
-      if(i1){
+      if(r0){
         i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
-        c.append(i1);
+        c.append(r0);
       }
-      if(i2){
+      if(l1){
         i1.style.cssText = "position: absolute; top: " + dy2 + "px; left:" + dx2 + "px;";
-        c.append(i2);
+        c.append(l1);
       }
-      if(i3){
+      if(r1){
         i1.style.cssText = "position: absolute; top: " + dy3+ "px; left:" + dx3 + "px;";
-        c.append(i3);
+        c.append(r1);
       }
       c.append(mask);
       c = null;
@@ -269,17 +283,17 @@ function $Reader(params, _fps) {
         var rate =  Math.sqrt(320/screen.width);
         c.scale(rate, rate);
       }
-      if(i0){
-        c.drawImage(i0, dx0, dy0);
+      if(l0){
+        c.drawImage(l0, dx0, dy0, l0.scaledWidth(), l0.scaledHeight());
       }
-      if(i1){
-        c.drawImage(i1, dx1, dy1);
+      if(r0){
+        c.drawImage(r1, dx1, dy1, r0.scaledWidth(), r0.scaledHeight());
       }
-      if(i2){
-        c.drawImage(i2, dx2, dy2);
+      if(l1){
+        c.drawImage(l1, dx2, dy2, l1.scaledWidth(), l1.scaledHeight());
       }
-      if(i3){
-        c.drawImage(i3, dx3, dy3);
+      if(r1){
+        c.drawImage(r1, dx3, dy3, r1.scaledWidth(), r1.scaledHeight());
       }
     }
   };
@@ -1313,22 +1327,22 @@ function $Reader(params, _fps) {
         setTimeout(paint, 0);
         var i;
         if(reverse){
-            if(currentPageIndex==0){
-                i = pageImages[current_mode][currentPageIndex];
-            }else{
-                i = pageImages[current_mode][currentPageIndex-1];
-            }
+          if(currentPageIndex==0){
+            i = pageImages[current_mode][currentPageIndex];
+          }else{
+            i = pageImages[current_mode][currentPageIndex-1];
+          }
         }else{
-            if(currentPageIndex==0){
-                i = pageImages[current_mode][currentPageIndex];
-            }else{
-                i = pageImages[current_mode][currentPageIndex+1];
-            }
+          if(currentPageIndex==0){
+            i = pageImages[current_mode][currentPageIndex];
+          }else{
+            i = pageImages[current_mode][currentPageIndex+1];
+          }
         }
 
         var padding = 0;
         if(i){
-          padding = width/2-i.width;
+          padding = width/2-i.scaledWidth();
         }
 
         var limit = width;
@@ -1469,9 +1483,8 @@ function $Reader(params, _fps) {
       $("#canvas").css("left", dx/2);
     }else if(touch_start_y!=0 && isRollMode()){
       var dy = touch_pageY - touch_start_y;
-      $("#canvas").css("top", (dy) + parseInt($("#canvas").css("top")));
-      touch_start_x = touch_pageX;
       touch_start_y = touch_pageY;
+      $("#canvas").css("top", (dy) + parseInt($("#canvas").css("top")));
       console.log(dy);
     }
     App.preventDefault(e);
@@ -1483,10 +1496,18 @@ function $Reader(params, _fps) {
       var dx = touch_pageX - touch_start_x;
       if(dx > 100){
         pagex = Math.abs(touch_pageX)*-1;
-        goNext();
+        if(spread===SPREAD_RIGHT){
+            goNext();
+        }else{
+            goPrev();
+        }
       }else if(dx < -100){
         pagex = Math.abs(touch_pageX);
-        goPrev();
+        if(current_view!==VIEW_PAGE_FL || spread===SPREAD_RIGHT){
+            goPrev();
+        }else{
+            goNext();
+        }
       }else{
         menu_click(e);
       }
@@ -1792,6 +1813,7 @@ function $Reader(params, _fps) {
       creatorId = storyMetaFile["creator_id"];
       scenes = storyMetaFile["scenes"];
       pages = storyMetaFile["pages"];
+      spread = storyMetaFile["spread"];
       var comic_title = storyMetaFile["comic_title"];
       var story_title = storyMetaFile["story_title"];
       var story_number = storyMetaFile["story_number"];
