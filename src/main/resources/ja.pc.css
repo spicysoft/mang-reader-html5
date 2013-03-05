@@ -142,8 +142,7 @@
 	vertical-align:middle;
 }
 .sprite span {
-	background-image: url(ja.pc.png?v=6);
-	background-size: 160px 112px; 
+	background-image: url(ja.pc.png?v=7);
 	background-repeat:no-repeat; 
 	text-indent:-9999px;
 	overflow:hidden;
@@ -191,6 +190,12 @@
 
 #bound_right     		  		{width: 138px;height: 88px; cursor: pointer;float:right;}
 #bound_right span				{background-position: -60px -56px; width: 100px; height: 56px;}
+
+#bound_up						{width: 88px;height: 138px; cursor: pointer;}
+#bound_up span					{background-position: -160px 0; width: 56px; height: 100px;}
+
+#bound_down						{width: 88px;height: 138px; cursor: pointer;}
+#bound_down span				{background-position: -216px 0; width: 56px; height: 100px;}
 
 /*押下時のアクション*/
 #menu_first,#menu_prev,#menu_next,#menu_fullscreen,#close_fullscreen {

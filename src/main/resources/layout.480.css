@@ -23,8 +23,7 @@
 	vertical-align:middle;
 }
 .sprite span {
-	background-image: url(ja.480.png?v=11);
-	background-size: 624px 795px;
+	background-image: url(ja.480.png?v=12);
 	background-repeat:no-repeat;
 	text-indent:-9999px;
 	overflow:hidden;
@@ -50,9 +49,9 @@
 #img_quality span				{background-position: 0 0;width: 73px;height: 44px;margin-top: 2px;}
 
 #change_reading span			{background-position: 0 -44px;width: 138px;height: 28px;}
-#change_reading.disable span			{opacity: 0.5;}
+#change_reading.disable span	{background-position: -495px -180px;width: 138px;height: 28px;}
 #change_reading:hover span,
-#change_reading.active span	{background-position: -138px -44px;width: 138px;height: 28px;}
+#change_reading.active span		{background-position: -138px -44px;width: 138px;height: 28px;}
 
 #change_original span			{background-position: 0 -72px;width: 138px;height: 28px;}
 #change_original:hover span,
@@ -175,6 +174,8 @@
 /*フリック方向指示*/
 #swipe_right span			{background-position: 0 -610px;width: 126px;height: 185px;}
 #swipe_left span			{background-position: -126px -610px;width: 126px;height: 185px;}
+#swipe_down span			{background-position: -252px -610px;width: 126px;height: 185px;}
+#swipe_up span				{background-position: -378px -610px;width: 126px;height: 185px;}
 
 /*モード/設定・メニュー/*/
 #menu_top h1,#menu_top h2 {
@@ -238,7 +239,11 @@
 }
 
 /*ロゴ*/
-#logo_mangaget span			{background-position: -252px -615px;width: 144px;height: 29px;}
+#logo_mangaget span			{background-position: -484px -550px;width: 144px;height: 29px;}
+
+/*プレミアムアイコン*/
+#icon_premium_user span		{background-position: -330px 0;width: 19px;height: 19px;}
+
 
 #menu_tab_close {background-position: -513px -38px;width: 69px;height: 35px; cursor:pointer;}
 #menu_tab_close:hover, #menu_tab_close.active {background-position: -583px -38px;width: 69px;height: 35px; cursor:pointer;}
