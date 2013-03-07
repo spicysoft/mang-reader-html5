@@ -73,8 +73,6 @@ function $Reader(params, _fps) {
   var SPREAD_LEFT = 1;
   var spread = 0;
   var flick = 0;
-  //var orientation = 'vertical';
-  var orientation = 'horizontal';
 
   var ad_src = false;
 
@@ -82,9 +80,10 @@ function $Reader(params, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v6.0.13");
+  console.log("v6.1.0");
 
   var replaceCanvas = function(){
+	 $("#canvas").empty();
      if(isRollMode() || App.IE){
          $("#canvas").replaceWith('<div id="canvas" style="background: #000;"></div>');
      }else{
@@ -107,9 +106,10 @@ function $Reader(params, _fps) {
     $("#menu_switch").hide();
   }
 
-  var act_start = App.isSmartPhone?"touchstart":"mousedown";
-  var act_end = App.isSmartPhone?"touchend":"mouseup";
-  var act_move = App.isSmartPhone?"touchmove":"mousemove";
+  var act_start  = App.isSmartPhone?"touchstart":"mousedown";
+  var act_end    = App.isSmartPhone?"touchend":"mouseup";
+  var act_out    = App.isSmartPhone?"touchcancel":"mouseout";
+  var act_move   = App.isSmartPhone?"touchmove":"mousemove";
   var act_button = App.isSmartPhone?"touchend":"mouseup";
 
   var isPageMode = function(){
@@ -150,7 +150,7 @@ function $Reader(params, _fps) {
       canvas.width = width;
       canvas.style.width = width + "px";
       canvas.height = height;
-      canvas.style.height = height + "px";
+      canvas.style.height = '100%';
       canvas.fillStyle = canvas.style.background;
     }
     if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
@@ -399,6 +399,18 @@ function $Reader(params, _fps) {
       }
     };
 
+  var calcRollImagesHeight = function(){
+	  if(!isRollMode()){
+		  return 0;
+	  }
+	  var c = getCanvas();
+	  var h = 0;
+	  c.children().each(function(){
+		  h = h+$(this).height();
+	  });
+	  return h;
+  };
+
   var paintRollImages = function(){
     console.log("paintRollImages");
     var objects = [];
@@ -423,7 +435,7 @@ function $Reader(params, _fps) {
           var url = urlSceneImage(image_host, objects[i][key], current_mode, dpi, param);
       }
       console.log(url);
-      c.append("<p><img src='"+url+"' width='"+dpi+"px'/></p>");
+      c.append("<p style='margin-top:0px;margin-bottom:12px;'><img src='"+url+"' width='"+dpi+"px'/></p>");
     }
   };
 
@@ -984,6 +996,7 @@ function $Reader(params, _fps) {
     $("#canvas").bind(act_start,canvas_click);
     $("#canvas").bind(act_move,canvas_move);
     $("#canvas").bind(act_end,canvas_up);
+    $("#canvas").bind(act_out,canvas_up);
   };
 
   var activate_button = function(item, time){
@@ -1280,16 +1293,20 @@ function $Reader(params, _fps) {
     }
     if (isPageMode() && next >= pages.length ||
         current_view === VIEW_SCENE && next >= scenes.length) {
+    	processFinished();
+    } else {
+      jumpTo(next);
+    }
+  };
+
+  var processFinished = function(){
       if (should_show_ad &&
     		  (isPageMode() && 1 < pages.length || current_view === VIEW_SCENE && 1 < scenes.length) ) {
         (parent["Controll"]["showAd"])(storyId, "afterReadingInReader", showFinished);
 	  } else {
 	  	showFinished();
 	  }
-    } else {
-      jumpTo(next);
-    }
-  };
+  }
 
   /**
    * アニメーションの各フレーム処理の実行
@@ -1389,6 +1406,7 @@ function $Reader(params, _fps) {
    * @return void
    */
   var goNext = function() {
+    console.log("go next start");
     SceneAnimator.reverse = false;
     SceneAnimator.dirFwd = true;
     reverse = false;
@@ -1483,43 +1501,65 @@ function $Reader(params, _fps) {
       $("#canvas").css("left", dx/2);
     }else if(touch_start_y!=0 && isRollMode()){
       var dy = touch_pageY - touch_start_y;
+      var top = parseInt($("#canvas").css("top"));
+      var limit = calcRollImagesHeight();
+      var ny = 0;
+      if(dy+top < 0){
+    	  ny = ny = dy+top
+      }
+      if(limit < top * -1){
+    	  top = -1 * limit;
+    	  processFinished();
+      }
       touch_start_y = touch_pageY;
-      $("#canvas").css("top", (dy) + parseInt($("#canvas").css("top")));
-      console.log(dy);
+      $("#canvas").css("top", ny);
+      console.log("top:" + $("#canvas").css("top"));
+    }else{
+      processFlick(e);
     }
     App.preventDefault(e);
   };
 
+  var processFlick = function(e){
+    if(touch_start_x!=0 && !isRollMode()){
+      var dx = touch_pageX - touch_start_x;
+      console.log("dx:" + dx);
+      if(dx > 80){
+        if(spread===SPREAD_RIGHT){
+          goNext();
+        }else{
+          goPrev();
+        }
+        touch_start_x=0;
+        return true;
+      }else if(dx < -80){
+        if(current_view!==VIEW_PAGE_FL && spread===SPREAD_RIGHT){
+          goPrev();
+        }else{
+          goNext();
+        }
+        touch_start_x=0;
+        return true;
+      }
+      return false;
+    }
+  }
   var canvas_up = function(e) {
     console.log("canvas_up");
     if(touch_start_x!=0 && !isRollMode()){
       var dx = touch_pageX - touch_start_x;
-      if(dx > 100){
-        pagex = Math.abs(touch_pageX)*-1;
-        if(spread===SPREAD_RIGHT){
-            goNext();
-        }else{
-            goPrev();
-        }
-      }else if(dx < -100){
-        pagex = Math.abs(touch_pageX);
-        if(current_view!==VIEW_PAGE_FL || spread===SPREAD_RIGHT){
-            goPrev();
-        }else{
-            goNext();
-        }
+      console.log("dx:" + dx);
+      if(dx > 80 || dx <-80){
+    	  processFlick(e);
       }else{
         menu_click(e);
       }
-      console.log(dx);
     }else if(touch_start_y!=0 && isRollMode()){
       var dy = touch_pageY - touch_start_y;
-      if(dy > 100 || dy < -100){
+      if(dy >= 80 || dy <= -80){
         menu_click(e);
       }
       console.log(dy);
-    }else{
-      goNext();
     }
     touch_start_x=0;
     touch_start_y=0;
