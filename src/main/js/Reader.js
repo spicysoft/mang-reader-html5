@@ -27,8 +27,6 @@ function $Reader(params, _fps) {
   var VIEW_SCENE_R = 4;//コマロールモード
 
   var current_view = VIEW_SCENE;
-  //var current_view = VIEW_SCENE_R;
-  //var current_view = VIEW_PAGE_W;
 
   var storyId;
   var creatorId;
@@ -48,6 +46,7 @@ function $Reader(params, _fps) {
   var hasComicTitleShown = false;
   var hasStoryTitleShown = false;
   var hasAllTitleShown = true;
+  var is_first_page_single = true;
 
   var su_key = "";
   var su_expire = 0;
@@ -475,20 +474,20 @@ function $Reader(params, _fps) {
     if(current_view === VIEW_PAGE_FL){
       if(pageScroll){
           if(reverse){
-              if(currentPageIndex==0){
+              if(currentPageIndex==0 && is_first_page_single){
                   paintPageImageSpread(pageImages[current_mode][currentPageIndex],  null, pageImages[current_mode][currentPageIndex-1],  pageImages[current_mode][currentPageIndex-2]);
               }else{
                   paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], pageImages[current_mode][currentPageIndex-1],  pageImages[current_mode][currentPageIndex-2]);
               }
           }else{
-	          if(currentPageIndex==0){
+	          if(currentPageIndex==0 && is_first_page_single){
 	              paintPageImageSpread(pageImages[current_mode][currentPageIndex],  null, pageImages[current_mode][currentPageIndex+2],  pageImages[current_mode][currentPageIndex+1]);
 	          }else{
 	              paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], pageImages[current_mode][currentPageIndex+3],  pageImages[current_mode][currentPageIndex+2]);
 	          }
           }
       }else{
-        if(currentPageIndex==0){
+        if(currentPageIndex==0 && is_first_page_single){
           paintPageImageSpread(pageImages[current_mode][currentPageIndex], null, null, null);
         }else{
           paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], null, null);
@@ -1279,7 +1278,7 @@ function $Reader(params, _fps) {
     }
     var next;
     if(current_view === VIEW_PAGE_FL){
-      if(currentPageIndex==0){
+      if(currentPageIndex==0 && is_first_page_single){
     	  next = 1;
       }else if(currentPageIndex==pages.length-2){
     	  next = currentPageIndex + 1;
@@ -1854,6 +1853,8 @@ function $Reader(params, _fps) {
       scenes = storyMetaFile["scenes"];
       pages = storyMetaFile["pages"];
       spread = storyMetaFile["spread"];
+      is_first_page_single =  storyMetaFile["is_first_page_single"];
+
       var comic_title = storyMetaFile["comic_title"];
       var story_title = storyMetaFile["story_title"];
       var story_number = storyMetaFile["story_number"];
@@ -1881,16 +1882,25 @@ function $Reader(params, _fps) {
         $("#set_reading").bind(act_button, change_mode_reading);
       }
 
+	  $(".change_mode").click(function(){
+	    $("#menu_mode").fadeIn(300);
+	  });
+      enable_button($(".change_mode"));
+
       if(storyMetaFile['enable_page_mode']){
-        enable_button($(".change_mode"));
-		$(".change_mode").click(function(){
-          $("#menu_mode").fadeIn(300);
-        });
-        $("#mode_anime_coma").bind(act_button, change_view_scene);
+        enable_button($("#mode_full_page"));
+        enable_button($("#mode_wide_page"));
         $("#mode_full_page").bind(act_button, change_view_page);
-        $("#mode_roll_coma").bind(act_button, change_view_scene_roll);
         $("#mode_wide_page").bind(act_button, change_view_page_wide);
       }
+
+      if(storyMetaFile['enable_scene_mode']){
+        enable_button($("#mode_anime_coma"));
+        enable_button($("#mode_roll_coma"));
+        $("#mode_anime_coma").bind(act_button, change_view_scene);
+        $("#mode_roll_coma").bind(act_button, change_view_scene_roll);
+      }
+
       change_mode_uiview();
 	  change_view_uiview();
       comicTitleInsert = storyMetaFile['comic_title_insert']==='1';
