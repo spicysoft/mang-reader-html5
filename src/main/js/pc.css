@@ -294,6 +294,7 @@ body {
 #menu_lower {
     position:         relative;
     width:            100%;
+	clear:both;
 }
 #swipe {
 	position:absolute;
