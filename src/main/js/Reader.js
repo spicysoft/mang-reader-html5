@@ -1476,6 +1476,7 @@ function $Reader(params, _fps) {
     return e.pageX;
   };
 
+  var dy = 0;
   var point_y = function(e){
     if(e.clientY){
       return e.clientY;
@@ -1489,9 +1490,11 @@ function $Reader(params, _fps) {
     console.log("canvas_click");
     touch_start_x = point_x(e);
     touch_start_y = point_y(e);
+    dy = 0;
     App.preventDefault(e);
   };
 
+  var canvas_limit = 0;
   var canvas_move = function(e) {
     touch_pageX=point_x(e);
     touch_pageY=point_y(e);
@@ -1499,15 +1502,16 @@ function $Reader(params, _fps) {
       var dx = touch_pageX - touch_start_x;
       $("#canvas").css("left", dx/2);
     }else if(touch_start_y!=0 && isRollMode()){
-      var dy = touch_pageY - touch_start_y;
+      dy = touch_pageY - touch_start_y;
       var top = parseInt($("#canvas").css("top"));
-      var limit = calcRollImagesHeight();
+
       var ny = 0;
       if(dy+top < 0){
-    	  ny = ny = dy+top
+    	  ny = dy+top
       }
-      if(limit < top * -1){
-    	  top = -1 * limit;
+      canvas_limit = calcRollImagesHeight();
+      if(canvas_limit < ny * -1){
+    	  ny = -1 * canvas_limit;
     	  processFinished();
       }
       touch_start_y = touch_pageY;
@@ -1554,12 +1558,42 @@ function $Reader(params, _fps) {
         menu_click(e);
       }
     }else if(touch_start_y!=0 && isRollMode()){
-      var dy = touch_pageY - touch_start_y;
       if(dy >= 80 || dy <= -80){
         menu_click(e);
       }
+      //TODO: AnimationFrame
+      var timer = setInterval(function(){
+    	  console.log("up:" + dy);
+    	  var abs = Math.abs(dy);
+    	  if(abs < 1){
+    		  dy = 0;
+    	      clearInterval(timer);
+    	  }else{
+    	      var top = parseInt($("#canvas").css("top"));
+    	      var ny = 0;
+    	      if(dy > 0){
+       	    	  dy = dy*0.9;
+    	      }else{
+       	    	  dy = dy*0.9;
+    	      }
+
+    	      if(dy+top < 0){
+    	    	  ny = dy+top;
+    	      }else{
+    	    	  ny = 0;
+    	    	  dy = 0;
+    	      }
+        	  console.log("cl:" + canvas_limit);
+    	      if(canvas_limit < ny * -1){
+    	    	  ny = -1 * canvas_limit;
+    	    	  dy = 0;
+    	      }
+    	      $("#canvas").css("top", ny);
+    	  }
+      },50);
       console.log(dy);
     }
+
     touch_start_x=0;
     touch_start_y=0;
     touch_pageX=0;
