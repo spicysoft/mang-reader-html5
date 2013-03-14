@@ -7,7 +7,6 @@
     <include type="css" src="src/main/js/pc.css"/>
     <script type="text/javascript" >
       var fileref=document.createElement("link");
-
       fileref.setAttribute("rel", "stylesheet");
       fileref.setAttribute("type", "text/css");
       $("html").css("zoom", 1);
@@ -51,14 +50,12 @@
         </div>
         <div id="menu_lower">
           <a href="javascript:void(0);" id="prev_scene"   class="sprite disable" title="前のコマへ"></a>
+          <a href="javascript:void(0);" id="next_scene"   style="display:none;"></a>
           <a href="javascript:void(0);" id="prev_page"   class="sprite disable"  style="display:none;" title="前のページへ"></a>
           <a href="javascript:void(0);" id="first_scene"  class="sprite disable" title="最初から読む"></a>
         </div>
         <div id="menu_center">
           <span id="progress" ><span id="progress_current">--</span>/<span id="progress_total">--</span></span>
-          <span id="menu_tab_wrap">
-            <span id="menu_tab_close" class="sprite"  ></span>
-          </span>
         </div>
       </div>
 	  <div id="swipe">

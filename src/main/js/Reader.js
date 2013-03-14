@@ -144,12 +144,18 @@ function $Reader(params, _fps) {
      }else {
       var reader = $("#mangh5r");
       width = reader.width();
-      height = reader.height();
       canvas = $("#canvas")[0];
       canvas.width = width;
       canvas.style.width = width + "px";
-      canvas.height = height;
-      canvas.style.height = '100%';
+      if(isPageMode() || isRollMode()){
+        height = reader.height();
+        canvas.height = height;
+        canvas.style.height = '100%';
+      }else{
+        height = reader.width();
+        canvas.height = width;
+        canvas.style.height =  width + "px";
+      }
       canvas.fillStyle = canvas.style.background;
     }
     if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
@@ -157,7 +163,13 @@ function $Reader(params, _fps) {
     }else{
       dpi = resolveDpi(canvas.height);
     }
-    console.log(width + "x" + height + " dpi:" + dpi);
+    var ww = $(window).width();
+    var wh = $(window).height();
+    var mw = $("#mangh5r").width();
+    var mh = $("#mangh5r").height();
+    var top = (wh-height)/2;
+	$("#canvas").css("top", top + "px");
+    console.log("window->(" + ww + "-" + wh + ") mangh5r->("+ mw + "-" + mh +") canvas->(" +canvas.width + "-" + canvas.height + ") "+ width + "x" + height + " dpi:" + dpi);
   };
 
   setWidthAndHeight();
@@ -696,7 +708,7 @@ function $Reader(params, _fps) {
        refetch(id, mode, dpi, i);
     };
     i.scaledWidth = function(){
-      if(isPageMode()&&!isRollMode()){
+      if(!isRollMode()){
         if(this.width < this.height){
           var w = this.width * (height/dpi) * this.scale;
           if(w < width){
@@ -708,7 +720,7 @@ function $Reader(params, _fps) {
       return this.width * this.scale;
     };
     i.scaledHeight = function(){
-      if(isPageMode()&&!isRollMode()){
+      if(!isRollMode()){
         if(this.width < this.height){
           var w = this.width * (height/dpi) * this.scale;
           if(w < width){
@@ -1117,7 +1129,7 @@ function $Reader(params, _fps) {
       return;
     }
     $("#menu").animate(
-      {top: "-208px"},
+      {top: "-234px"},
       fadeout,'swing',
       function(){
         $("#menu_switch").bind('click', menu_click);
@@ -1490,7 +1502,15 @@ function $Reader(params, _fps) {
     console.log("canvas_click");
     touch_start_x = point_x(e);
     touch_start_y = point_y(e);
+    touch_pageX   = touch_start_x;
+    touch_pageY   = touch_start_y;
     dy = 0;
+    if(nomenu && !isRollMode()){
+        goNext();
+        touch_start_x = 0;
+        touch_start_y = 0;
+        touch_pageX = 0;
+    }
     App.preventDefault(e);
   };
 
@@ -1499,8 +1519,7 @@ function $Reader(params, _fps) {
     touch_pageX=point_x(e);
     touch_pageY=point_y(e);
     if(touch_start_x!=0 && !isRollMode()){
-      var dx = touch_pageX - touch_start_x;
-      $("#canvas").css("left", dx/2);
+    	//
     }else if(touch_start_y!=0 && isRollMode()){
       dy = touch_pageY - touch_start_y;
       var top = parseInt($("#canvas").css("top"));
@@ -1526,14 +1545,15 @@ function $Reader(params, _fps) {
   var processFlick = function(e){
     if(touch_start_x!=0 && !isRollMode()){
       var dx = touch_pageX - touch_start_x;
-      console.log("dx:" + dx);
+      console.log("flick:" + dx);
       if(dx > 80){
         if(spread===SPREAD_RIGHT){
           goNext();
         }else{
           goPrev();
         }
-        touch_start_x=0;
+        touch_start_x = 0;
+        touch_pageX = 0;
         return true;
       }else if(dx < -80){
         if(current_view!==VIEW_PAGE_FL && spread===SPREAD_RIGHT){
@@ -1541,7 +1561,8 @@ function $Reader(params, _fps) {
         }else{
           goNext();
         }
-        touch_start_x=0;
+        touch_start_x = 0;
+        touch_pageX = 0;
         return true;
       }
       return false;
@@ -1553,7 +1574,7 @@ function $Reader(params, _fps) {
       var dx = touch_pageX - touch_start_x;
       console.log("dx:" + dx);
       if(dx > 80 || dx <-80){
-    	  processFlick(e);
+    	processFlick(e);
       }else{
         menu_click(e);
       }
@@ -1958,6 +1979,7 @@ function $Reader(params, _fps) {
 
       $("#prev_scene").bind(act_button, goPrev);
       $("#prev_page").bind(act_button, goPrev);
+      $("#next_scene").bind(act_button, goNext);
       $("#first_scene").bind(act_button, show_first_click);
       $("#close").bind(act_button, function(){
     	  (parent["closeReader"])();
@@ -2064,9 +2086,9 @@ function $Reader(params, _fps) {
   };
 
   var prepareMenu = function(){
-    $("#menu").css("top", -1 * 208 + "px");
+    $("#menu").css("top", -1 * 234 + "px");
     $("#menu").show();
-    $("#menu_tab_close").bind('click', menu_hide_click);
+    $("#menu").bind('click', menu_hide_click);
     disable_button($(".change_setting"));
     disable_button($(".change_mode"));
    };

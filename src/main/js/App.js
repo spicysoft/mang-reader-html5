@@ -319,9 +319,9 @@ $(function() {
 
   $(window).resize(function(){
     console.log("window resize : " + $(window).width() + " " + $(window).height());
-    if(/Android/.test(window.navigator.userAgent)){
-      $("html").css("zoom" ,$(window).width()/css_size);
-    }
+//    if(/Android/.test(window.navigator.userAgent)){
+//      $("html").css("zoom" ,$(window).width()/css_size);
+//    }
     Reader.resize();
   });
     if(!params.auto){
