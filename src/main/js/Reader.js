@@ -717,7 +717,7 @@ function $Reader(params, _fps) {
           }
         }
       }
-      return this.width * this.scale;
+      return this.width * (width/dpi);
     };
     i.scaledHeight = function(){
       if(!isRollMode()){
@@ -730,7 +730,7 @@ function $Reader(params, _fps) {
           }
         }
       }
-      return this.height * this.scale;
+      return this.height * (width/dpi) * this.scale;
     };
     var param = "";
     if(t > 0){
