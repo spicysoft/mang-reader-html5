@@ -1829,26 +1829,45 @@ function $Reader(params, _fps) {
 		$("#mode_wide_page").addClass("disable");
 	}
   	$("#menu_mode a").removeClass("active");
+	
+	var swip_direction = "";
   	switch(current_view){
 		case VIEW_PAGE_FL:
 		case VIEW_PAGE_FP:
 		$("#mode_full_page").addClass("active");
 		$(".change_mode").attr("id","change_full_page");
+		if(spread===SPREAD_RIGHT) {
+			swip_direction="swipe_left";
+		} else {
+			swip_direction="swipe_right";
+		}
 		break;
 		case VIEW_PAGE_W:
 		$("#mode_wide_page").addClass("active");
 		$(".change_mode").attr("id","change_wide_page");
+		swip_direction="swipe_up";
 		break;
 		case VIEW_SCENE:
 		$("#mode_anime_coma").addClass("active");
 		$(".change_mode").attr("id","change_coma_anime");
+		if(spread===SPREAD_RIGHT) {
+			swip_direction="swipe_left";
+		} else {
+			swip_direction="swipe_right";
+		}
 		break;
 		case VIEW_SCENE_R:
 		$("#mode_roll_coma").addClass("active");
 		$(".change_mode").attr("id","change_coma_roll");
+		swip_direction="swipe_up";
 		break;
 	}
   	$("#menu_mode").fadeOut(300);
+	var direction = $(".swipe_direction");
+	direction.attr("id",swip_direction);
+	direction.show();
+	direction.fadeOut("800");
+	
   }
 
   var loadConfig = function(){
