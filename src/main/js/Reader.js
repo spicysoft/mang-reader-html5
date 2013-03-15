@@ -134,16 +134,18 @@ function $Reader(params, _fps) {
 
   var setWidthAndHeight = function(){
     if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
+      var reader_width = $(window).width();
+      var reader_height = $(window).height();
       if(isPageMode()||isRollMode()){
-        width = $(window).width();
-        height = $(window).height();
+        width = reader_width;
+        height = reader_height;
       }else{
-        if(width > height){
-          width = $(window).height();
-          height = $(window).height();
+        if(reader_width > reader_height){
+          width = reader_height;
+          height = reader_height;
         }else{
-          width = $(window).width();
-          height = $(window).width();
+          width = reader_width;
+          height = reader_width;
         }
       }
       $("#mangh5r").width(width);
@@ -152,17 +154,18 @@ function $Reader(params, _fps) {
       $("#canvas").height(height);
      }else {
       var reader = $("#mangh5r");
-      width = reader.width();
+      var reader_width = reader.width();
+      var reader_height = reader.height();
       if(isPageMode() || isRollMode()){
-        width = reader.width();
-        height = reader.height();
+        width = reader_width;
+        height = reader_height;
       }else{
-        if(width > height){
+        if(reader_width > reader_height){
           width = reader.height();
-          height = reader.height();
+          height = reader_height;
         }else{
-          width = reader.width();
-          height = reader.width();
+          width = reader_width;
+          height = reader_width;
         }
       }
 
@@ -187,7 +190,7 @@ function $Reader(params, _fps) {
     var left =  ($(window).width()-width)/2;
 	$("#canvas").css("top", top + "px");
 	$("#canvas").css("left", left + "px");
-    console.log(width + "x" + height + " dpi:" + dpi);
+    console.log("top->" + top + " left->" + left + " " +width + "x" + height + " dpi:" + dpi);
   };
 
   setWidthAndHeight();
@@ -1944,7 +1947,7 @@ function $Reader(params, _fps) {
       creatorId = storyMetaFile["creator_id"];
       scenes = storyMetaFile["scenes"];
       pages = storyMetaFile["pages"];
-      spread = storyMetaFile["spread"];
+      spread = parseInt(storyMetaFile["spread"]);
       is_first_page_single =  storyMetaFile["is_first_page_single"];
 
       var comic_title = storyMetaFile["comic_title"];
