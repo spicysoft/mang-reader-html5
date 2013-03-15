@@ -134,9 +134,18 @@ function $Reader(params, _fps) {
 
   var setWidthAndHeight = function(){
     if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
-      width = $(window).width();
-      height = $(window).height();
-      console.log("w-h: "+width+"-"+height);
+      if(isPageMode()||isRollMode()){
+        width = $(window).width();
+        height = $(window).height();
+      }else{
+        if(width > height){
+          width = $(window).height();
+          height = $(window).height();
+        }else{
+          width = $(window).width();
+          height = $(window).width();
+        }
+      }
       $("#mangh5r").width(width);
       $("#mangh5r").height(height);
       $("#canvas").width(width);
@@ -144,15 +153,26 @@ function $Reader(params, _fps) {
      }else {
       var reader = $("#mangh5r");
       width = reader.width();
+      if(isPageMode() || isRollMode()){
+        width = reader.width();
+        height = reader.height();
+      }else{
+        if(width > height){
+          width = reader.height();
+          height = reader.height();
+        }else{
+          width = reader.width();
+          height = reader.width();
+        }
+      }
+
       canvas = $("#canvas")[0];
       canvas.width = width;
       canvas.style.width = width + "px";
       if(isPageMode() || isRollMode()){
-        height = reader.height();
         canvas.height = height;
         canvas.style.height = '100%';
       }else{
-        height = reader.width();
         canvas.height = width;
         canvas.style.height =  width + "px";
       }
@@ -163,13 +183,9 @@ function $Reader(params, _fps) {
     }else{
       dpi = resolveDpi(canvas.height);
     }
-    var ww = $(window).width();
-    var wh = $(window).height();
-    var mw = $("#mangh5r").width();
-    var mh = $("#mangh5r").height();
-    var top = (wh-height)/2;
+    var top = ($(window).height()-height)/2;
 	$("#canvas").css("top", top + "px");
-    console.log("window->(" + ww + "-" + wh + ") mangh5r->("+ mw + "-" + mh +") canvas->(" +canvas.width + "-" + canvas.height + ") "+ width + "x" + height + " dpi:" + dpi);
+    console.log(width + "x" + height + " dpi:" + dpi);
   };
 
   setWidthAndHeight();
