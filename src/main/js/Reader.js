@@ -184,7 +184,9 @@ function $Reader(params, _fps) {
       dpi = resolveDpi(canvas.height);
     }
     var top = ($(window).height()-height)/2;
+    var left =  ($(window).width()-width)/2;
 	$("#canvas").css("top", top + "px");
+	$("#canvas").css("left", left + "px");
     console.log(width + "x" + height + " dpi:" + dpi);
   };
 
