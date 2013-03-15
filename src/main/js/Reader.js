@@ -1833,7 +1833,11 @@ function $Reader(params, _fps) {
 		case VIEW_PAGE_FP:
 		$("#mode_full_page").addClass("active");
 		$(".change_mode").attr("id","change_full_page");
-		swip_direction="swipe_left";
+		if(spread===SPREAD_RIGHT) {
+			swip_direction="swipe_left";
+		} else {
+			swip_direction="swipe_right";
+		}
 		break;
 		case VIEW_PAGE_W:
 		$("#mode_wide_page").addClass("active");
@@ -1843,7 +1847,11 @@ function $Reader(params, _fps) {
 		case VIEW_SCENE:
 		$("#mode_anime_coma").addClass("active");
 		$(".change_mode").attr("id","change_coma_anime");
-		swip_direction="swipe_left";
+		if(spread===SPREAD_RIGHT) {
+			swip_direction="swipe_left";
+		} else {
+			swip_direction="swipe_right";
+		}
 		break;
 		case VIEW_SCENE_R:
 		$("#mode_roll_coma").addClass("active");
