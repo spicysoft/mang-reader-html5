@@ -106,14 +106,14 @@
 #first_scene.disable span	{background-position: -218px -160px;width: 109px;height: 34px;}
 
 /*ブックマークして次へ*/
-#bookmark					{width: 144px;height: 59px; cursor: pointer;}
+#bookmark					{width: 144px;height: 59px; cursor: pointer;margin-left:8px !important;}
 #bookmark span				{background-position: 0 -194px;width: 138px;height: 48px;}
 #bookmark:hover span,
 #bookmark.active span		{background-position: -138px -194px;width: 138px;height: 48px;}
 #bookmark.disable span		{background-position: -276px -194px;width: 138px;height: 48px;}
 
 /*いいねして次へ*/
-#vote						{width: 144px;height: 59px; cursor: pointer;}
+#vote						{width: 144px;height: 59px; cursor: pointer;margin-right:8px !important;}
 #vote span					{background-position: 0 -242px;width: 138px;height: 48px;}
 #vote:hover span,
 #vote.active span			{background-position: -138px -242px;width: 138px;height: 48px;}
