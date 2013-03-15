@@ -481,3 +481,10 @@ div.top_button {
 	top:13px;
 	right:13px;
 }
+.swipe_direction {
+	display:none;
+	position:absolute;
+	z-index: 12;
+	top:50%;
+	left:50%;
+}

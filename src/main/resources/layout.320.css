@@ -177,6 +177,10 @@
 #dialog_loading span		{background-position: -282px -92px;width: 109px;height: 34px;}
 
 /*フリック方向指示*/
+.swipe_direction { 
+	margin-left:-47px;
+	margin-top:-69px;
+}
 #swipe_right span			{background-position: 0 -410px;width: 94px;height: 138px;}
 #swipe_left span			{background-position: -94px -410px;width: 94px;height: 138px;}
 #swipe_down span			{background-position: -188px -410px;width: 94px;height: 138px;}
