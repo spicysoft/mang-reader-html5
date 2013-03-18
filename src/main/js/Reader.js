@@ -161,11 +161,11 @@ function $Reader(params, _fps) {
         height = reader_height;
       }else{
         if(reader_width > reader_height){
-          width = reader.height();
+          width = reader_height;
           height = reader_height;
         }else{
-          width = reader_width;
-          height = reader_width;
+          width = reader_height;
+          height = reader_height;
         }
       }
 
@@ -187,7 +187,7 @@ function $Reader(params, _fps) {
       dpi = resolveDpi(canvas.height);
     }
     var top = ($(window).height()-height)/2;
-    var left =  ($(window).width()-width)/2;
+    var left = ($(window).width()-width)/2;
 	$("#canvas").css("top", top + "px");
 	$("#canvas").css("left", left + "px");
     console.log("top->" + top + " left->" + left + " " +width + "x" + height + " dpi:" + dpi);
@@ -467,7 +467,7 @@ function $Reader(params, _fps) {
           var url = urlSceneImage(image_host, objects[i][key], current_mode, dpi, param);
       }
       console.log(url);
-      c.append("<p style='margin-top:0px;margin-bottom:12px;'><img src='"+url+"' width='"+dpi+"px'/></p>");
+      c.append("<p style='margin-top:0px;margin-bottom:12px;'><img src='"+url+"' width='"+dpi+"px' style='margin:auto;'/></p>");
     }
   };
 
@@ -1829,7 +1829,7 @@ function $Reader(params, _fps) {
 		$("#mode_wide_page").addClass("disable");
 	}
   	$("#menu_mode a").removeClass("active");
-	
+
 	var swip_direction = "";
   	switch(current_view){
 		case VIEW_PAGE_FL:
@@ -1867,7 +1867,7 @@ function $Reader(params, _fps) {
 	direction.attr("id",swip_direction);
 	direction.show();
 	direction.fadeOut("800");
-	
+
   }
 
   var loadConfig = function(){
