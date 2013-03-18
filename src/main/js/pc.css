@@ -487,4 +487,6 @@ div.top_button {
 	z-index: 12;
 	top:50%;
 	left:50%;
+	border:none !important;
+	background:none !important;
 }
