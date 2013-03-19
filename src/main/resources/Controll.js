@@ -235,6 +235,12 @@ function $Controll() {
 			console.log("ad close button : click done");
 			if("1"!=Controll.current() && Controll.current() == Controll.total()) {
 				callbackSkipAd();
+			} else {
+				var direction = elem(".swipe_direction");
+				direction.show();
+				setTimeout(function(){
+					direction.fadeOut("500");
+				},2000);
 			}
 		});
 		},ad_animate_time+((adSpaceId=="afterReadingInReader")?0:1000));
