@@ -88,7 +88,7 @@
 #reader_wrapper.full {
     position: absolute;
     margin:0;
-    top:96px;
+    top:0px;
     width:100%;
     text-align:center;
 }
@@ -143,7 +143,7 @@
 }
 .sprite span {
 	background-image: url(ja.pc.png?v=7);
-	background-repeat:no-repeat; 
+	background-repeat:no-repeat;
 	text-indent:-9999px;
 	overflow:hidden;
 	display:block;
@@ -151,33 +151,33 @@
 }
 #menu_first      		  		{width: 27px;height: 26px; cursor: pointer;}
 #menu_first span				{background-position: 0 0; width: 20px; height: 20px;}
-#menu_first:hover span, 
+#menu_first:hover span,
 #menu_first.active span  		{background-position:-20px 0; width: 20px; height: 20px;}
-#menu_first.disable span		{background-position:-40px 0; width: 20px; height: 20px;}	
+#menu_first.disable span		{background-position:-40px 0; width: 20px; height: 20px;}
 
 #menu_prev      		  		{width: 27px;height: 26px; cursor: pointer;}
 #menu_prev span					{background-position: 0 -20px; width: 20px; height: 20px;}
-#menu_prev:hover span, 
+#menu_prev:hover span,
 #menu_prev.active span  		{background-position:-20px -20px; width: 20px; height: 20px;}
-#menu_prev.disable span			{background-position:-40px -20px; width: 20px; height: 20px;}	
+#menu_prev.disable span			{background-position:-40px -20px; width: 20px; height: 20px;}
 
 #menu_next      		  		{width: 27px;height: 26px; cursor: pointer;}
 #menu_next span					{background-position: 0 -40px; width: 20px; height: 20px;}
-#menu_next:hover span, 
+#menu_next:hover span,
 #menu_next.active span  		{background-position:-20px -40px; width: 20px; height: 20px;}
-#menu_next.disable span			{background-position:-40px -40px; width: 20px; height: 20px;}	
+#menu_next.disable span			{background-position:-40px -40px; width: 20px; height: 20px;}
 
 #menu_fullscreen      		  	{width: 27px;height: 26px; cursor: pointer;}
 #menu_fullscreen span			{background-position: 0 -60px; width: 20px; height: 20px;}
-#menu_fullscreen:hover span, 
+#menu_fullscreen:hover span,
 #menu_fullscreen.active span  	{background-position:-20px -60px; width: 20px; height: 20px;}
-#menu_fullscreen.disable span	{background-position:-40px -60px; width: 20px; height: 20px;}	
+#menu_fullscreen.disable span	{background-position:-40px -60px; width: 20px; height: 20px;}
 
 #close_fullscreen      		  	{width: 27px;height: 26px; cursor: pointer;}
 #close_fullscreen span			{background-position: 0 -80px; width: 20px; height: 20px;}
-#close_fullscreen:hover span, 
+#close_fullscreen:hover span,
 #close_fullscreen.active span  	{background-position:-20px -80px; width: 20px; height: 20px;}
-#close_fullscreen.disable span	{background-position:-40px -80px; width: 20px; height: 20px;}	
+#close_fullscreen.disable span	{background-position:-40px -80px; width: 20px; height: 20px;}
 
 #bound {
 	position:absolute;

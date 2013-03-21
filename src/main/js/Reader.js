@@ -152,7 +152,7 @@ function $Reader(params, _fps) {
       $("#mangh5r").height(height);
       $("#canvas").width(width);
       $("#canvas").height(height);
-     }else {
+    }else {
       var reader = $("#mangh5r");
       var reader_width = reader.width();
       var reader_height = reader.height();
@@ -164,28 +164,28 @@ function $Reader(params, _fps) {
           width = reader_height;
           height = reader_height;
         }else{
-          width = reader_height;
-          height = reader_height;
+          width = reader_width;
+          height = reader_width;
         }
-      }
+     }
 
-      canvas = $("#canvas")[0];
-      canvas.width = width;
-      canvas.style.width = width + "px";
-      if(isPageMode() || isRollMode()){
-        canvas.height = height;
-        canvas.style.height = '100%';
-      }else{
-        canvas.height = width;
-        canvas.style.height =  width + "px";
-      }
-      canvas.fillStyle = canvas.style.background;
-    }
-    if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
+     canvas = $("#canvas")[0];
+     canvas.width = width;
+     canvas.style.width = width + "px";
+     if(isPageMode() || isRollMode()){
+       canvas.height = height;
+       canvas.style.height = '100%';
+     }else{
+       canvas.height = width;
+       canvas.style.height =  width + "px";
+     }
+     canvas.fillStyle = canvas.style.background;
+   }
+   if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
       dpi = resolveDpi(height);
-    }else{
+   }else{
       dpi = resolveDpi(canvas.height);
-    }
+   }
     var top = ($(window).height()-height)/2;
     var left = ($(window).width()-width)/2;
 	$("#canvas").css("top", top + "px");
@@ -1640,7 +1640,6 @@ function $Reader(params, _fps) {
     touch_start_y=0;
     touch_pageX=0;
     touch_pageY=0;
-    $("#canvas").css("left", 0);
     App.preventDefault(e);
   };
 
