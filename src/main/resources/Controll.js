@@ -237,10 +237,7 @@ function $Controll() {
 				callbackSkipAd();
 			} else {
 				var direction = elem(".swipe_direction");
-				direction.show();
-				setTimeout(function(){
-					direction.fadeOut("500");
-				},2000);
+				direction.trigger("pop");
 			}
 		});
 		},ad_animate_time+((adSpaceId=="afterReadingInReader")?0:1000));

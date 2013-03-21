@@ -1865,6 +1865,10 @@ function $Reader(params, _fps) {
   	$("#menu_mode").fadeOut(300);
 	var direction = $(".swipe_direction");
 	direction.attr("id",swip_direction);
+	direction.trigger("pop");
+  }
+  var popUpDirection = function() {
+  	var direction = $(".swipe_direction");
 	direction.show();
 	setTimeout(function(){
 		direction.fadeOut("500");
@@ -1958,7 +1962,12 @@ function $Reader(params, _fps) {
       $("#story_title_menu").text(story_title);
       $("#current_story").text(story_number);
       $("#total_story").text(storyMetaFile["story_count"]);
-
+	  
+	  if (App.isSmartPhone) {
+	  	$(".swipe_direction").bind("pop", popUpDirection);
+	  } else {
+	  	$(".swipe_direction").hide();
+	  }
       cdn_host = storyMetaFile["cdn_host"];
       if(t > 0){
     	  image_host = cdn_host;
