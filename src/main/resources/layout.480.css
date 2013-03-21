@@ -33,7 +33,7 @@
 .no_border {
 	border:none;
 	background:none;
-	border-radius:none;
+	border-radius:0;
 }
 
 #dialog_error{
