@@ -101,7 +101,7 @@ function $Controll() {
   }
 
   this.change_setting = function(){
-  	if(!Controll.supportOriginalMode()){
+  	if(!Controll.supportOriginalMode() && Controll.total()!="--"){
 		create_unlock_dialog("selectOriginalMode");
 		return;
 	}
