@@ -1137,7 +1137,12 @@ function $Reader(params, _fps) {
   var menu_click = function(e){
     menu_click_lock = true;
     is_back = false;
-    showMenu(500, 500);
+	if($("#menu").css("top")!="0px") {
+		showMenu(500, 500);
+	} else {
+		hideMenu(500);
+	}
+    
     App.preventDefault(e);
   };
 
