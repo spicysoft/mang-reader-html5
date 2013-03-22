@@ -93,6 +93,13 @@ function $App() {
     } else {
       this.isSmartPhone = false;
     }
+
+    if (/N\-05E/.test(ua)) {
+        this.isMedias = true;
+    }else{
+        this.isMedias = false;
+    }
+
     if(/mang\/\d+/.test(ua)){
       this.isApp = true;
     }
