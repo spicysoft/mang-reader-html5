@@ -319,7 +319,7 @@ function $Reader(params, _fps) {
         c.drawImage(l0, dx0, dy0, l0.scaledWidth(), l0.scaledHeight());
       }
       if(r0){
-        c.drawImage(r1, dx1, dy1, r0.scaledWidth(), r0.scaledHeight());
+        c.drawImage(r0, dx1, dy1, r0.scaledWidth(), r0.scaledHeight());
       }
       if(l1){
         c.drawImage(l1, dx2, dy2, l1.scaledWidth(), l1.scaledHeight());
@@ -1885,12 +1885,16 @@ function $Reader(params, _fps) {
     }
     if(storyMetaFile['enable_page_mode']){
       m = $.cookie('mang.reader.config.view');
-      if(m && parseInt(m,10) === VIEW_PAGE_FP){
-    	  current_view = VIEW_PAGE_FP;
+      if(m && (parseInt(m,10) === VIEW_PAGE_FP || parseInt(m,10) === VIEW_PAGE_FL)){
+    	  if(width > height){
+        	  current_view = VIEW_PAGE_FL;
+    	  }else{
+        	  current_view = VIEW_PAGE_FP;
+    	  }
       }
     }
 
-    if(m && parseInt(m,10) === VIEW_PAGE_FP){
+    if(m && (parseInt(m,10) === VIEW_PAGE_FP || parseInt(m,10) === VIEW_PAGE_FL)){
         change_view_page();
     }
     if(v && v === MODE_ORIGINAL){
@@ -1961,7 +1965,11 @@ function $Reader(params, _fps) {
       $("#story_title_menu").text(story_title);
       $("#current_story").text(story_number);
       $("#total_story").text(storyMetaFile["story_count"]);
-	  
+
+      if(width > height && App.isMedias){
+        current_view = VIEW_PAGE_FL;
+      }
+
 	  if (App.isSmartPhone) {
 	  	$(".swipe_direction").bind("pop", popUpDirection);
 	  } else {
