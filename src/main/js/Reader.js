@@ -180,6 +180,8 @@ function $Reader(params, _fps) {
        canvas.style.height =  width + "px";
      }
      canvas.fillStyle = canvas.style.background;
+     $("#mangh5r").width(width);
+     $("#mangh5r").height(height);
    }
    if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
       dpi = resolveDpi(height);
@@ -1142,7 +1144,7 @@ function $Reader(params, _fps) {
 	} else {
 		hideMenu(500);
 	}
-    
+
     App.preventDefault(e);
   };
 
@@ -1990,7 +1992,7 @@ function $Reader(params, _fps) {
     	  replaceCanvas();
       }
 
-      if(storyMetaFile['enable_original_mode'] && premium){
+      if(storyMetaFile['enable_original_mode'] && (premium || storyMetaFile['is_premium_author'])){
         enable_button($(".change_setting"));
 		$(".change_setting").click(function(){
 	      $("#menu_setting").fadeIn(300);
