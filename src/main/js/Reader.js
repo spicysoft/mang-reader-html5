@@ -148,11 +148,11 @@ function $Reader(params, _fps) {
           height = reader_width;
         }
       }
-      $("#mangh5r").width(width);
-      $("#mangh5r").height(height);
       $("#canvas").width(width);
       $("#canvas").height(height);
     }else {
+      $("#mangh5r").width($(window).width());
+      $("#mangh5r").height($(window).height());
       var reader = $("#mangh5r");
       var reader_width = reader.width();
       var reader_height = reader.height();
@@ -180,8 +180,6 @@ function $Reader(params, _fps) {
        canvas.style.height =  width + "px";
      }
      canvas.fillStyle = canvas.style.background;
-     $("#mangh5r").width(width);
-     $("#mangh5r").height(height);
    }
    if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
       dpi = resolveDpi(height);
