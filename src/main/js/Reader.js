@@ -1181,7 +1181,7 @@ function $Reader(params, _fps) {
           menu_click_lock = false;
         });
 
-    if(current_view != isPageMode()){
+    if(!isPageMode()){
       if(currentSceneIndex === 0){
         disable_button($("#prev_scene"));
         disable_button($("#first_scene"));
