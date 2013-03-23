@@ -79,7 +79,7 @@ function $Reader(params, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v6.1.0");
+  console.log("v6.1.1");
 
   var replaceCanvas = function(){
 	 $("#canvas").empty();
@@ -151,8 +151,9 @@ function $Reader(params, _fps) {
       $("#canvas").width(width);
       $("#canvas").height(height);
     }else {
-      $("#mangh5r").width($('body').width());
-      $("#mangh5r").height($('body').height());
+
+      $("#mangh5r").width($(window).width());
+      $("#mangh5r").height($(window).height());
       var reader = $("#mangh5r");
       var reader_width = reader.width();
       var reader_height = reader.height();
@@ -186,8 +187,8 @@ function $Reader(params, _fps) {
    }else{
       dpi = resolveDpi(canvas.height);
    }
-    var top = ($('body').height()-height)/2;
-    var left = ($('body').width()-width)/2;
+    var top = ($(window).height()-height)/2;
+    var left = ($(window).width()-width)/2;
 	$("#canvas").css("top", top + "px");
 	$("#canvas").css("left", left + "px");
     console.log("top->" + top + " left->" + left + " " +width + "x" + height + " dpi:" + dpi);
@@ -733,7 +734,6 @@ function $Reader(params, _fps) {
         if(this.width < this.height){
           var w = this.width * (height/dpi) * this.scale;
           if(w < width){
-            console.log("scaled w:" + w);
             return w;
           }
         }
@@ -746,7 +746,6 @@ function $Reader(params, _fps) {
           var w = this.width * (height/dpi) * this.scale;
           if(w < width){
         	var h = this.height * (height/dpi) * this.scale;
-            console.log("scaled h:" + h);
             return h;
           }
         }
@@ -2130,10 +2129,10 @@ function $Reader(params, _fps) {
 
   var resize = function() {
     setWidthAndHeight();
-    if(height > width && current_viwe == VIEW_PAGE_FL){
-      current_view === VIEW_PAGE_FP;
-    }else if (height < width && current_viwe == VIEW_PAGE_FP){
-      current_view === VIEW_PAGE_FL;
+    if(height >= width && current_view == VIEW_PAGE_FL){
+      current_view = VIEW_PAGE_FP;
+    }else if (height < width && current_view == VIEW_PAGE_FP){
+      current_view = VIEW_PAGE_FL;
     }
     SceneAnimator = new $SceneAnimator(width, height, FPS);
     if(started){

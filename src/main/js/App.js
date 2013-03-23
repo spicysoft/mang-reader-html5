@@ -328,7 +328,7 @@ $(function() {
     setTimeout(function(){
         console.log("window resize : " + $(window).width() + " " + $(window).height());
         Reader.resize();
-    },200);
+    },250);
   });
     if(!params.auto){
         Reader.showPreview(params.storyId);
