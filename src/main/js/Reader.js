@@ -151,8 +151,8 @@ function $Reader(params, _fps) {
       $("#canvas").width(width);
       $("#canvas").height(height);
     }else {
-      $("#mangh5r").width($(window).width());
-      $("#mangh5r").height($(window).height());
+      $("#mangh5r").width($('body').width());
+      $("#mangh5r").height($('body').height());
       var reader = $("#mangh5r");
       var reader_width = reader.width();
       var reader_height = reader.height();
@@ -186,8 +186,8 @@ function $Reader(params, _fps) {
    }else{
       dpi = resolveDpi(canvas.height);
    }
-    var top = ($(window).height()-height)/2;
-    var left = ($(window).width()-width)/2;
+    var top = ($('body').height()-height)/2;
+    var left = ($('body').width()-width)/2;
 	$("#canvas").css("top", top + "px");
 	$("#canvas").css("left", left + "px");
     console.log("top->" + top + " left->" + left + " " +width + "x" + height + " dpi:" + dpi);
@@ -334,14 +334,14 @@ function $Reader(params, _fps) {
   var paintPageImage = function(i0, i1){
 	  console.log("paintPageImage");
     var d=0;
-    if(reverse){
+    if(reverse && spread!==SPREAD_RIGHT || !reverse && spread===SPREAD_RIGHT){
       d = pageX;
     }else{
       d = -1 * pageX;
     }
     var x0 = d;
     var x1;
-    if(reverse){
+    if(reverse && spread!==SPREAD_RIGHT || !reverse && spread===SPREAD_RIGHT){
       x1=d-width;
     }else{
       x1=d+width;
@@ -729,7 +729,7 @@ function $Reader(params, _fps) {
        refetch(id, mode, dpi, i);
     };
     i.scaledWidth = function(){
-      if(!isRollMode()){
+      if(!isRollMode() && isPageMode()){
         if(this.width < this.height){
           var w = this.width * (height/dpi) * this.scale;
           if(w < width){
@@ -741,7 +741,7 @@ function $Reader(params, _fps) {
       return this.width * (width/dpi);
     };
     i.scaledHeight = function(){
-      if(!isRollMode()){
+      if(!isRollMode() && isPageMode()){
         if(this.width < this.height){
           var w = this.width * (height/dpi) * this.scale;
           if(w < width){
@@ -1766,13 +1766,12 @@ function $Reader(params, _fps) {
     console.log("change_view_page");
     is_back = false;
     if(storyMetaFile['enable_page_mode']){
-      //fixme
+      replaceCanvas();
       if(width > height){
         current_view = VIEW_PAGE_FL;
       }else{
         current_view = VIEW_PAGE_FP;
       }
-      replaceCanvas();
       if(hasAllTitleShown){
         jumpTo(currentPageIndex);
       }
@@ -1972,6 +1971,7 @@ function $Reader(params, _fps) {
       $("#total_story").text(storyMetaFile["story_count"]);
 
       if(width > height && App.isMedias){
+        console.log("medias w");
         current_view = VIEW_PAGE_FL;
       }
 
@@ -2130,6 +2130,11 @@ function $Reader(params, _fps) {
 
   var resize = function() {
     setWidthAndHeight();
+    if(height > width && current_viwe == VIEW_PAGE_FL){
+      current_view === VIEW_PAGE_FP;
+    }else if (height < width && current_viwe == VIEW_PAGE_FP){
+      current_view === VIEW_PAGE_FL;
+    }
     SceneAnimator = new $SceneAnimator(width, height, FPS);
     if(started){
       clearSceneImages();
