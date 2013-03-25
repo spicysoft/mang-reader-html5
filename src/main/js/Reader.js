@@ -79,7 +79,7 @@ function $Reader(params, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v6.1.0");
+  console.log("v6.1.1");
 
   var replaceCanvas = function(){
 	 $("#canvas").empty();
@@ -151,6 +151,7 @@ function $Reader(params, _fps) {
       $("#canvas").width(width);
       $("#canvas").height(height);
     }else {
+
       $("#mangh5r").width($(window).width());
       $("#mangh5r").height($(window).height());
       var reader = $("#mangh5r");
@@ -334,14 +335,14 @@ function $Reader(params, _fps) {
   var paintPageImage = function(i0, i1){
 	  console.log("paintPageImage");
     var d=0;
-    if(reverse){
+    if(reverse && spread!==SPREAD_RIGHT || !reverse && spread===SPREAD_RIGHT){
       d = pageX;
     }else{
       d = -1 * pageX;
     }
     var x0 = d;
     var x1;
-    if(reverse){
+    if(reverse && spread!==SPREAD_RIGHT || !reverse && spread===SPREAD_RIGHT){
       x1=d-width;
     }else{
       x1=d+width;
@@ -729,11 +730,10 @@ function $Reader(params, _fps) {
        refetch(id, mode, dpi, i);
     };
     i.scaledWidth = function(){
-      if(!isRollMode()){
+      if(!isRollMode() && isPageMode()){
         if(this.width < this.height){
           var w = this.width * (height/dpi) * this.scale;
           if(w < width){
-            console.log("scaled w:" + w);
             return w;
           }
         }
@@ -741,12 +741,11 @@ function $Reader(params, _fps) {
       return this.width * (width/dpi);
     };
     i.scaledHeight = function(){
-      if(!isRollMode()){
+      if(!isRollMode() && isPageMode()){
         if(this.width < this.height){
           var w = this.width * (height/dpi) * this.scale;
           if(w < width){
         	var h = this.height * (height/dpi) * this.scale;
-            console.log("scaled h:" + h);
             return h;
           }
         }
@@ -1766,13 +1765,12 @@ function $Reader(params, _fps) {
     console.log("change_view_page");
     is_back = false;
     if(storyMetaFile['enable_page_mode']){
-      //fixme
+      replaceCanvas();
       if(width > height){
         current_view = VIEW_PAGE_FL;
       }else{
         current_view = VIEW_PAGE_FP;
       }
-      replaceCanvas();
       if(hasAllTitleShown){
         jumpTo(currentPageIndex);
       }
@@ -1972,6 +1970,7 @@ function $Reader(params, _fps) {
       $("#total_story").text(storyMetaFile["story_count"]);
 
       if(width > height && App.isMedias){
+        console.log("medias w");
         current_view = VIEW_PAGE_FL;
       }
 
@@ -2130,6 +2129,11 @@ function $Reader(params, _fps) {
 
   var resize = function() {
     setWidthAndHeight();
+    if(height >= width && current_view == VIEW_PAGE_FL){
+      current_view = VIEW_PAGE_FP;
+    }else if (height < width && current_view == VIEW_PAGE_FP){
+      current_view = VIEW_PAGE_FL;
+    }
     SceneAnimator = new $SceneAnimator(width, height, FPS);
     if(started){
       clearSceneImages();

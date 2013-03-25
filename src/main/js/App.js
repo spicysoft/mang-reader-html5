@@ -325,11 +325,10 @@ $(function() {
   Reader = new $Reader(params, 50/App.speed);
 
   $(window).resize(function(){
-    console.log("window resize : " + $(window).width() + " " + $(window).height());
-//    if(/Android/.test(window.navigator.userAgent)){
-//      $("html").css("zoom" ,$(window).width()/css_size);
-//    }
-    Reader.resize();
+    setTimeout(function(){
+        console.log("window resize : " + $(window).width() + " " + $(window).height());
+        Reader.resize();
+    },250);
   });
     if(!params.auto){
         Reader.showPreview(params.storyId);
