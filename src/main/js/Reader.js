@@ -972,11 +972,23 @@ function $Reader(params, _fps) {
       }else{
         quality = '/original';
       }
-      if(current_view === VIEW_SCENE){
-          trackPageView('frame'+quality+'/'+newIndex);
-      }else{
-          trackPageView('page'+quality+'/'+newIndex);
-      }
+	  var view = "/"
+	  switch(current_view){
+	  	case VIEW_SCENE:
+		view = "frame_anime";
+		break;
+		case VIEW_PAGE_FL:
+		case VIEW_PAGE_FP:
+		view = "page_full";
+		break;
+		case VIEW_PAGE_W:
+		view = "page_wide";
+		break;
+		case VIEW_SCENE_R:
+		view = "frame_roll";
+		break;
+	  }
+      trackPageView(view+quality+'/'+newIndex);
     }
 
     if (i !== undefined && i.hasLoaded()) {
