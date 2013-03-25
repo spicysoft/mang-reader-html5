@@ -133,6 +133,7 @@ function $Reader(params, _fps) {
   };
 
   var setWidthAndHeight = function(){
+    console.log("setWidthAndHeight start");
     if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
       var reader_width = $(window).width();
       var reader_height = $(window).height();
@@ -180,9 +181,12 @@ function $Reader(params, _fps) {
      canvas = $("#canvas")[0];
      canvas.width = width;
      canvas.style.width = width + "px";
-     if(isPageMode() || isRollMode()){
+     if(isRollMode()){
        canvas.height = height;
        canvas.style.height = '100%';
+     }else if(isPageMode()){
+       canvas.height = height;
+       canvas.style.height = height + "px";
      }else{
        canvas.height = width;
        canvas.style.height =  width + "px";
@@ -198,7 +202,7 @@ function $Reader(params, _fps) {
     var left = (w-width)/2;
 	$("#canvas").css("top", top + "px");
 	$("#canvas").css("left", left + "px");
-    console.log("top->" + top + " left->" + left + " " +width + "x" + height + " dpi:" + dpi);
+    console.log("setWidthAndHeight top->" + top + " left->" + left + " " +width + "x" + height + " dpi:" + dpi);
   };
 
   setWidthAndHeight();
@@ -340,7 +344,7 @@ function $Reader(params, _fps) {
 
   //フルページモード
   var paintPageImage = function(i0, i1){
-	  console.log("paintPageImage");
+    console.log("paintPageImage");
     var d=0;
     if(reverse && spread!==SPREAD_RIGHT || !reverse && spread===SPREAD_RIGHT){
       d = pageX;
@@ -391,6 +395,7 @@ function $Reader(params, _fps) {
         c.scale(rate, rate);
       }
 
+      console.log("paintPageImage: " + w0 + "-" + h0);
       c.drawImage(i0, dx0, dy0, w0, h0);
       if(i1){
         c.drawImage(i1, dx1, dy1, w1, h1);
@@ -410,8 +415,8 @@ function $Reader(params, _fps) {
         x=SceneAnimator.x();
         y=SceneAnimator.y();
       }
-      var w=i.scaledWidth();
-      var h=i.scaledHeight();
+      var mw=i.scaledWidth();
+      var mh=i.scaledHeight();
       var dx=(width - w) / 2 + x;
       var dy=(height - h) / 2 + y;
 
@@ -434,8 +439,8 @@ function $Reader(params, _fps) {
           var rate =  Math.sqrt(320/screen.width);
           c.scale(rate, rate);
         }
-        console.log( i.scaledWidth() + "-" + i.scaledHeight());
-        c.drawImage(i, dx, dy, i.scaledWidth(), i.scaledHeight());
+        console.log("paintImage: " + mw + "-" + mh);
+        c.drawImage(i, dx, dy, mw, mh);
       }
     };
 
@@ -740,23 +745,26 @@ function $Reader(params, _fps) {
       if(!isRollMode() && isPageMode()){
         if(this.width < this.height){
           var w = this.width * (height/dpi) * this.scale;
-          if(w < width){
+          var h = this.height * (height/dpi) * this.scale;
+          if(w <= width && h <= height){
             return w;
           }
         }
       }
-      return this.width * (width/dpi);
+      return this.width * (width/dpi) * this.scale;
     };
     i.scaledHeight = function(){
       if(!isRollMode() && isPageMode()){
         if(this.width < this.height){
           var w = this.width * (height/dpi) * this.scale;
-          if(w < width){
-        	var h = this.height * (height/dpi) * this.scale;
+          var h = this.height * (height/dpi) * this.scale;
+          console.log("a: " + this.width +"-"+ this.height + " -> "  + w + "-" + h + " ("  + width + "-"+ height +")");
+          if(w <= width && h <= height){
             return h;
           }
         }
       }
+      console.log("b: " + this.width +"-"+ this.height + " -> "  + w + "-" + h + " ("  + width + "-"+ height +")");
       return this.height * (width/dpi) * this.scale;
     };
     var param = "";
@@ -1600,7 +1608,7 @@ function $Reader(params, _fps) {
         touch_pageX = 0;
         return true;
       }else if(dx < -80){
-        if(current_view!==VIEW_PAGE_FL && spread===SPREAD_RIGHT){
+        if(spread===SPREAD_RIGHT){
           goPrev();
         }else{
           goNext();
@@ -1784,12 +1792,12 @@ function $Reader(params, _fps) {
     console.log("change_view_page");
     is_back = false;
     if(storyMetaFile['enable_page_mode']){
-      replaceCanvas();
-      if(width > height){
+      if($(window).width() > $(window).height()){
         current_view = VIEW_PAGE_FL;
       }else{
         current_view = VIEW_PAGE_FP;
       }
+      replaceCanvas();
       if(hasAllTitleShown){
         jumpTo(currentPageIndex);
       }
