@@ -151,9 +151,16 @@ function $Reader(params, _fps) {
       $("#canvas").width(width);
       $("#canvas").height(height);
     }else {
+      if(App.isIOS){
+        var w = window.innerWidth;
+        var h = window.innerHeight;
+      }else{
+        var w = $(window).width();
+        var h = $(window).height();
+      }
 
-      $("#mangh5r").width($(window).width());
-      $("#mangh5r").height($(window).height());
+      $("#mangh5r").width(w);
+      $("#mangh5r").height(h);
       var reader = $("#mangh5r");
       var reader_width = reader.width();
       var reader_height = reader.height();
@@ -187,8 +194,8 @@ function $Reader(params, _fps) {
    }else{
       dpi = resolveDpi(canvas.height);
    }
-    var top = ($(window).height()-height)/2;
-    var left = ($(window).width()-width)/2;
+    var top = (h-height)/2;
+    var left = (w-width)/2;
 	$("#canvas").css("top", top + "px");
 	$("#canvas").css("left", left + "px");
     console.log("top->" + top + " left->" + left + " " +width + "x" + height + " dpi:" + dpi);

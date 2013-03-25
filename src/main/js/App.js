@@ -36,6 +36,7 @@ function $App() {
   this.ANDROID21 = false;
   this.isSmartPhone = false;
   this.isAndroid = false;
+  this.isIOS = false;
   this.isApp = false;
   this.speed = 1;
 
@@ -90,6 +91,7 @@ function $App() {
       this.isAndroid = true;
     } else if (/iPhone\sOS/.test(ua)){
       this.isSmartPhone = true;
+      this.isIOS = true;
     } else {
       this.isSmartPhone = false;
     }
@@ -328,7 +330,7 @@ $(function() {
     setTimeout(function(){
         console.log("window resize : " + $(window).width() + " " + $(window).height());
         Reader.resize();
-    },250);
+    },400);
   });
     if(!params.auto){
         Reader.showPreview(params.storyId);
