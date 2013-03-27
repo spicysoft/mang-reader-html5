@@ -417,8 +417,9 @@ function $Reader(params, _fps) {
       }
       var mw=i.scaledWidth();
       var mh=i.scaledHeight();
-      var dx=(width - w) / 2 + x;
-      var dy=(height - h) / 2 + y;
+      console.log("a paintImage: " + mw + "-" + mh);
+      var dx=(width - mw) / 2 + x;
+      var dy=(height - mh) / 2 + y;
 
       var c = getCanvas();
       if (App.IE) {
@@ -439,7 +440,7 @@ function $Reader(params, _fps) {
           var rate =  Math.sqrt(320/screen.width);
           c.scale(rate, rate);
         }
-        console.log("paintImage: " + mw + "-" + mh);
+        console.log("b paintImage: " + mw + "-" + mh);
         c.drawImage(i, dx, dy, mw, mh);
       }
     };
@@ -2042,6 +2043,9 @@ function $Reader(params, _fps) {
         enable_button($("#mode_roll_coma"));
         $("#mode_anime_coma").bind(act_button, change_view_scene);
         $("#mode_roll_coma").bind(act_button, change_view_scene_roll);
+      }else if(!isPageMode()){
+        current_view = VIEW_PAGE_FP;
+        saveConfig();
       }
 
       change_mode_uiview();
