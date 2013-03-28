@@ -79,12 +79,12 @@ function $Reader(params, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v6.1.1");
+  console.log("v6.1.2");
 
   var replaceCanvas = function(){
 	 $("#canvas").empty();
      if(isRollMode() || App.IE){
-         $("#canvas").replaceWith('<div id="canvas" style="background: #000;"></div>');
+         $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;"></div>');
      }else{
          $("#canvas").replaceWith('<canvas id="canvas"></canvas>');
      }
@@ -451,9 +451,15 @@ function $Reader(params, _fps) {
 	  }
 	  var c = getCanvas();
 	  var h = 0;
+	  var i=0;
 	  c.children().each(function(){
-		  h = h+$(this).height();
+		  console.log(this);
+		  var ih = $(this).outerHeight();
+		  h = h+ih;
+		  console.log(h + "<-" + ih);
+		  i++;
 	  });
+	  h - c.height();
 	  return h;
   };
 
@@ -520,19 +526,19 @@ function $Reader(params, _fps) {
     }
     if(current_view === VIEW_PAGE_FL){
       if(pageScroll){
-          if(reverse){
-              if(currentPageIndex==0 && is_first_page_single){
-                  paintPageImageSpread(pageImages[current_mode][currentPageIndex],  null, pageImages[current_mode][currentPageIndex-1],  pageImages[current_mode][currentPageIndex-2]);
-              }else{
-                  paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], pageImages[current_mode][currentPageIndex-1],  pageImages[current_mode][currentPageIndex-2]);
-              }
+        if(reverse){
+          if(currentPageIndex==0 && is_first_page_single){
+            paintPageImageSpread(pageImages[current_mode][currentPageIndex],  null, pageImages[current_mode][currentPageIndex-1],  pageImages[current_mode][currentPageIndex-2]);
           }else{
-	          if(currentPageIndex==0 && is_first_page_single){
-	              paintPageImageSpread(pageImages[current_mode][currentPageIndex],  null, pageImages[current_mode][currentPageIndex+2],  pageImages[current_mode][currentPageIndex+1]);
-	          }else{
-	              paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], pageImages[current_mode][currentPageIndex+3],  pageImages[current_mode][currentPageIndex+2]);
-	          }
+            paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], pageImages[current_mode][currentPageIndex-1],  pageImages[current_mode][currentPageIndex-2]);
           }
+        }else{
+	      if(currentPageIndex==0 && is_first_page_single){
+	        paintPageImageSpread(pageImages[current_mode][currentPageIndex],  null, pageImages[current_mode][currentPageIndex+2],  pageImages[current_mode][currentPageIndex+1]);
+	      }else{
+	        paintPageImageSpread(pageImages[current_mode][currentPageIndex+1],  pageImages[current_mode][currentPageIndex], pageImages[current_mode][currentPageIndex+3],  pageImages[current_mode][currentPageIndex+2]);
+	      }
+        }
       }else{
         if(currentPageIndex==0 && is_first_page_single){
           paintPageImageSpread(pageImages[current_mode][currentPageIndex], null, null, null);
@@ -743,14 +749,15 @@ function $Reader(params, _fps) {
        refetch(id, mode, dpi, i);
     };
     i.scaledWidth = function(){
-      if(!isRollMode() && isPageMode()){
+    	if(!isRollMode() && isPageMode()){
         if(this.width < this.height){
-          var w = this.width * (height/dpi) * this.scale;
-          var h = this.height * (height/dpi) * this.scale;
-          if(w <= width && h <= height){
+          var r = (height/dpi);
+          var w = this.width * r * this.scale;
+          var h = this.height * r * this.scale;
+          if(w/h <= width/height){
             return w;
           }else{
-            return this.width * (height/dpi) * this.scale;
+            return this.width * (width/this.width) * this.scale;
           }
         }
       }
@@ -761,11 +768,12 @@ function $Reader(params, _fps) {
         var w = this.width * (height/dpi) * this.scale;
         var h = this.height * (height/dpi) * this.scale;
         if(this.width < this.height){
+          var r = (height/dpi);
           console.log("a: " + this.width +"-"+ this.height + " -> "  + w + "-" + h + " ("  + width + "-"+ height +")");
-          if(w <= width && h <= height){
+          if(w/h <= width/height){
             return h;
           }else{
-            return this.height * (height/dpi) * this.scale;
+            return this.height * (width/this.width) * this.scale;
           }
         }
       }
@@ -806,7 +814,7 @@ function $Reader(params, _fps) {
             if(scenes[i]['scene_id']===sceneId){
               sceneImages[mode][i] = undefined;
               if(i===currentSceneIndex){
-                  jumpTo(currentSceneIndex);
+                jumpTo(currentSceneIndex);
               }
               break;
             }
@@ -824,8 +832,8 @@ function $Reader(params, _fps) {
               if(pages[i]['pageId']===pageId){
                 pageImages[mode][i] = undefined;
                 if(i===currentPageIndex){
-                    jumpTo(currentPageIndex);
-                  }
+                  jumpTo(currentPageIndex);
+                }
                 break;
               }
             }
@@ -1639,13 +1647,12 @@ function $Reader(params, _fps) {
       if(dy >= 80 || dy <= -80){
         menu_click(e);
       }
-      //TODO: AnimationFrame
-      var timer = setInterval(function(){
+      var anim = function(){
     	  console.log("up:" + dy);
     	  var abs = Math.abs(dy);
     	  if(abs < 1){
     		  dy = 0;
-    	      clearInterval(timer);
+    		  return;
     	  }else{
     	      var top = parseInt($("#canvas").css("top"));
     	      var ny = 0;
@@ -1667,8 +1674,10 @@ function $Reader(params, _fps) {
     	    	  dy = 0;
     	      }
     	      $("#canvas").css("top", ny);
+    	      requestAnimationFrame(anim);
     	  }
-      },50);
+      }
+      requestAnimationFrame(anim);
       console.log(dy);
     }
 
@@ -1931,6 +1940,10 @@ function $Reader(params, _fps) {
 
     if(m && (parseInt(m,10) === VIEW_PAGE_FP || parseInt(m,10) === VIEW_PAGE_FL)){
         change_view_page();
+    }else if(m && (parseInt(m,10) === VIEW_PAGE_W)) {
+    	change_view_page_wide
+    }else if(m && (parseInt(m,10) === VIEW_SCENE_R)) {
+    	change_view_scene_roll();
     }
     if(v && v === MODE_ORIGINAL){
         change_mode_original();
