@@ -749,6 +749,8 @@ function $Reader(params, _fps) {
           var h = this.height * (height/dpi) * this.scale;
           if(w <= width && h <= height){
             return w;
+          }else{
+            return this.width * (height/dpi) * this.scale;
           }
         }
       }
@@ -756,12 +758,14 @@ function $Reader(params, _fps) {
     };
     i.scaledHeight = function(){
       if(!isRollMode() && isPageMode()){
+        var w = this.width * (height/dpi) * this.scale;
+        var h = this.height * (height/dpi) * this.scale;
         if(this.width < this.height){
-          var w = this.width * (height/dpi) * this.scale;
-          var h = this.height * (height/dpi) * this.scale;
           console.log("a: " + this.width +"-"+ this.height + " -> "  + w + "-" + h + " ("  + width + "-"+ height +")");
           if(w <= width && h <= height){
             return h;
+          }else{
+            return this.height * (height/dpi) * this.scale;
           }
         }
       }
