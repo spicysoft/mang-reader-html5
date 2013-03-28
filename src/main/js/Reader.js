@@ -749,36 +749,46 @@ function $Reader(params, _fps) {
        refetch(id, mode, dpi, i);
     };
     i.scaledWidth = function(){
-    	if(!isRollMode() && isPageMode()){
+      if(current_view == VIEW_PAGE_FL){
+        var bw = width/2;
+      }else{
+        var bw = width;
+      }
+      if(!isRollMode() && isPageMode()){
         if(this.width < this.height){
           var r = (height/dpi);
           var w = this.width * r * this.scale;
           var h = this.height * r * this.scale;
-          if(w/h <= width/height){
+          if(w/h <= bw/height){
             return w;
           }else{
-            return this.width * (width/this.width) * this.scale;
+            return this.width * (bw/this.width) * this.scale;
           }
         }
       }
-      return this.width * (width/dpi) * this.scale;
+      return this.width * (bw/dpi) * this.scale;
     };
     i.scaledHeight = function(){
+      if(current_view == VIEW_PAGE_FL){
+        var bw = width/2;
+      }else{
+        var bw = width;
+      }
       if(!isRollMode() && isPageMode()){
         var w = this.width * (height/dpi) * this.scale;
         var h = this.height * (height/dpi) * this.scale;
         if(this.width < this.height){
           var r = (height/dpi);
-          console.log("a: " + this.width +"-"+ this.height + " -> "  + w + "-" + h + " ("  + width + "-"+ height +")");
-          if(w/h <= width/height){
+          console.log("a: " + this.width +"-"+ this.height + " -> "  + w + "-" + h + " ("  + bw + "-"+ height +")");
+          if(w/h <= bw/height){
             return h;
           }else{
-            return this.height * (width/this.width) * this.scale;
+            return this.height * (bw/this.width) * this.scale;
           }
         }
       }
-      console.log("b: " + this.width +"-"+ this.height + " -> "  + w + "-" + h + " ("  + width + "-"+ height +")");
-      return this.height * (width/dpi) * this.scale;
+      console.log("b: " + this.width +"-"+ this.height + " -> "  + w + "-" + h + " ("  + bw + "-"+ height +")");
+      return this.height * (bw/dpi) * this.scale;
     };
     var param = "";
     if(t > 0){
