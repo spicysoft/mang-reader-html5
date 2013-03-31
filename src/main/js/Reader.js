@@ -34,6 +34,7 @@ function $Reader(params, _fps) {
   var storyMetaFile;
   var scenes;
   var pages;
+  var roll_image_positions = [];
   var sceneImages;
   var pageImages;
   var currentSceneIndex = 0;
@@ -82,12 +83,16 @@ function $Reader(params, _fps) {
   console.log("v6.1.2");
 
   var replaceCanvas = function(){
-	 $("#canvas").empty();
-     if(isRollMode() || App.IE){
-         $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;"></div>');
+     console.log("replaceCanvas");
+     $("#canvas").empty();
+     if(isRollMode()){
+         $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;padding:0:border:none;"><div id="roll" style="position:absolute;text-align:center;margin:0;padding:0:border:none;"></div></div>');
+     }else if(App.IE){
+         $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;padding:0:border:none;"></div>');
      }else{
          $("#canvas").replaceWith('<canvas id="canvas"></canvas>');
      }
+     roll_image_positions = [];
      setWidthAndHeight();
   }
 
@@ -176,22 +181,23 @@ function $Reader(params, _fps) {
           width = reader_width;
           height = reader_width;
         }
-     }
+      }
 
-     canvas = $("#canvas")[0];
-     canvas.width = width;
-     canvas.style.width = width + "px";
-     if(isRollMode()){
-       canvas.height = height;
-       canvas.style.height = '100%';
-     }else if(isPageMode()){
-       canvas.height = height;
-       canvas.style.height = height + "px";
-     }else{
-       canvas.height = width;
-       canvas.style.height =  width + "px";
-     }
-     canvas.fillStyle = canvas.style.background;
+      canvas = $("#canvas")[0];
+      canvas.width = width;
+      canvas.style.width = width + "px";
+      if(isRollMode()){
+        canvas.height = height;
+        canvas.style.height = '100%';
+        $("#roll").css("top",  "0px");
+      }else if(isPageMode()){
+        canvas.height = height;
+        canvas.style.height = height + "px";
+      }else{
+        canvas.height = width;
+        canvas.style.height =  width + "px";
+      }
+      canvas.fillStyle = canvas.style.background;
    }
    if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
       dpi = resolveDpi(height);
@@ -209,6 +215,7 @@ function $Reader(params, _fps) {
   var SceneAnimator = new $SceneAnimator(width, height, FPS);
 
   var updateIndex = function(nindex){
+	    console.log("updateIndex:" + nindex);
     if(isPageMode()){
       currentPageIndex = nindex;
       var sceneIndex = 0;
@@ -247,7 +254,9 @@ function $Reader(params, _fps) {
   };
 
   var getCanvas = function(){
-    if(App.IE || isRollMode()){
+    if(isRollMode()){
+      return  $("#roll");
+    }else if(App.IE){
       return  $("#canvas");
     }
     var context = canvas.getContext("2d");
@@ -423,14 +432,18 @@ function $Reader(params, _fps) {
 
       var c = getCanvas();
       if (App.IE) {
+        i.width = mw;
+        i.height = mh;
         if(App.IE_VER==8 || document.documentMode==8){
-          c.css({zoom:i.scale});
+          $("#canvas").css({zoom:i.scale});
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
         }else{
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:"+i.scale+";";
         }
         var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
+        var c = $("#canvas");
         c.empty().append(i).append(mask);
+        console.log(c.parent().html());
         c = null;
       } else {
         //Android2.1以下のCanvas drawImageバグ対応
@@ -445,27 +458,46 @@ function $Reader(params, _fps) {
       }
     };
 
-  var calcRollImagesHeight = function(){
+  var calcRollImagesHeight = function(shouldIndexUpdate){
 	  if(!isRollMode()){
 		  return 0;
 	  }
-	  var c = getCanvas();
-	  var h = 0;
+	  var top = parseInt($("#roll").css("top"));
+	  var r = $("#roll").height();
+	  var c = $("#canvas").height();
 	  var i=0;
-	  c.children().each(function(){
-		  console.log(this);
-		  var ih = $(this).outerHeight();
-		  h = h+ih;
-		  console.log(h + "<-" + ih);
-		  i++;
+	  var sum = 0;
+	  var updated = false;
+	  $("#roll").children().each(function(){
+		  if(shouldIndexUpdate && !updated && sum >= top*-1){
+			  updateIndex(i);
+			  updateProgress();
+			  updated= true;
+		  }
+		  var h = $(this).height();
+		  if(h>120){
+			  console.log(h);
+			  var p =0;
+			  if(h > c){
+				  p = sum;
+			  }else{
+				  p = sum + (c-h)/2;
+			  }
+			  roll_image_positions[i] = p;
+			  sum = sum+h;
+			  i++;
+		  }
 	  });
-	  h - c.height();
-	  return h;
+	  if(r < c){
+		  return c;
+	  }
+	  return r-c;
   };
 
   var paintRollImages = function(){
     console.log("paintRollImages");
     var objects = [];
+    roll_image_positions = [];
     var key = null;
     if(isPageMode()){
       objects = pages;
@@ -487,8 +519,9 @@ function $Reader(params, _fps) {
           var url = urlSceneImage(image_host, objects[i][key], current_mode, dpi, param);
       }
       console.log(url);
-      c.append("<p style='margin-top:0px;margin-bottom:12px;'><img src='"+url+"' width='"+dpi+"px' style='margin:auto;'/></p>");
+      c.append("<p clss='roll_image'><img src='"+url+"' width='"+dpi+"px' style='margin:0;padding:0;border:none;'/></p>");
     }
+    calcRollImagesHeight(false);
   };
 
   /**
@@ -696,6 +729,7 @@ function $Reader(params, _fps) {
   };
 
   var updateProgress = function(){
+    console.log("updateProgress");
     if(isPageMode()){
       $("#progress_total").text(pages.length);
       $("#progress_current").text(currentPageIndex+1);
@@ -754,6 +788,9 @@ function $Reader(params, _fps) {
       }else{
         var bw = width;
       }
+      if(App.IE){
+          return this.width * (bw/dpi) * this.scale;
+      }
       if(!isRollMode() && isPageMode()){
         if(this.width < this.height){
           var r = (height/dpi);
@@ -773,6 +810,9 @@ function $Reader(params, _fps) {
         var bw = width/2;
       }else{
         var bw = width;
+      }
+      if(App.IE){
+          return this.height * (bw/dpi) * this.scale;
       }
       if(!isRollMode() && isPageMode()){
         var w = this.width * (height/dpi) * this.scale;
@@ -979,7 +1019,15 @@ function $Reader(params, _fps) {
     updateProgress();
 
     if(isRollMode()){
-    	paintRollImages();
+    	if(roll_image_positions.length < 1){
+    		console.log("empty roll imagesca");
+        	paintRollImages();
+    	}else{
+    	    calcRollImagesHeight(false);
+    		console.log(roll_image_positions);
+    		console.log("roll:" + roll_image_positions[newIndex] + " " + newIndex);
+    		$("#roll").animate({top: (-1 * roll_image_positions[newIndex]) + "px"}, 500);
+    	}
     	return;
     }
     var i;
@@ -1109,7 +1157,10 @@ function $Reader(params, _fps) {
     SceneAnimator.reverse = true;
     SceneAnimator.dirFwd = false;
     reverse = true;
-
+    if(isRollMode()){
+        jumpPrev();
+        return;
+    }
     if((isPageMode()) && 0 === currentPageIndex ||
       current_view === VIEW_SCENE && 0 === currentSceneIndex){
       console.log("ignore goPrev");
@@ -1372,9 +1423,9 @@ function $Reader(params, _fps) {
       }else{
           next = currentPageIndex + 2;
       }
-    }else if(current_view === VIEW_PAGE_FP){
+    }else if(isPageMode()){
       next = currentPageIndex + 1;
-    }else{
+    }else {
       next = currentSceneIndex + 1;
     }
     if (isPageMode() && next >= pages.length ||
@@ -1493,9 +1544,13 @@ function $Reader(params, _fps) {
    */
   var goNext = function() {
     console.log("go next start");
+
     SceneAnimator.reverse = false;
     SceneAnimator.dirFwd = true;
     reverse = false;
+    if(isRollMode()){
+        jumpNext();
+    }
     if(!hasAllTitleShown){
       jumpNext();
       return;
@@ -1597,20 +1652,18 @@ function $Reader(params, _fps) {
     	//
     }else if(touch_start_y!=0 && isRollMode()){
       dy = touch_pageY - touch_start_y;
-      var top = parseInt($("#canvas").css("top"));
-
+      var top = parseInt($("#roll").css("top"));
       var ny = 0;
       if(dy+top < 0){
     	  ny = dy+top
       }
-      canvas_limit = calcRollImagesHeight();
+      canvas_limit = calcRollImagesHeight(true);
       if(canvas_limit < ny * -1){
     	  ny = -1 * canvas_limit;
     	  processFinished();
       }
       touch_start_y = touch_pageY;
-      $("#canvas").css("top", ny);
-      console.log("top:" + $("#canvas").css("top"));
+      $("#roll").css("top", ny);
     }else{
       processFlick(e);
     }
@@ -1664,7 +1717,7 @@ function $Reader(params, _fps) {
     		  dy = 0;
     		  return;
     	  }else{
-    	      var top = parseInt($("#canvas").css("top"));
+    	      var top = parseInt($("#roll").css("top"));
     	      var ny = 0;
     	      if(dy > 0){
        	    	  dy = dy*0.9;
@@ -1683,7 +1736,7 @@ function $Reader(params, _fps) {
     	    	  ny = -1 * canvas_limit;
     	    	  dy = 0;
     	      }
-    	      $("#canvas").css("top", ny);
+    	      $("#roll").css("top", ny);
     	      requestAnimationFrame(anim);
     	  }
       }
@@ -1991,6 +2044,7 @@ function $Reader(params, _fps) {
    * 指定したマンガの話をリーダーで開く。
    */
   var openStory = function(_storyId) {
+    console.log("openStory:" + _storyId);
     started = true;
     storyId = _storyId;
     clearSceneImages();
@@ -2005,7 +2059,7 @@ function $Reader(params, _fps) {
         (parent["Controll"]["showAd"])(storyId, "beforeReadingInReader", showFinished);
 	}
     showLoading();
-
+    console.log("load start");
     apiStoryMetaFile(storyId, function(json) {
       console.log("apiStoryMetaFile");
       storyMetaFile = json;
@@ -2114,8 +2168,9 @@ function $Reader(params, _fps) {
       if(!su){
         apiRead(storyId, function(json){console.log(json);});
       }
+      console.log("openStory: done");
     }, apiError);
-
+    console.log("load processing...");
   };
 
   var showAd = function(adSpaceId) {
@@ -2186,6 +2241,7 @@ function $Reader(params, _fps) {
   }
 
   var resize = function() {
+    console.log("resize start");
     setWidthAndHeight();
     if(height >= width && current_view == VIEW_PAGE_FL){
       current_view = VIEW_PAGE_FP;
@@ -2207,6 +2263,7 @@ function $Reader(params, _fps) {
       console.log("start!");
       $("#thumbnail").click();
     }
+    console.log("resize done");
   };
 
   var prepareMenu = function(){

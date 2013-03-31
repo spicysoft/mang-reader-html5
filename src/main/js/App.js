@@ -332,10 +332,9 @@ $(function() {
         Reader.resize();
     },400);
   });
-    if(!params.auto){
-        Reader.showPreview(params.storyId);
-      }else{
-        Reader.openStory(params.storyId);
-      }
-
+  if(!params.auto){
+    Reader.showPreview(params.storyId);
+  }else{
+    Reader.openStory(params.storyId);
+  }
 });

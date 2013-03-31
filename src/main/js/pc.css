@@ -286,7 +286,7 @@ body {
 	float:left;
 }
 #menu_upper .left {
-	
+
 }
 #menu_upper .right {
 	margin-right: 8px;
@@ -459,7 +459,7 @@ body {
 }
 div.top_button {
 	padding-top:20px !important;
-}	
+}
 #ad_area .go_premium {
 	font-size:13px;
 	color:#FFF;
@@ -489,4 +489,10 @@ div.top_button {
 	left:50%;
 	border:none !important;
 	background:none !important;
+}
+
+. roll_image{
+    border:none !important;
+    padding:0;
+    margin-top:0px;margin-bottom:12px;
 }
