@@ -309,6 +309,7 @@ function $Reader(params, _fps) {
 
     var c = getCanvas();
     if (App.IE) {
+      c.empty();
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
       if(l0){
         i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
@@ -2044,6 +2045,7 @@ function $Reader(params, _fps) {
    * 指定したマンガの話をリーダーで開く。
    */
   var openStory = function(_storyId) {
+    replaceCanvas();
     console.log("openStory:" + _storyId);
     started = true;
     storyId = _storyId;
