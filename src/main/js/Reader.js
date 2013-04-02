@@ -264,7 +264,6 @@ function $Reader(params, _fps) {
     return context;
   };
 
-  //refactor me
   var paintPageImageSpread = function(i0, i1, i2, i3){
     var d=0;
     var nd = 0;
@@ -309,21 +308,22 @@ function $Reader(params, _fps) {
 
     var c = getCanvas();
     if (App.IE) {
+      c.empty();
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
       if(l0){
-        i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
-        c.empty().append(l0);
+        l0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;zoom:"+(l0.scaledWidth()/l0.width)+";";
+        c.append(l0);
       }
       if(r0){
-        i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
+        r0.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;zoom:"+(r0.scaledWidth()/r0.width)+";";
         c.append(r0);
       }
       if(l1){
-        i1.style.cssText = "position: absolute; top: " + dy2 + "px; left:" + dx2 + "px;";
+        l1.style.cssText = "position: absolute; top: " + dy2 + "px; left:" + dx2 + "px;zoom:"+(l1.scaledWidth()/l1.width)+";";
         c.append(l1);
       }
       if(r1){
-        i1.style.cssText = "position: absolute; top: " + dy3+ "px; left:" + dx3 + "px;";
+        r1.style.cssText = "position: absolute; top: " + dy3+ "px; left:" + dx3 + "px;zoom:"+(r1.scaledWidth()/r1.width)+";";
         c.append(r1);
       }
       c.append(mask);
@@ -788,9 +788,6 @@ function $Reader(params, _fps) {
       }else{
         var bw = width;
       }
-      if(App.IE){
-          return this.width * (bw/dpi) * this.scale;
-      }
       if(!isRollMode() && isPageMode()){
         if(this.width < this.height){
           var r = (height/dpi);
@@ -810,9 +807,6 @@ function $Reader(params, _fps) {
         var bw = width/2;
       }else{
         var bw = width;
-      }
-      if(App.IE){
-          return this.height * (bw/dpi) * this.scale;
       }
       if(!isRollMode() && isPageMode()){
         var w = this.width * (height/dpi) * this.scale;
@@ -1255,7 +1249,7 @@ function $Reader(params, _fps) {
       return;
     }
     $("#menu").animate(
-      {top: "-234px"},
+      {top: "-264px"},
       fadeout,'swing',
       function(){
         $("#menu_switch").bind('click', menu_click);
@@ -1697,7 +1691,6 @@ function $Reader(params, _fps) {
     }
   }
   var canvas_up = function(e) {
-    console.log("canvas_up");
     if(touch_start_x!=0 && !isRollMode()){
       var dx = touch_pageX - touch_start_x;
       console.log("dx:" + dx);
@@ -2044,6 +2037,7 @@ function $Reader(params, _fps) {
    * 指定したマンガの話をリーダーで開く。
    */
   var openStory = function(_storyId) {
+    replaceCanvas();
     console.log("openStory:" + _storyId);
     started = true;
     storyId = _storyId;
@@ -2267,7 +2261,7 @@ function $Reader(params, _fps) {
   };
 
   var prepareMenu = function(){
-    $("#menu").css("top", -1 * 234 + "px");
+    $("#menu").css("top", -1 * 264 + "px");
     $("#menu").show();
     $("#menu").bind('click', menu_hide_click);
     disable_button($(".change_setting"));
