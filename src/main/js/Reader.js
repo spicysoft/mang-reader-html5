@@ -519,7 +519,7 @@ function $Reader(params, _fps) {
           var url = urlSceneImage(image_host, objects[i][key], current_mode, dpi, param);
       }
       console.log(url);
-      c.append("<p clss='roll_image'><img src='"+url+"' width='"+dpi+"px' style='margin:0;padding:0;border:none;'/></p>");
+      c.append("<p clss='roll_image'><img src='"+url+"' width='"+$("#canvas").width()+"px' style='margin:0;padding:0;border:none;'/></p>");
     }
     calcRollImagesHeight(false);
   };
@@ -2241,6 +2241,8 @@ function $Reader(params, _fps) {
       current_view = VIEW_PAGE_FP;
     }else if (height < width && current_view == VIEW_PAGE_FP){
       current_view = VIEW_PAGE_FL;
+    }else if(isRollMode()){
+      replaceCanvas();
     }
     SceneAnimator = new $SceneAnimator(width, height, FPS);
     if(started){
