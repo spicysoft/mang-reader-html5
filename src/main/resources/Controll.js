@@ -157,6 +157,16 @@ function $Controll() {
       });
    }
 
+  this.onResizedCallback = function(){};
+  this.setOnResizedCallback = function(callback){
+	  this.onResizedCallback = callback;
+  };
+  this.onResized = function(){
+	  if(this.onResizedCallback){
+		  this.onResizedCallback();
+	  }
+  };
+
   this.enableGA = function(){
     document.getElementById('reader_reader').contentWindow._gaq =  _gaq;
   };

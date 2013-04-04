@@ -80,7 +80,7 @@ function $Reader(params, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v6.1.2");
+  console.log("v6.2.0");
 
   var replaceCanvas = function(){
      console.log("replaceCanvas");
@@ -126,6 +126,16 @@ function $Reader(params, _fps) {
 
   var resolveDpi = function(w){
     console.log("resolve src:" + w);
+    if(isPageMode()){
+      if(w < 320){
+        return 320;
+      }else if(w < 480){
+        return 480;
+      }else if(w < 640){
+        return 640;
+      }
+    }
+
     if(w < 320){
       return 240;
     }else if(w < 480){
@@ -154,6 +164,8 @@ function $Reader(params, _fps) {
           height = reader_width;
         }
       }
+      var w = $(window).width();
+      var h = $(window).height();
       $("#canvas").width(width);
       $("#canvas").height(height);
     }else {
@@ -387,10 +399,10 @@ function $Reader(params, _fps) {
     var c = getCanvas();
     if (App.IE) {
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
-      i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
+      i0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px; zoom:"+(i0.scaledWidth()/i0.width)+";";
       c.empty().append(i0);
       if(i1){
-        i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
+        i1.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px; zoom:"+(i1.scaledWidth()/i1.width)+";";
         c.append(i1);
       }
       c.append(mask);
@@ -432,13 +444,11 @@ function $Reader(params, _fps) {
 
       var c = getCanvas();
       if (App.IE) {
-        i.width = mw;
-        i.height = mh;
         if(App.IE_VER==8 || document.documentMode==8){
-          $("#canvas").css({zoom:i.scale});
+          $("#canvas").css({zoom:(i.scaledWidth()/i.width)});
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
         }else{
-          i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px; zoom:"+i.scale+";";
+          i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;zoom:"+(i.scaledWidth()/i.width)+";";
         }
         var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
         var c = $("#canvas");
@@ -468,26 +478,25 @@ function $Reader(params, _fps) {
 	  var i=0;
 	  var sum = 0;
 	  var updated = false;
-	  $("#roll").children().each(function(){
-		  if(shouldIndexUpdate && !updated && sum >= top*-1){
-			  updateIndex(i);
-			  updateProgress();
-			  updated= true;
-		  }
-		  var h = $(this).height();
-		  if(h>120){
-			  console.log(h);
-			  var p =0;
-			  if(h > c){
-				  p = sum;
-			  }else{
-				  p = sum + (c-h)/2;
+
+	  //TOOD キャッシュ済の場合はキャッシュから再計算する
+	  if(roll_image_positions.length < 1){
+		  $("#roll").children().each(function(){
+			  var h = $(this).height();
+			  if(h>120){
+				  var p =0;
+				  if(h > c){
+					  p = sum;
+				  }else{
+					  p = sum + (c-h)/2;
+				  }
+				  roll_image_positions[i] = p;
+				  sum = sum+h;
+				  i++;
 			  }
-			  roll_image_positions[i] = p;
-			  sum = sum+h;
-			  i++;
-		  }
-	  });
+		  });
+	  }
+
 	  if(r < c){
 		  return c;
 	  }
@@ -518,9 +527,17 @@ function $Reader(params, _fps) {
       }else{
           var url = urlSceneImage(image_host, objects[i][key], current_mode, dpi, param);
       }
-      console.log(url);
       c.append("<p clss='roll_image'><img src='"+url+"' width='"+$("#canvas").width()+"px' style='margin:0;padding:0;border:none;'/></p>");
     }
+
+    //ignore roll click
+    $(".roll_image").children().each(function(){
+    	$(this).bind(act_start, App.preventDefault);
+    	$(this).bind(act_end, App.preventDefault);
+    	$(this).bind(act_out, App.preventDefault);
+    	$(this).bind(act_move, App.preventDefault);
+    	$(this).bind(act_button, App.preventDefault);
+    });
     calcRollImagesHeight(false);
   };
 
@@ -1642,11 +1659,13 @@ function $Reader(params, _fps) {
   var canvas_move = function(e) {
     touch_pageX=point_x(e);
     touch_pageY=point_y(e);
+    //console.log("canvas_move: " + touch_pageY);
     if(touch_start_x!=0 && !isRollMode()){
     	//
     }else if(touch_start_y!=0 && isRollMode()){
       dy = touch_pageY - touch_start_y;
-      var top = parseInt($("#roll").css("top"));
+      var roll = $("#roll");
+      var top = parseInt(roll.css("top"));
       var ny = 0;
       if(dy+top < 0){
     	  ny = dy+top
@@ -1657,7 +1676,7 @@ function $Reader(params, _fps) {
     	  processFinished();
       }
       touch_start_y = touch_pageY;
-      $("#roll").css("top", ny);
+      roll.css("top", ny);
     }else{
       processFlick(e);
     }
@@ -1689,8 +1708,10 @@ function $Reader(params, _fps) {
       }
       return false;
     }
+
   }
   var canvas_up = function(e) {
+    //console.log("canvas_up");
     if(touch_start_x!=0 && !isRollMode()){
       var dx = touch_pageX - touch_start_x;
       console.log("dx:" + dx);
@@ -1700,17 +1721,31 @@ function $Reader(params, _fps) {
         menu_click(e);
       }
     }else if(touch_start_y!=0 && isRollMode()){
-      if(dy >= 80 || dy <= -80){
+      console.log("dy:" + dy);
+      if(dy < 40 && dy > -40){
         menu_click(e);
       }
+
+      var sum = 0;
+      var top = parseInt($("#roll").css("top"));
+      for(var i=0;i<roll_image_positions.length;i++){
+        var p = roll_image_positions[i];
+        if(sum >= top*-1){
+          updateIndex(i);
+          updateProgress();
+          break;
+        }
+        sum = sum + p;
+      }
+
+      var roll = $("#roll");
       var anim = function(){
-    	  console.log("up:" + dy);
     	  var abs = Math.abs(dy);
     	  if(abs < 1){
     		  dy = 0;
     		  return;
     	  }else{
-    	      var top = parseInt($("#roll").css("top"));
+    	      top = parseInt(roll.css("top"));
     	      var ny = 0;
     	      if(dy > 0){
        	    	  dy = dy*0.9;
@@ -1724,12 +1759,11 @@ function $Reader(params, _fps) {
     	    	  ny = 0;
     	    	  dy = 0;
     	      }
-        	  console.log("cl:" + canvas_limit);
     	      if(canvas_limit < ny * -1){
     	    	  ny = -1 * canvas_limit;
     	    	  dy = 0;
     	      }
-    	      $("#roll").css("top", ny);
+    	      roll.css("top", ny);
     	      requestAnimationFrame(anim);
     	  }
       }
@@ -1997,7 +2031,7 @@ function $Reader(params, _fps) {
     if(m && (parseInt(m,10) === VIEW_PAGE_FP || parseInt(m,10) === VIEW_PAGE_FL)){
         change_view_page();
     }else if(m && (parseInt(m,10) === VIEW_PAGE_W)) {
-    	change_view_page_wide
+    	change_view_page_wide();
     }else if(m && (parseInt(m,10) === VIEW_SCENE_R)) {
     	change_view_scene_roll();
     }
@@ -2092,13 +2126,18 @@ function $Reader(params, _fps) {
     	  replaceCanvas();
       }
 
-      if(storyMetaFile['enable_original_mode'] && (premium || storyMetaFile['is_premium_author'])){
-        enable_button($(".change_setting"));
-		$(".change_setting").click(function(){
-	      $("#menu_setting").fadeIn(300);
-	    });
-        $("#set_original").bind(act_button, change_mode_original);
-        $("#set_reading").bind(act_button, change_mode_reading);
+      if(premium || storyMetaFile['is_premium_author']){
+        if(storyMetaFile['enable_original_mode']){
+          enable_button($(".change_setting"));
+          $(".change_setting").click(function(){
+        	  $("#menu_setting").fadeIn(300);
+          });
+          $("#set_original").bind(act_button, change_mode_original);
+          $("#set_reading").bind(act_button, change_mode_reading);
+        }
+      }else{
+        current_mode = MODE_READING;
+        saveConfig();
       }
 
 	  $(".change_mode").click(function(){
@@ -2165,6 +2204,7 @@ function $Reader(params, _fps) {
       console.log("openStory: done");
     }, apiError);
     console.log("load processing...");
+    (parent["Controll"]["setOnResizedCallback"])(App.resize);
   };
 
   var showAd = function(adSpaceId) {
@@ -2236,6 +2276,13 @@ function $Reader(params, _fps) {
 
   var resize = function() {
     console.log("resize start");
+    var cur;
+    if(isPageMode()){
+      cur = currentPageIndex;
+    }else{
+      cur = currentSceneIndex;
+    }
+    console.log("resize jump:" + cur);
     setWidthAndHeight();
     if(height >= width && current_view == VIEW_PAGE_FL){
       current_view = VIEW_PAGE_FP;
@@ -2243,18 +2290,15 @@ function $Reader(params, _fps) {
       current_view = VIEW_PAGE_FL;
     }else if(isRollMode()){
       replaceCanvas();
+      paintRollImages();
     }
     SceneAnimator = new $SceneAnimator(width, height, FPS);
     if(started){
       clearSceneImages();
       clearPageImages();
-      var cur;
-      if(isPageMode()){
-        cur = currentPageIndex;
-      }else{
-        cur = currentSceneIndex;
-      }
-      jumpTo(cur);
+      setTimeout(function(){
+        jumpTo(cur);
+      },100);
     }else{
       console.log("start!");
       $("#thumbnail").click();
@@ -2275,6 +2319,7 @@ function $Reader(params, _fps) {
    * @returns void
    */
   this.showPreview = function(_storyId) {
+    console.log("showPreview:" + _storyId);
     var param = "";
     if(t > 0){
       param = "/"+t;
@@ -2284,6 +2329,7 @@ function $Reader(params, _fps) {
 
     $("#thumbnail").hide();
     $("#thumbnail").bind("load", function(e){
+      console.log("thumbnail is loaded dpi:" + dpi + " r:" + ($("#thumbnail").height()/$("#thumbnail").width()));
       $("#thumbnail").width(dpi);
       $("#thumbnail").height(dpi * ($("#thumbnail").height()/$("#thumbnail").width()));
       App.centering($("#thumbnail"));
@@ -2297,6 +2343,7 @@ function $Reader(params, _fps) {
       $("#preview").hide();
       App.preventDefault(event);
     });
+    console.log("showPreview done");
   };
 
   //子フレーム用のキー入力受付
