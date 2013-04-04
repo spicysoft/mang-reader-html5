@@ -326,9 +326,18 @@ $(function() {
   var params = getRealParameters();
   Reader = new $Reader(params, 50/App.speed);
 
+  var width = 0;
+  var height = 0;
   $(window).resize(function(){
     setTimeout(function(){
-        console.log("window resize : " + $(window).width() + " " + $(window).height());
+    	var w = $(window).width();
+    	var h =  $(window).height();
+        console.log("window resize : " + w + " " + h);
+        if(width==w && height ==h){
+        	return;
+        }
+        width = w;
+        height = h;
         Reader.resize();
     },400);
   });
