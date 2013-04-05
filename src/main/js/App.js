@@ -87,7 +87,7 @@ function $App() {
       this.ANDROID21 = true;
       this.isSmartPhone = true;
       this.isAndroid = true;
-    } else if (/Android\s2\.[0|1]/.test(ua)) {
+    } else if (/Android\s2/.test(ua)) {
       this.ANDROID23= true;
       this.isSmartPhone = true;
       this.isAndroid = true;
@@ -116,6 +116,14 @@ function $App() {
     }
   };
 
+  this.window_width = function(){
+	  return window.innerWidth;
+  };
+
+  this.window_height = function(){
+	  return window.innerHeight;
+  };
+
   /**
    * windowのセンターにオブジェクトを配置する
    * @public
@@ -123,8 +131,8 @@ function $App() {
   this.centering = function(element) {
     element.each(function(){
       var $window = $(window);
-      var windowHeight = $window.height();
-      var windowWidth  = $window.width();
+      var windowHeight = App.window_height();
+      var windowWidth  = App.window_width();
 
       var $self = $(this);
       var width = $self.width();
@@ -355,7 +363,7 @@ $(function() {
      },200);
   };
 
-  if(!App.ANDROID23 && !isIOS){
+  if(!App.ANDROID23 && !App.isIOS){
 	  $(window).resize(resize);
   }
 

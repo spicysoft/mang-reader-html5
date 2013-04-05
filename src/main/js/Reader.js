@@ -150,8 +150,8 @@ function $Reader(params, _fps) {
   var setWidthAndHeight = function(){
     console.log("setWidthAndHeight start");
     if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
-      var reader_width = $(window).width();
-      var reader_height = $(window).height();
+      var reader_width = App.window_width();
+      var reader_height = App.window_height();
       if(isPageMode()||isRollMode()){
         width = reader_width;
         height = reader_height;
@@ -164,18 +164,13 @@ function $Reader(params, _fps) {
           height = reader_width;
         }
       }
-      var w = $(window).width();
-      var h = $(window).height();
+      var w = reader_width;
+      var h = reader_height;
       $("#canvas").width(width);
       $("#canvas").height(height);
     }else {
-      if(App.isIOS){
-        var w = window.innerWidth;
-        var h = window.innerHeight;
-      }else{
-        var w = $(window).width();
-        var h = $(window).height();
-      }
+      var w = App.window_width();
+      var h = App.window_height();
 
       $("#mangh5r").width(w);
       $("#mangh5r").height(h);
@@ -2204,7 +2199,8 @@ function $Reader(params, _fps) {
       console.log("openStory: done");
     }, apiError);
     console.log("load processing...");
-    (parent["Controll"]["setOnResizedCallback"])(App.resize);
+    (parent["Controll"]["setOnResizedCallback"])(Reader.resize);
+    console.log("load processing...");
   };
 
   var showAd = function(adSpaceId) {
