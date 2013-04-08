@@ -157,14 +157,14 @@ function $Controll() {
       });
    }
 
-  var onResizedCallback = function(){};
+  var onResizedCallback = function(w,h){};
   this.setOnResizedCallback = function(callback){
 	  console.log("setOnResizedCallback");
 	  onResizedCallback = callback;
   };
-  this.onResized = function(){
+  this.onResized = function(w,h){
 	  if(onResizedCallback){
-		  onResizedCallback();
+		  onResizedCallback(w,h);
 	  }
   };
 

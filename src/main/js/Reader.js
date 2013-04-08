@@ -147,8 +147,8 @@ function $Reader(params, _fps) {
     }
   };
 
-  var setWidthAndHeight = function(){
-    console.log("setWidthAndHeight start");
+  var setWidthAndHeight = function(parent_width, parent_height){
+    console.log("setWidthAndHeight start : pw->" + parent_width);
     if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
       var reader_width = App.window_width();
       var reader_height = App.window_height();
@@ -169,8 +169,13 @@ function $Reader(params, _fps) {
       $("#canvas").width(width);
       $("#canvas").height(height);
     }else {
-      var w = App.window_width();
-      var h = App.window_height();
+      if(0 < parent_width){
+          var w = parent_width;
+          var h = parent_height;
+      }else{
+          var w = App.window_width();
+          var h = App.window_height();
+      }
 
       $("#mangh5r").width(w);
       $("#mangh5r").height(h);
@@ -312,9 +317,33 @@ function $Reader(params, _fps) {
       dy3= (height-r1.scaledHeight())/2;
       dx3= (width/2+d)+nd;
     }
-
     var c = getCanvas();
-    if (App.IE) {
+    if (App.IE_VER==8 || document.documentMode==8) {
+        c.empty();
+        var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
+        if(l0){
+          c.css({zoom:(l0.scaledWidth()/l0.width)});
+          l0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
+          c.append(l0);
+        }
+        if(r0){
+          if(!l0){
+            c.css({zoom:(l0.scaledWidth()/r0.width)});
+          }
+          r0.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
+          c.append(r0);
+        }
+        if(l1){
+          l1.style.cssText = "position: absolute; top: " + dy2 + "px; left:" + dx2 + "px;";
+          c.append(l1);
+        }
+        if(r1){
+          r1.style.cssText = "position: absolute; top: " + dy3+ "px; left:" + dx3 + "px;";
+          c.append(r1);
+        }
+        c.append(mask);
+        c = null;
+    }else if (App.IE) {
       c.empty();
       var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
       if(l0){
@@ -2270,7 +2299,7 @@ function $Reader(params, _fps) {
 	}
   }
 
-  var resize = function() {
+  var resize = function(w,h) {
     console.log("resize start");
     var cur;
     if(isPageMode()){
@@ -2279,7 +2308,7 @@ function $Reader(params, _fps) {
       cur = currentSceneIndex;
     }
     console.log("resize jump:" + cur);
-    setWidthAndHeight();
+    setWidthAndHeight(w,h);
     if(height >= width && current_view == VIEW_PAGE_FL){
       current_view = VIEW_PAGE_FP;
     }else if (height < width && current_view == VIEW_PAGE_FP){
