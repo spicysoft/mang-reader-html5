@@ -34,6 +34,7 @@ function $App() {
   this.IE = false;
   this.IE_VER = false;
   this.ANDROID21 = false;
+  this.ANDROID23 = false;
   this.isSmartPhone = false;
   this.isAndroid = false;
   this.isIOS = false;
@@ -86,6 +87,10 @@ function $App() {
       this.ANDROID21 = true;
       this.isSmartPhone = true;
       this.isAndroid = true;
+    } else if (/Android\s2/.test(ua)) {
+      this.ANDROID23= true;
+      this.isSmartPhone = true;
+      this.isAndroid = true;
     } else if (/Android/.test(ua)){
       this.isSmartPhone = true;
       this.isAndroid = true;
@@ -111,6 +116,14 @@ function $App() {
     }
   };
 
+  this.window_width = function(){
+	  return window.innerWidth;
+  };
+
+  this.window_height = function(){
+	  return window.innerHeight;
+  };
+
   /**
    * windowのセンターにオブジェクトを配置する
    * @public
@@ -118,8 +131,8 @@ function $App() {
   this.centering = function(element) {
     element.each(function(){
       var $window = $(window);
-      var windowHeight = $window.height();
-      var windowWidth  = $window.width();
+      var windowHeight = App.window_height();
+      var windowWidth  = App.window_width();
 
       var $self = $(this);
       var width = $self.width();
@@ -328,19 +341,32 @@ $(function() {
 
   var width = 0;
   var height = 0;
-  $(window).resize(function(){
-    setTimeout(function(){
-    	var w = $(window).width();
+  var resize_lock = false;
+
+  var resize = function(){
+	  if(resize_lock){
+		  return;
+	  }
+	  resize_lock = true;
+	  setTimeout(function(){
+      	var w = $(window).width();
     	var h =  $(window).height();
         console.log("window resize : " + w + " " + h);
         if(width==w && height ==h){
-        	return;
+          resize_lock = false;
+          return;
         }
         width = w;
         height = h;
         Reader.resize();
-    },400);
-  });
+        resize_lock = false;
+     },200);
+  };
+
+  if(!App.ANDROID23 && !App.isIOS){
+	  $(window).resize(resize);
+  }
+
   if(!params.auto){
     Reader.showPreview(params.storyId);
   }else{
