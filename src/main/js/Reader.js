@@ -328,7 +328,7 @@ function $Reader(params, _fps) {
         }
         if(r0){
           if(!l0){
-            c.css({zoom:(l0.scaledWidth()/r0.width)});
+            c.css({zoom:(r0.scaledWidth()/r0.width)});
           }
           r0.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
           c.append(r0);
