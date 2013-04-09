@@ -220,11 +220,12 @@ function $Reader(params, _fps) {
     var left = (w-width)/2;
 	$("#canvas").css("top", top + "px");
 	$("#canvas").css("left", left + "px");
+    SceneAnimator = new $SceneAnimator(width, height, FPS);
     console.log("setWidthAndHeight top->" + top + " left->" + left + " " +width + "x" + height + " dpi:" + dpi);
   };
 
+  var SceneAnimator;
   setWidthAndHeight();
-  var SceneAnimator = new $SceneAnimator(width, height, FPS);
 
   var updateIndex = function(nindex){
 	    console.log("updateIndex:" + nindex);
@@ -2315,12 +2316,11 @@ function $Reader(params, _fps) {
     }else if (height < width){
 		$("#menu_mode").addClass("landscape")
 		if(current_view == VIEW_PAGE_FP)current_view = VIEW_PAGE_FL;
-      
+
     }else if(isRollMode()){
       replaceCanvas();
       paintRollImages();
     }
-    SceneAnimator = new $SceneAnimator(width, height, FPS);
     if(started){
       clearSceneImages();
       clearPageImages();
