@@ -80,13 +80,13 @@ function $Reader(params, _fps) {
   //menuが表示されるまでの間、canvasのクリックをロックする
   var menu_click_lock = false;
 
-  console.log("v6.2.0");
+  console.log("v6.2.1");
 
   var replaceCanvas = function(){
      console.log("replaceCanvas");
      $("#canvas").empty();
      if(isRollMode()){
-         $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;padding:0:border:none;"><div id="roll" style="position:absolute;text-align:center;margin:0;padding:0:border:none;"></div></div>');
+         $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;padding:0:border:none;"><div id="roll" style="position:absolute;text-align:center;margin:0;padding:0:border:none;"></div><div id="roll_control" style="width:100%;height:100%;"></div></div>');
      }else if(App.IE){
          $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;padding:0:border:none;"></div>');
      }else{
@@ -194,15 +194,15 @@ function $Reader(params, _fps) {
           height = reader_width;
         }
       }
-	  
+
 	   if (reader_width > reader_height) {
 	   	 $("#menu_mode").addClass("landscape");
-		 //$("#menu_mode .buttons").css("margin-left":reader_width/2-120+"px");
+		 $("#menu_mode .buttons").css({"margin-left":reader_width/2-240+"px"});
 	   } else  {
 	   	 $("#menu_mode").removeClass("landscape");
-		 //$("#menu_mode .buttons").css("margin-left":"0px");
+		 $("#menu_mode .buttons").css({"margin-left":"0px"});
 	   }
-	   
+
       canvas = $("#canvas")[0];
       canvas.width = width;
       canvas.style.width = width + "px";
@@ -560,17 +560,15 @@ function $Reader(params, _fps) {
       }else{
           var url = urlSceneImage(image_host, objects[i][key], current_mode, dpi, param);
       }
-      c.append("<p clss='roll_image'><img src='"+url+"' width='"+$("#canvas").width()+"px' style='margin:0;padding:0;border:none;'/></p>");
+      c.append("<p clss='roll_image'><img src='"+url+"' width='"+$("#canvas").width()+"px' style='margin:0;padding:0;border:none;' onDrag='return false;' /></p>");
     }
 
-    //ignore roll click
-    $(".roll_image").children().each(function(){
-    	$(this).bind(act_start, App.preventDefault);
-    	$(this).bind(act_end, App.preventDefault);
-    	$(this).bind(act_out, App.preventDefault);
-    	$(this).bind(act_move, App.preventDefault);
-    	$(this).bind(act_button, App.preventDefault);
-    });
+    var rc = $("#roll_control");
+    rc.bind(act_start, App.preventDefault);
+    rc.bind(act_end, App.preventDefault);
+    rc.bind(act_out, App.preventDefault);
+    rc.bind(act_move, App.preventDefault);
+    rc.bind(act_button, App.preventDefault);
     calcRollImagesHeight(false);
   };
 
@@ -1872,7 +1870,7 @@ function $Reader(params, _fps) {
 
 
   var saveConfig = function(){
-    console.log("saved config");
+    console.log("saved config view->" + current_view + " mode->" + current_mode);
     $.cookie('mang.reader.config.view',current_view,{ expires: 14 });
     $.cookie('mang.reader.config.mode',current_mode,{ expires: 14 });
   };
@@ -2050,15 +2048,25 @@ function $Reader(params, _fps) {
           current_mode  = MODE_ORIGINAL;
       }
     }
+    m = $.cookie('mang.reader.config.view');
+    console.log('cookie view :' + m);
     if(storyMetaFile['enable_page_mode']){
-      m = $.cookie('mang.reader.config.view');
-      if(m && (parseInt(m,10) === VIEW_PAGE_FP || parseInt(m,10) === VIEW_PAGE_FL)){
-    	  if(width > height){
-        	  current_view = VIEW_PAGE_FL;
-    	  }else{
-        	  current_view = VIEW_PAGE_FP;
-    	  }
+      if(!storyMetaFile['enable_scene_mode'] && m && (parseInt(m,10) === VIEW_SCENE_R || parseInt(m,10) === VIEW_SCENE)){
+        m = VIEW_PAGE_FP;
       }
+      if(m && (parseInt(m,10) === VIEW_PAGE_FP || parseInt(m,10) === VIEW_PAGE_FL)){
+        if(width > height){
+          m = VIEW_PAGE_FL;
+        }else{
+          m = VIEW_PAGE_FP;
+        }
+        current_view = m;
+      }
+    }else{
+      if(m && (parseInt(m,10) !== VIEW_SCENE_R)){
+        m = VIEW_SCENE;
+      }
+      current_view = VIEW_SCENE;
     }
 
     if(m && (parseInt(m,10) === VIEW_PAGE_FP || parseInt(m,10) === VIEW_PAGE_FL)){
@@ -2139,6 +2147,7 @@ function $Reader(params, _fps) {
       $("#current_story").text(story_number);
       $("#total_story").text(storyMetaFile["story_count"]);
 
+      loadConfig();
       if(width > height && App.isMedias){
         console.log("medias w");
         current_view = VIEW_PAGE_FL;
