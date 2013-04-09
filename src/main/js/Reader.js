@@ -194,15 +194,15 @@ function $Reader(params, _fps) {
           height = reader_width;
         }
       }
-	  
+
 	   if (reader_width > reader_height) {
 	   	 $("#menu_mode").addClass("landscape");
-		 $("#menu_mode .buttons").css("margin":reader_width/2-120+"px");
+		 $("#menu_mode .buttons").css({"margin":reader_width/2-120+"px"});
 	   } else  {
 	   	 $("#menu_mode").removeClass("landscape");
-		 $("#menu_mode .buttons").css("margin-left":"0px");
+		 $("#menu_mode .buttons").css({"margin-left":"0px"});
 	   }
-	   
+
       canvas = $("#canvas")[0];
       canvas.width = width;
       canvas.style.width = width + "px";
