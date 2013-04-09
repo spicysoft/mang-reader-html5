@@ -2309,10 +2309,13 @@ function $Reader(params, _fps) {
     }
     console.log("resize jump:" + cur);
     setWidthAndHeight(w,h);
-    if(height >= width && current_view == VIEW_PAGE_FL){
-      current_view = VIEW_PAGE_FP;
-    }else if (height < width && current_view == VIEW_PAGE_FP){
-      current_view = VIEW_PAGE_FL;
+    if(height >= width){
+		$("#menu_mode").removeClass("landscape")
+		if(current_view == VIEW_PAGE_FL)current_view = VIEW_PAGE_FP;
+    }else if (height < width){
+		$("#menu_mode").addClass("landscape")
+		if(current_view == VIEW_PAGE_FP)current_view = VIEW_PAGE_FL;
+      
     }else if(isRollMode()){
       replaceCanvas();
       paintRollImages();

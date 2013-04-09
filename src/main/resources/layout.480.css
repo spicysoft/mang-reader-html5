@@ -238,6 +238,39 @@
 	float:left;
 	margin:10px 10px 0 0;
 }
+
+#menu_mode.landscape a {
+	width:120px;
+	box-sizing: border-box;
+	border:1px solid #888;
+	padding: 10px 0;
+	height: initial;
+	float:left;
+	clear:none;
+}
+
+#menu_mode.landscape .buttons {
+	margin-top:-52px;
+}
+#menu_mode.landscape .sprite div {
+	float:none;
+	zoom:0.9;
+}
+#menu_mode.landscape .sprite div span {
+	margin:0 12px;
+}
+#menu_mode.landscape #mode_full_page div span {
+	margin:0 5px;
+}
+#menu_mode.landscape a h3 {
+	margin-top:10px;
+	text-align:center;
+	font-size: 11px;
+}
+#menu_mode.landscape a p {
+	display:none;
+}
+
 #menu_setting .buttons {
 	margin-top:-101px;
 }
