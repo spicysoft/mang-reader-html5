@@ -195,7 +195,7 @@ function $Reader(params, _fps) {
         }
       }
 
-	   if (reader_width > reader_height) {
+	   if (reader_width > reader_height && reader_height < 480) {
 	   	 $("#menu_mode").addClass("landscape");
 		 $("#menu_mode .buttons").css({"margin-left":reader_width/2-240+"px"});
 	   } else  {
