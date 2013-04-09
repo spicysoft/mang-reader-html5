@@ -194,6 +194,12 @@ function $Reader(params, _fps) {
           height = reader_width;
         }
       }
+	   if (reader_width > reader_height && App.isSmartPhone) {
+	   	 $("#menu_mode").addClass("landscape")
+	   } else if(App.isSmartPhone) {
+	   	 $("#menu_mode").removeClass("landscape")
+	   }
+	  
 
       canvas = $("#canvas")[0];
       canvas.width = width;
@@ -2309,12 +2315,10 @@ function $Reader(params, _fps) {
     }
     console.log("resize jump:" + cur);
     setWidthAndHeight(w,h);
-    if(height >= width){
-		$("#menu_mode").removeClass("landscape")
-		if(current_view == VIEW_PAGE_FL)current_view = VIEW_PAGE_FP;
-    }else if (height < width){
-		$("#menu_mode").addClass("landscape")
-		if(current_view == VIEW_PAGE_FP)current_view = VIEW_PAGE_FL;
+    if(height >= width && current_view == VIEW_PAGE_FL){
+		current_view = VIEW_PAGE_FP;
+    }else if (height < width && current_view == VIEW_PAGE_FP){
+		current_view = VIEW_PAGE_FL;
       
     }else if(isRollMode()){
       replaceCanvas();

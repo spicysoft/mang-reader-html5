@@ -251,6 +251,8 @@
 
 #menu_mode.landscape .buttons {
 	margin-top:-52px;
+	left: 50%;
+	margin-left: -240px;
 }
 #menu_mode.landscape .sprite div {
 	float:none;
