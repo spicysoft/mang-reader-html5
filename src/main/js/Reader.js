@@ -194,10 +194,13 @@ function $Reader(params, _fps) {
           height = reader_width;
         }
       }
-	   if (reader_width > reader_height && App.isSmartPhone) {
-	   	 $("#menu_mode").addClass("landscape")
-	   } else if(App.isSmartPhone) {
-	   	 $("#menu_mode").removeClass("landscape")
+	  console.log("test")
+	   if (reader_width > reader_height) {
+	   	 $("#menu_mode").addClass("landscape");
+		 $("#menu_mode").css(left:reader_width/2-120+"px");
+	   } else  {
+	   	 $("#menu_mode").removeClass("landscape");
+		 $("#menu_mode").css(left:"0px");
 	   }
 
 
