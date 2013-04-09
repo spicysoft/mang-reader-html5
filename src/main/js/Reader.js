@@ -1460,7 +1460,7 @@ function $Reader(params, _fps) {
     if(current_view === VIEW_PAGE_FL){
       if(currentPageIndex==0 && is_first_page_single){
     	  next = 1;
-      }else if(currentPageIndex==pages.length-2){
+      }else if(currentPageIndex>=pages.length-2){
     	  next = currentPageIndex + 1;
       }else{
           next = currentPageIndex + 2;
