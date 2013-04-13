@@ -1060,6 +1060,35 @@ function $Reader(params, _fps) {
     updateIndex(newIndex);
     updateProgress();
 
+    var track = function(){
+      if(!trackstart){
+        return;
+      }
+      var quality = '/';
+      if(current_mode===MODE_READING){
+        quality = '/compressed';
+      }else{
+        quality = '/original';
+      }
+      var view = "/"
+      switch(current_view){
+        case VIEW_SCENE:
+        view = "frame_anime";
+        break;
+        case VIEW_PAGE_FL:
+        case VIEW_PAGE_FP:
+          view = "page_full";
+          break;
+        case VIEW_PAGE_W:
+          view = "page_wide";
+          break;
+        case VIEW_SCENE_R:
+          view = "frame_roll";
+          break;
+      }
+      trackPageView(view+quality+'/'+newIndex);
+    };
+
     if(isRollMode()){
     	if(roll_image_positions.length < 1){
     		console.log("empty roll imagesca");
@@ -1070,6 +1099,7 @@ function $Reader(params, _fps) {
     		console.log("roll:" + roll_image_positions[newIndex] + " " + newIndex);
     		$("#roll").animate({top: (-1 * roll_image_positions[newIndex]) + "px"}, 500);
     	}
+    	track();
     	return;
     }
     var i;
@@ -1091,32 +1121,7 @@ function $Reader(params, _fps) {
           hideMenu(500);
       },500);
       setTimeout(paint, 0);
-      if(!trackstart){
-        return;
-      }
-      var quality = '/';
-      if(current_mode===MODE_READING){
-        quality = '/compressed';
-      }else{
-        quality = '/original';
-      }
-	  var view = "/"
-	  switch(current_view){
-	  	case VIEW_SCENE:
-		view = "frame_anime";
-		break;
-		case VIEW_PAGE_FL:
-		case VIEW_PAGE_FP:
-		view = "page_full";
-		break;
-		case VIEW_PAGE_W:
-		view = "page_wide";
-		break;
-		case VIEW_SCENE_R:
-		view = "frame_roll";
-		break;
-	  }
-      trackPageView(view+quality+'/'+newIndex);
+      track();
     }
 
     if (i !== undefined && i.hasLoaded()) {
@@ -1459,17 +1464,16 @@ function $Reader(params, _fps) {
     var next;
     if(current_view === VIEW_PAGE_FL){
       if(currentPageIndex==0 && is_first_page_single){
-    	  next = 1;
-      }else if(currentPageIndex>=pages.length-2){
-    	  next = currentPageIndex + 1;
+        next = 1;
       }else{
-          next = currentPageIndex + 2;
+        next = currentPageIndex + 2;
       }
     }else if(isPageMode()){
       next = currentPageIndex + 1;
     }else {
       next = currentSceneIndex + 1;
     }
+    console.log("next:" + next);
     if (isPageMode() && next >= pages.length ||
         current_view === VIEW_SCENE && next >= scenes.length) {
     	processFinished();
