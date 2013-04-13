@@ -97,6 +97,9 @@ function $App() {
     } else if (/iPhone\sOS/.test(ua)){
       this.isSmartPhone = true;
       this.isIOS = true;
+	} else if (/iPad/.test(ua)){
+	  this.isSmartPhone = true;
+      this.isIOS = true;
     } else {
       this.isSmartPhone = false;
     }
