@@ -560,7 +560,7 @@ function $Reader(params, _fps) {
       }else{
           var url = urlSceneImage(image_host, objects[i][key], current_mode, dpi, param);
       }
-      c.append("<p clss='roll_image'><img src='"+url+"' width='"+$("#canvas").width()+"px' style='margin:0;padding:0;border:none;' onDrag='return false;' /></p>");
+      c.append("<p clss='roll_image' style='margin:0;padding:0;border:none;'><img src='"+url+"' width='"+$("#canvas").width()+"px' style='margin:0;padding:0;border:none;' onDrag='return false;' /></p>");
     }
 
     var rc = $("#roll_control");
@@ -1157,7 +1157,11 @@ function $Reader(params, _fps) {
     }else if(current_view === VIEW_PAGE_FP){
       prev = currentPageIndex - 1;
     }else{
-      prev = currentSceneIndex - 1;
+      if(isPageMode()){
+          prev = currentPageIndex - 1;
+      }else{
+          prev = currentSceneIndex - 1;
+      }
     }
     if (0 <= prev) {
       is_back = true;
@@ -1746,7 +1750,7 @@ function $Reader(params, _fps) {
 
   }
   var canvas_up = function(e) {
-    //console.log("canvas_up");
+    console.log("canvas_up");
     if(touch_start_x!=0 && !isRollMode()){
       var dx = touch_pageX - touch_start_x;
       console.log("dx:" + dx);
@@ -1763,14 +1767,16 @@ function $Reader(params, _fps) {
 
       var sum = 0;
       var top = parseInt($("#roll").css("top"));
+      console.log($("#roll").css("top"));
+      console.log(roll_image_positions);
       for(var i=0;i<roll_image_positions.length;i++){
         var p = roll_image_positions[i];
-        if(sum >= top*-1){
+        console.log("sum:" + p + " top:" + top + " i:" + i);
+        if(p+$("#canvas").height() >= top*-1){
           updateIndex(i);
           updateProgress();
           break;
         }
-        sum = sum + p;
       }
 
       var roll = $("#roll");
