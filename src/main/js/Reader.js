@@ -86,7 +86,7 @@ function $Reader(params, _fps) {
      console.log("replaceCanvas");
      $("#canvas").empty();
      if(isRollMode()){
-         $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;padding:0:border:none;"><div id="roll" style="position:absolute;text-align:center;margin:0;padding:0:border:none;"></div><div id="roll_control" style="width:100%;height:100%;"></div></div>');
+         $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;padding:0:border:none;overflow: hidden;"><div id="roll" style="position:absolute;text-align:center;margin:0;padding:0:border:none;"></div><div id="roll_control" style="width:100%;height:100%;"></div></div>');
      }else if(App.IE){
          $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;padding:0:border:none;"></div>');
      }else{
@@ -280,6 +280,7 @@ function $Reader(params, _fps) {
     }else if(App.IE){
       return  $("#canvas");
     }
+    console.log("use html5 canvas");
     var context = canvas.getContext("2d");
     context.fillRect(0, 0, width, height);
     return context;
@@ -459,7 +460,6 @@ function $Reader(params, _fps) {
 
   var paintImage = function(i){
 	  console.log("paintImage");
-	  console.log(i);
       var x;
       var y;
       if(isPageMode()){
@@ -499,6 +499,7 @@ function $Reader(params, _fps) {
         console.log("b paintImage: " + mw + "-" + mh);
         c.drawImage(i, dx, dy, mw, mh);
       }
+	  console.log("paintImage done");
     };
 
   var calcRollImagesHeight = function(shouldIndexUpdate){
@@ -510,18 +511,24 @@ function $Reader(params, _fps) {
 	  var c = $("#canvas").height();
 	  var i=0;
 	  var sum = 0;
-	  var updated = false;
 
-	  //TOOD キャッシュ済の場合はキャッシュから再計算する
+	  var len = 0;
+	  if(isPageMode()){
+		  len = pages.length;
+	  }else{
+		  len = scenes.length;
+	  }
 	  if(roll_image_positions.length < 1){
 		  $("#roll").children().each(function(){
 			  var h = $(this).height();
 			  if(h>120){
 				  var p =0;
-				  if(h > c){
+				  if(i!=0 && i==len-1){
+					  p = sum + h -c;
+				  }else if(h > c || i==0){
 					  p = sum;
 				  }else{
-					  p = sum + (c-h)/2;
+					  p = sum - (c-h)/2;
 				  }
 				  roll_image_positions[i] = p;
 				  sum = sum+h;
@@ -1479,7 +1486,7 @@ function $Reader(params, _fps) {
     }
     console.log("next:" + next);
     if (isPageMode() && next >= pages.length ||
-        current_view === VIEW_SCENE && next >= scenes.length) {
+    	!isPageMode()  && next >= scenes.length) {
     	processFinished();
     } else {
       jumpTo(next);
@@ -1772,7 +1779,7 @@ function $Reader(params, _fps) {
       for(var i=0;i<roll_image_positions.length;i++){
         var p = roll_image_positions[i];
         console.log("sum:" + p + " top:" + top + " i:" + i);
-        if(p+$("#canvas").height() >= top*-1){
+        if(p+$("#canvas").height() > top*-1){
           updateIndex(i);
           updateProgress();
           break;
