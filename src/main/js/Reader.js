@@ -88,7 +88,7 @@ function $Reader(params, _fps) {
      if(isRollMode()){
          $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;padding:0:border:none;overflow: hidden;"><div id="roll" style="position:absolute;text-align:center;margin:0;padding:0:border:none;"></div><div id="roll_control" style="width:100%;height:100%;"></div></div>');
      }else if(App.IE){
-         $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;padding:0:border:none;"></div>');
+         $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;padding:0:border:none;overflow: hidden;"></div>');
      }else{
          $("#canvas").replaceWith('<canvas id="canvas"></canvas>');
      }
@@ -1495,7 +1495,7 @@ function $Reader(params, _fps) {
 
   var processFinished = function(){
       if (should_show_ad &&
-    		  (isPageMode() && 1 < pages.length || current_view === VIEW_SCENE && 1 < scenes.length) ) {
+    		  (isPageMode() && 1 < pages.length || !isPageMode() && 1 < scenes.length) ) {
         (parent["Controll"]["showAd"])(storyId, "afterReadingInReader", showFinished);
 	  } else {
 	  	showFinished();
@@ -1897,6 +1897,7 @@ function $Reader(params, _fps) {
     is_back = false;
     if(storyMetaFile['enable_original_mode']){
         current_mode  = MODE_ORIGINAL;
+        replaceCanvas();
         if(hasAllTitleShown){
           if(isPageMode()){
             jumpTo(currentPageIndex);
@@ -1912,6 +1913,7 @@ function $Reader(params, _fps) {
   var change_mode_reading = function(){
     is_back = false;
     current_mode  = MODE_READING;
+    replaceCanvas();
     if(hasAllTitleShown){
       if(isPageMode()){
         jumpTo(currentPageIndex);
