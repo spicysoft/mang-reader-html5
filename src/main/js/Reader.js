@@ -1778,12 +1778,12 @@ function $Reader(params, _fps) {
       console.log(roll_image_positions);
       for(var i=0;i<roll_image_positions.length;i++){
         var p = roll_image_positions[i];
-        console.log("sum:" + p + " top:" + top + " i:" + i);
-        if(p+$("#canvas").height() > top*-1){
+        if(p >= top*-1){
           updateIndex(i);
           updateProgress();
           break;
         }
+        console.log("sum:" + p + " top:" + top + " i:" + i);
       }
 
       var roll = $("#roll");
