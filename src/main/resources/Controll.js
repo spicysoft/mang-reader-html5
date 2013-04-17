@@ -244,7 +244,7 @@ function $Controll() {
 			ad_cover.hide();
 			self.is_show_ad=false;
 			console.log("ad close button : click done");
-			if("1"!=Controll.current() && Controll.current() == Controll.total()) {
+			if(adSpaceId=="afterReadingInReader") {
 				callbackSkipAd();
 			} else {
 				var direction = elem(".swipe_direction");

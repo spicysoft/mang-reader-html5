@@ -15,6 +15,8 @@ function $Reader(params, _fps) {
   var width = 0;
   var height = 0;
   var canvas;
+  var canvas_top = 0;
+  var canvas_left = 0;
 
   var MODE_ORIGINAL = 'original';
   var MODE_READING  = 'reading';
@@ -86,14 +88,17 @@ function $Reader(params, _fps) {
      console.log("replaceCanvas");
      $("#canvas").empty();
      if(isRollMode()){
-         $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;padding:0:border:none;overflow: hidden;"><div id="roll" style="position:absolute;text-align:center;margin:0;padding:0:border:none;"></div><div id="roll_control" style="width:100%;height:100%;"></div></div>');
+       $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;padding:0:border:none;overflow: hidden;"><div id="roll" style="position:absolute;text-align:center;margin:0;padding:0:border:none;"></div><div id="roll_control" style="width:100%;height:100%;"></div></div>');
      }else if(App.IE){
-         $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;padding:0:border:none;overflow: hidden;"></div>');
+       $("#canvas").replaceWith('<div id="canvas" style="background: #000;text-align:center;margin:0;;padding:0:border:none;overflow: hidden;"></div>');
      }else{
-         $("#canvas").replaceWith('<canvas id="canvas"></canvas>');
+       $("#canvas").replaceWith('<canvas id="canvas"></canvas>');
      }
      roll_image_positions = [];
      setWidthAndHeight();
+     if(isRollMode()){
+     	paintRollImages();
+     }
   }
 
   if(!t){
@@ -150,8 +155,10 @@ function $Reader(params, _fps) {
   var setWidthAndHeight = function(parent_width, parent_height){
     console.log("setWidthAndHeight start : pw->" + parent_width);
     if (App.IE && (App.IE_VER < 8 || document.documentMode < 8)) {
+      console.log("setWidthAndHeight IE");
       var reader_width = App.window_width();
       var reader_height = App.window_height();
+      console.log("setWidthAndHeight (" + reader_width + "x" + reader_height + ")");
       if(isPageMode()||isRollMode()){
         width = reader_width;
         height = reader_height;
@@ -169,19 +176,20 @@ function $Reader(params, _fps) {
       $("#canvas").width(width);
       $("#canvas").height(height);
     }else {
-      if(0 < parent_width){
+      console.log("setWidthAndHeight canvas");
+      if(parent_width != undefined && 0 < parent_width){
           var w = parent_width;
           var h = parent_height;
       }else{
           var w = App.window_width();
           var h = App.window_height();
       }
-
+      console.log("setWidthAndHeight (" + w  + "x" + h + ")");
       $("#mangh5r").width(w);
       $("#mangh5r").height(h);
       var reader = $("#mangh5r");
-      var reader_width = reader.width();
-      var reader_height = reader.height();
+      var reader_width = w;
+      var reader_height = h;
       if(isPageMode() || isRollMode()){
         width = reader_width;
         height = reader_height;
@@ -226,6 +234,8 @@ function $Reader(params, _fps) {
    }
     var top = (h-height)/2;
     var left = (w-width)/2;
+    canvas_top = top;
+    canvas_left = left;
 	$("#canvas").css("top", top + "px");
 	$("#canvas").css("left", left + "px");
     SceneAnimator = new $SceneAnimator(width, height, FPS);
@@ -328,27 +338,30 @@ function $Reader(params, _fps) {
       dx3= (width/2+d)+nd;
     }
     var c = getCanvas();
+    var zoom = 1;
     if (App.IE_VER==8 || document.documentMode==8) {
         c.empty();
         var mask = "<div style='position:absolute; width:100%;height:100%;'></div>";
         if(l0){
-          c.css({zoom:(l0.scaledWidth()/l0.width)});
-          l0.style.cssText = "position: absolute; top: " + dy0 + "px; left:" + dx0 + "px;";
+          zoom = l0.scaledWidth()/l0.width;
+          zoomCanvas(c,zoom);
+          l0.style.cssText = "position: absolute; top: " + dy0/zoom + "px; left:" + dx0/zoom + "px;";
           c.append(l0);
         }
         if(r0){
           if(!l0){
-            c.css({zoom:(r0.scaledWidth()/r0.width)});
+            zoom = r0.scaledWidth()/r0.width;
+            zoomCanvas(c,zoom);
           }
-          r0.style.cssText = "position: absolute; top: " + dy1 + "px; left:" + dx1 + "px;";
+          r0.style.cssText = "position: absolute; top: " + dy1/zoom + "px; left:" + dx1/zoom + "px;";
           c.append(r0);
         }
         if(l1){
-          l1.style.cssText = "position: absolute; top: " + dy2 + "px; left:" + dx2 + "px;";
+          l1.style.cssText = "position: absolute; top: " + dy2/zoom + "px; left:" + dx2/zoom + "px;";
           c.append(l1);
         }
         if(r1){
-          r1.style.cssText = "position: absolute; top: " + dy3+ "px; left:" + dx3 + "px;";
+          r1.style.cssText = "position: absolute; top: " + dy3/zoom+ "px; left:" + dx3/zoom + "px;";
           c.append(r1);
         }
         c.append(mask);
@@ -478,7 +491,7 @@ function $Reader(params, _fps) {
       var c = getCanvas();
       if (App.IE) {
         if(App.IE_VER==8 || document.documentMode==8){
-          $("#canvas").css({zoom:(i.scaledWidth()/i.width)});
+          zoomCanvas($("#canvas"), i.scaledWidth()/i.width);
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;";
         }else{
           i.style.cssText = "position: absolute; top: " + dy + "px; left:" + dx + "px;zoom:"+(i.scaledWidth()/i.width)+";";
@@ -502,6 +515,12 @@ function $Reader(params, _fps) {
 	  console.log("paintImage done");
     };
 
+  var zoomCanvas = function(c, r){
+	  var top = parseInt(canvas_top/r) + 'px';
+	  var left = parseInt(canvas_left/r) + 'px';
+	  console.log('new left:' + left);
+	  c.css({zoom:r, top:top, left:left});
+  };
   var calcRollImagesHeight = function(shouldIndexUpdate){
 	  if(!isRollMode()){
 		  return 0;
@@ -1709,20 +1728,23 @@ function $Reader(params, _fps) {
     if(touch_start_x!=0 && !isRollMode()){
     	//
     }else if(touch_start_y!=0 && isRollMode()){
-      dy = touch_pageY - touch_start_y;
-      var roll = $("#roll");
-      var top = parseInt(roll.css("top"));
-      var ny = 0;
-      if(dy+top < 0){
-    	  ny = dy+top
+      if(touch_start_y != touch_pageY){
+          dy = touch_pageY - touch_start_y;
+          console.log("update dy:" + dy);
+          var roll = $("#roll");
+          var top = parseInt(roll.css("top"));
+          var ny = 0;
+          if(dy+top < 0){
+        	  ny = dy+top
+          }
+          canvas_limit = calcRollImagesHeight(true);
+          if(canvas_limit < ny * -1){
+        	  ny = -1 * canvas_limit;
+        	  processFinished();
+          }
+          touch_start_y = touch_pageY;
+          roll.css("top", ny);
       }
-      canvas_limit = calcRollImagesHeight(true);
-      if(canvas_limit < ny * -1){
-    	  ny = -1 * canvas_limit;
-    	  processFinished();
-      }
-      touch_start_y = touch_pageY;
-      roll.css("top", ny);
     }else{
       processFlick(e);
     }
@@ -1757,7 +1779,6 @@ function $Reader(params, _fps) {
 
   }
   var canvas_up = function(e) {
-    console.log("canvas_up");
     if(touch_start_x!=0 && !isRollMode()){
       var dx = touch_pageX - touch_start_x;
       console.log("dx:" + dx);

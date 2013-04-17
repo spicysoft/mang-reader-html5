@@ -120,10 +120,16 @@ function $App() {
   };
 
   this.window_width = function(){
+	  if(App.IE){
+		  return document.body.clientWidth;
+	  }
 	  return window.innerWidth;
   };
 
   this.window_height = function(){
+	  if(App.IE){
+		  return document.body.clientHeight;
+	  }
 	  return window.innerHeight;
   };
 
