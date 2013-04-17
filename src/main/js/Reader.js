@@ -1721,6 +1721,19 @@ function $Reader(params, _fps) {
   };
 
   var canvas_limit = 0;
+  var processRollMove = function(roll, top, dy){
+      var ny = 0;
+      if(dy+top < 0){
+        ny = dy+top
+      }
+      canvas_limit = calcRollImagesHeight(true);
+      if(canvas_limit < ny * -1){
+        ny = -1 * canvas_limit;
+        processFinished();
+      }
+      roll.css("top", ny);
+  };
+
   var canvas_move = function(e) {
     touch_pageX=point_x(e);
     touch_pageY=point_y(e);
@@ -1733,17 +1746,8 @@ function $Reader(params, _fps) {
           console.log("update dy:" + dy);
           var roll = $("#roll");
           var top = parseInt(roll.css("top"));
-          var ny = 0;
-          if(dy+top < 0){
-        	  ny = dy+top
-          }
-          canvas_limit = calcRollImagesHeight(true);
-          if(canvas_limit < ny * -1){
-        	  ny = -1 * canvas_limit;
-        	  processFinished();
-          }
+          processRollMove(roll, top, dy);
           touch_start_y = touch_pageY;
-          roll.css("top", ny);
       }
     }else{
       processFlick(e);
@@ -1778,6 +1782,20 @@ function $Reader(params, _fps) {
     }
 
   }
+
+  var updateRollIndex = function(top){
+      var sum = 0;
+      for(var i=0;i<roll_image_positions.length;i++){
+        var p = roll_image_positions[i];
+        if(p >= top*-1){
+          updateIndex(i);
+          updateProgress();
+          break;
+        }
+        console.log("sum:" + p + " top:" + top + " i:" + i);
+      }
+  };
+
   var canvas_up = function(e) {
     if(touch_start_x!=0 && !isRollMode()){
       var dx = touch_pageX - touch_start_x;
@@ -1793,19 +1811,8 @@ function $Reader(params, _fps) {
         menu_click(e);
       }
 
-      var sum = 0;
       var top = parseInt($("#roll").css("top"));
-      console.log($("#roll").css("top"));
-      console.log(roll_image_positions);
-      for(var i=0;i<roll_image_positions.length;i++){
-        var p = roll_image_positions[i];
-        if(p >= top*-1){
-          updateIndex(i);
-          updateProgress();
-          break;
-        }
-        console.log("sum:" + p + " top:" + top + " i:" + i);
-      }
+      updateRollIndex(top);
 
       var roll = $("#roll");
       var anim = function(){
@@ -2445,6 +2452,14 @@ function $Reader(params, _fps) {
       return false;
     }
   });
+
+  this.onMouseWheel = function(delta){
+    if(isRollMode()){
+      processRollMove($("#roll"), parseInt($("#roll").css("top")), delta);
+      updateRollIndex(parseInt($("#roll").css("top")));
+     }
+  };
+
   this.openStory = openStory;
   this.goNext = goNext;
   this.resize = resize;

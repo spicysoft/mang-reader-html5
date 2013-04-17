@@ -381,4 +381,26 @@ $(function() {
   }else{
     Reader.openStory(params.storyId);
   }
+
+  //Firefox
+  if(window.addEventListener){
+    window.addEventListener('DOMMouseScroll', function(e){
+      Reader.onMouseWheel(e.detail);
+      App.preventDefault(e);
+    }, false);
+  }
+
+  //IE
+  if(document.attachEvent){
+    document.attachEvent('onmousewheel', function(e){
+      Reader.onMouseWheel(e.wheelDelta/10);
+      App.preventDefault(e);
+    });
+  }
+
+  //Chrome
+  window.onmousewheel = function(e){
+    Reader.onMouseWheel(e.wheelDelta/10);
+    App.preventDefault(e);
+  }
 });
