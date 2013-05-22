@@ -1,6 +1,6 @@
 //var _gaq = _gaq || [];
 //var loadGoogleAnalytics = function(){
-//  _gaq.push(['_setAccount', 'UA-22337891-1']);
+//  _gaq.push(['_setAccount', 'UA-40957853-1']);
 //  _gaq.push(['_setDomainName', '.mang.jp']);
 //  _gaq.push(['_setAllowLinker', true]);
 //  _gaq.push(['_setAllowHash', false]);
